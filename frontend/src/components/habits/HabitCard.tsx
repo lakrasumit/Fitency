@@ -31,7 +31,7 @@ export function HabitCard({ item, onToggle, pending = false, disabled = false }:
         className={cn(
           'flex min-h-16 cursor-pointer items-center gap-3 rounded-lg border border-line bg-surface p-4 shadow-card transition-colors',
           'hover:border-line-strong',
-          'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-strong has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-page',
+          'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-strong',
           disabled && 'cursor-not-allowed opacity-70',
         )}
       >

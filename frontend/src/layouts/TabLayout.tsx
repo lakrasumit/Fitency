@@ -21,7 +21,7 @@ export function TabLayout() {
       <main
         id="main"
         tabIndex={-1}
-        className="mx-auto flex w-full max-w-[var(--content-max-mobile)] flex-col px-5 pb-32 pt-6 lg:max-w-[var(--content-max-desktop)] lg:px-8 lg:pb-16 lg:pt-8"
+        className="mx-auto flex w-full max-w-[var(--content-max-mobile)] flex-col px-5 pb-28 pt-6 lg:max-w-[var(--content-max-desktop)] lg:px-8 lg:pb-16 lg:pt-8"
       >
         <Outlet />
       </main>

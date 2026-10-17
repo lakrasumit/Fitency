@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 
 /**
  * Tracks connectivity (FR-S-6, DESIGN.md §7 "Offline").
@@ -32,16 +32,20 @@ export function useOnlineStatus(): boolean {
 /** True when the device just came back online, for a short confirmation window. */
 export function useJustReconnected(online: boolean, durationMs = 3000): boolean {
   const [justReconnected, setJustReconnected] = useState(false);
+  const wasOnline = useRef(online);
 
   useEffect(() => {
-    if (online) {
-      setJustReconnected(true);
-      const timer = setTimeout(() => setJustReconnected(false), durationMs);
-      return () => clearTimeout(timer);
+    const cameBackOnline = online && !wasOnline.current;
+    wasOnline.current = online;
+
+    if (!cameBackOnline) {
+      setJustReconnected(false);
+      return undefined;
     }
 
-    setJustReconnected(false);
-    return undefined;
+    setJustReconnected(true);
+    const timer = setTimeout(() => setJustReconnected(false), durationMs);
+    return () => clearTimeout(timer);
   }, [online, durationMs]);
 
   return justReconnected;

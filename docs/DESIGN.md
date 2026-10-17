@@ -1,395 +1,366 @@
-# Habit Tracker: Design Specification
+# Fitency — Frontend Design Specification
 
-Source: Figma Community file "Habit Tracker App UI Kit" (file key `TCU92j5lWZlACL65yC27VW`, page "Design", node `1:2`).
-Target stack: React + Next.js (App Router). Styling-agnostic: tokens are given as CSS variables.
+| | |
+|---|---|
+| **Status** | Draft for review |
+| **Version** | 2.0 (supersedes 1.0) |
+| **Date** | 2026-10-18 |
+| **Source** | Figma Community file *"Habit Tracker App UI Kit"* (file key `TCU92j5lWZlACL65yC27VW`, page "Design", node `1:2`) |
+| **Related docs** | [`PRD.md`](./PRD.md) · [`decisions.md`](./decisions.md) |
 
-> **Check the Community license** on the Figma file page before shipping anything commercial.
-
----
-
-## 0. Rules for the coding agent
-
-1. **Take from Figma/this doc:** layout, page structure, components, spacing, colors, typography.
-2. **Do not take features from the design.** Build only what is listed in `FEATURES.md`. If a screen shows UI for a feature not in that list, render it as a static placeholder.
-3. **Ignore device chrome.** Do not build: iOS status bar (9:41, signal, battery), Dynamic Island, home indicator bar, phone frames, lock-screen clock, flashlight/camera buttons.
-4. **Mobile-first.** The kit only has a 390px-wide design. On wider screens, center a single column (max-width 430px) until desktop designs exist.
-5. **Build order:** tokens, then shared components, then pages.
-6. **Backend is undecided.** Put every data call behind one `lib/api` module with mock data. Swap in real endpoints later.
-7. All copy in this doc is placeholder copy from the kit (sarcastic tone). Replace per product decisions.
-8. For pixel-level questions, query the Figma MCP with the node IDs below.
+> **License:** check the Figma Community license on the file page before shipping anything commercial.
+>
+> This document records the **finalized** frontend design system, layouts, navigation, components, responsive behavior, UI states, and architecture. The original Figma-derived reference (literal values, screen inventory, kit inconsistencies) is preserved verbatim in **Appendix A** for traceability. Decisions are cross-referenced as `(D-xx)` to [`decisions.md`](./decisions.md).
 
 ---
 
-## 1. Screen inventory
+## 0. Confirmed decisions affecting design
 
-| # | Figma frame | Node ID | Suggested route | Notes |
-|---|-------------|---------|-----------------|-------|
-| 1 | Daily Checklist | `1:1447` | `/` | Home tab |
-| 2 | Log & Analytics | `1:1446` | `/analytics` | Only the "Overview" tab is designed |
-| 3 | New Habit Creation | `1:1444` | `/habits/new` | No bottom nav on this screen |
-| 4 | Roast & Relapse Notifications | `1:1445` | n/a | A lock-screen mockup of push notifications, not an app page. Use for notification copy and icons |
-| 5 | Gamified Leveling | `1:1199` | `/rewards` | Rewards tab |
-| 6 | Widgets | `1:1069` | n/a | iOS home-screen widget showcase. Needs native WidgetKit, so out of scope for a web app |
-| n/a | Profile | n/a | `/profile` | **Not designed**, but exists as a nav tab |
+| Decision | Value |
+|----------|-------|
+| Framework | Vite + React SPA (D-01) |
+| Styling | Tailwind CSS v4 consuming semantic tokens (D-03, D-13) |
+| **Theme** | **Dark is the default (and only) theme** (D-12, D-14) |
+| Tokens | **Unified semantic token set** (D-13) |
+| Responsive | **Mobile-first + adaptive desktop** (frontend-proposed) (D-11) |
+| Navigation | **3 tabs + FAB**, Profile removed (D-16) |
+| Scope | Home · Analytics (Overview only) · New Habit · Rewards (D-08, D-09, D-10) |
+| Accessibility | WCAG 2.1 AA (D-19) |
+| Chart | Custom SVG (D-17) |
+| Copy | Kit placeholders; product name **Fitency** (D-15) |
+
+> ⚠️ **Sections 2.1 (dark palette) and 3.2/4 (desktop layouts) are proposals pending review** (open items O-4, O-5).
 
 ---
 
-## 2. Design tokens
+## 1. Design principles
 
-### 2.1 Colors (literal values from the kit)
+1. **Honest, playful feedback** — the product's tone (via pill text and copy) is light and self-aware.
+2. **Fast daily loop** — logging a habit should take one tap; creating one under a minute.
+3. **Dark-first** — surfaces are dark; hierarchy is built with elevation, borders, and tinted accents rather than heavy shadows.
+4. **One primary accent** — a single brand purple unifies the kit's four inconsistent purples.
+5. **Accessible by default** — AA contrast, ≥44px targets, ≥11px text, keyboard operability.
 
-**Brand purple.** The kit is inconsistent (see section 8). Values as found:
+---
 
-| Screen | Value | Used for |
-|--------|-------|----------|
-| 1 Home | `#7357f6` | FAB, active tab, checked checkbox, active filter pill |
-| 2 Analytics | `#7454f5` | Active tab, segmented control, chart line, FAB |
-| 3 New Habit | `#635bff` | CTA, toggle, selected day chips |
-| 5 Rewards | `#6d28d9` | Active tab, FAB, current step, "View all" |
-| 5 Rewards | `#4f46e5` | "NEXT LEVEL" label, XP gradient end |
-| 5 Rewards | `#9333ea` | Next-level progress fill |
-| 5 Rewards | `#a855f7` | XP gradient start |
+## 2. Design system
 
-**Neutrals (slate, used on screens 1, 3, 4, 5, 6):**
-`#0f172a` primary text, `#1e293b`, `#334155`, `#475569`, `#64748b` secondary text, `#94a3b8` muted text, `#cbd5e1` borders/unchecked, `#e2e8f0` input borders, `#f1f5f9` subtle fills/borders, `#f8fafc` page bg (screen 5).
+### 2.1 Color
 
-**Neutrals (purple-tinted, screen 2 only):**
-`#161338` H1, `#1c1939` card headings, `#413f58` row labels, `#46445b`, `#6e7084` body, `#787b91`, `#86879e`, `#9699aa`, `#9a9db2` inactive tab, `#eceef5` segmented-control bg, `#dfe0ec` pill border, `#f0edf8` card border, `#eef0f7` nav border, `#faf8fe` page bg.
+The kit was light and internally inconsistent (four purples, three neutral palettes — see Appendix A §A.4). We use **one unified semantic token set** with **dark values as the default**.
 
-**Semantic / status:**
-
-| Meaning | Background | Text/accent | Border |
-|---------|-----------|-------------|--------|
-| Success pill | `#ecfdf3` | `#16a34a` | `rgba(187,247,208,0.6)` |
-| Warning pill (amber) | `#fff7e8` | `#c27803` | `rgba(255,231,186,0.6)` |
-| Danger pill (red) | `#feecec` | `#dc2626` | `rgba(253,200,200,0.6)` |
-| Orange pill | `#fff0e6` | `#ea580c` | `rgba(255,216,190,0.6)` |
-| Purple pill | `#f1edfe` | `#6445ee` | `rgba(221,213,254,0.6)` |
-
-**Habit icon tiles (44px, bg / border):**
-water `#f0f9ff` / `#e0f2fe`, meditate `#faf5ff` / `#f3e8ff`, gym `#eef2ff` / `#e0e7ff`, food `#fff1f2` / `#ffe4e6`, reading `#f1f5f9` / `rgba(226,232,240,0.6)`.
-
-**Heatmap cells:** productive `#50d890`, normal `#b3f4ca`, struggled `#ffc5c5`, didn't do `#ff7d7d`, not-yet/future `#fff0e7` with border `#fbe0ce`.
-
-**Analytics metric tiles (bg / value / label):**
-green `#ebfbf3` / `#23a26d` / `#55816f`, purple `#f1edfe` / `#7454f5` / `#7169a0`, red `#fff0f0` / `#e94b4b` / `#b16262`.
-
-**Chart series:** perceived energy `#7454f5`, coffee `#44d7b6`.
-
-**Streak callout:** gradient `#fff4ea` to `#ffefe4` (left to right), border `rgba(255,226,207,0.8)`, subtitle `rgba(180,83,9,0.8)`.
-
-**Create-habit form:**
-- Category active pill: bg `rgba(250,245,255,0.6)`, border `#d8b4fe`, text `#7e22ce`
-- Easy card: bg `#ecfdf5`, border `#d1fae5`
-- Hard card: bg `rgba(255,251,235,0.8)`, border `#fef3c7`
-- Delusional card (selected): bg `rgba(255,228,230,0.8)`, border `#fda4af`
-- Warning banner: bg `rgba(255,251,235,0.8)`, border `rgba(253,230,138,0.9)`, text `#451a03`
-
-**Rewards:** level badge bg `#f3e8ff`; current-step ring `#f3e8ff`; XP gradient `#a855f7` to `#4f46e5`; badge tints: amber `#fffbeb`/`#fde68a`, rose `#fff1f2`/`#fecdd3`, blue `#eff6ff`/`#bfdbfe`.
-
-**Notification app-icon tints:** bell `#fef3c7`, owl `#ecfccb`, droplet `#dbeafe`, ticket `#e0e7ff`. Lock-screen background: `linear-gradient(145.6deg, #7496cb 0%, #b2a9cc 35%, #ebbfb0 70%, #d89a7d 100%)`.
-
-**Widgets:** bgs `#eff2fd`, `#f5f9f6`, `#f3f6fd`, `#efeffc`; page bg `#f7f8fc`; red pill `#ff4d4d`; grey pill `#e5e9f5`; progress `#10b981` on `#e2e8f0`.
-
-### 2.2 Recommended token set (my suggestion, not from Figma)
+The values below are **proposed** derivations from the kit's brand purple (`#7357f6`) and slate neutrals, adjusted for dark-surface contrast (AA). They are expected to be tuned visually during implementation.
 
 ```css
+/* Proposed dark theme — pending review (O-4) */
 :root {
-  --color-primary: #7357f6;        /* unified from screens 1 and 2 */
-  --color-primary-strong: #6d28d9; /* pressed / rewards accents */
-  --color-primary-soft: #f1edfe;
-  --text-strong: #0f172a;
-  --text: #334155;
-  --text-muted: #64748b;
-  --text-faint: #94a3b8;
-  --border: #e2e8f0;
-  --border-subtle: #f1f5f9;
-  --surface: #ffffff;
-  --surface-page: #f8fafc;
-  --success: #16a34a;
-  --danger: #dc2626;
-  --warning: #c27803;
+  /* Surfaces */
+  --bg-page:            #0b1220;
+  --bg-surface:         #131c2e;   /* cards */
+  --bg-surface-raised:  #1b2740;   /* elevated rows, sheets */
+  --bg-sunken:          #080d18;
+  --bg-subtle:          rgba(148,163,184,0.06);
 
-  --radius-sm: 6px;   /* heatmap cells, reality pills */
-  --radius-md: 12px;  /* inputs, icon tiles, difficulty cards */
-  --radius-lg: 16px;  /* cards, CTA */
-  --radius-xl: 28px;  /* widgets */
-  --radius-pill: 9999px;
+  /* Text */
+  --text-strong:        #f8fafc;
+  --text:               #cbd5e1;
+  --text-muted:         #94a3b8;
+  --text-faint:         #64748b;
 
-  --shadow-card: 0 4px 20px -2px rgba(99,102,241,0.05), 0 2px 6px -1px rgba(0,0,0,0.02);
-  --shadow-card-flat: 0 2px 6px rgba(0,0,0,0.03);
-  --shadow-fab: 0 10px 22px -4px rgba(115,87,246,0.45);
-  --shadow-cta: 0 10px 15px -3px rgba(99,91,255,0.25), 0 4px 6px -4px rgba(99,91,255,0.25);
-  --shadow-widget: 0 8px 24px -4px rgba(100,116,139,0.12), 0 4px 8px -2px rgba(100,116,139,0.06);
+  /* Borders */
+  --border:             rgba(148,163,184,0.16);
+  --border-subtle:      rgba(148,163,184,0.10);
+  --border-strong:      rgba(148,163,184,0.28);
+
+  /* Brand (unified from the kit's 4 purples) */
+  --color-primary:        #7c5cff;
+  --color-primary-strong: #a78bfa;
+  --color-primary-soft:   rgba(124,92,255,0.16);
+  --color-on-primary:     #ffffff;
+
+  /* Semantic (dark pill recipe: tinted bg + light text + soft border) */
+  --success-bg: rgba(34,197,94,0.14);   --success-fg: #4ade80;  --success-bd: rgba(34,197,94,0.28);
+  --warning-bg: rgba(245,158,11,0.14);  --warning-fg: #fbbf24;  --warning-bd: rgba(245,158,11,0.28);
+  --danger-bg:  rgba(239,68,68,0.14);   --danger-fg:  #f87171;  --danger-bd:  rgba(239,68,68,0.28);
+  --orange-bg:  rgba(249,115,22,0.14);  --orange-fg:  #fb923c;  --orange-bd:  rgba(249,115,22,0.28);
+  --purple-bg:  rgba(124,92,255,0.16);  --purple-fg:  #a78bfa;  --purple-bd:  rgba(124,92,255,0.32);
 }
 ```
 
-### 2.3 Typography
+**Habit icon tiles (44px, bg / border):**
 
-- **Font:** Screen 1 uses **Plus Jakarta Sans** (500, 600, 700, 800). Screens 2 to 6 render in Liberation Sans, which looks like a fallback for a font that wasn't loaded. My inference: the kit intends Plus Jakarta Sans everywhere. Load it with `next/font/google`.
-- **Scale seen in the kit (size / line-height):**
+| Habit | Background | Border |
+|-------|-----------|--------|
+| Water | `rgba(56,189,248,0.12)` | `rgba(56,189,248,0.24)` |
+| Meditate | `rgba(168,85,247,0.12)` | `rgba(168,85,247,0.24)` |
+| Gym | `rgba(99,102,241,0.14)` | `rgba(99,102,241,0.26)` |
+| Food | `rgba(244,63,94,0.12)` | `rgba(244,63,94,0.24)` |
+| Reading | `rgba(148,163,184,0.12)` | `rgba(148,163,184,0.22)` |
+
+**Heatmap cells:** productive `#22c55e` · normal `rgba(34,197,94,0.45)` · struggled `rgba(248,113,113,0.5)` · missed `#ef4444` · future `rgba(148,163,184,0.10)` (with border `--border-subtle`).
+
+**Analytics metric tiles (bg / value / label):** green `rgba(34,197,94,0.12)` / `#4ade80` / `--text-muted` · purple `rgba(124,92,255,0.14)` / `#a78bfa` / `--text-muted` · red `rgba(239,68,68,0.12)` / `#f87171` / `--text-muted`.
+
+**Chart series:** perceived energy `#8b7cff` · coffee `#2dd4bf`.
+
+**Streak callout:** gradient `rgba(249,115,22,0.16)` → `rgba(249,115,22,0.08)`; border `rgba(249,115,22,0.24)`; subtitle `#fdba74`.
+
+**Create-habit form:** category active pill bg `rgba(124,92,255,0.16)` / border `rgba(139,92,246,0.5)` / text `#c4b5fd` · Easy card bg `rgba(16,185,129,0.10)` / border `rgba(16,185,129,0.24)` · Hard card bg `rgba(245,158,11,0.10)` / border `rgba(245,158,11,0.24)` · Delusional (selected) bg `rgba(244,63,94,0.12)` / border `rgba(244,63,94,0.40)` · warning banner bg `rgba(245,158,11,0.12)` / border `rgba(245,158,11,0.28)` / text `#fde68a`.
+
+**Rewards:** level badge bg `rgba(168,85,247,0.16)` · current-step ring `rgba(168,85,247,0.25)` · XP gradient `#a855f7` → `#6366f1` · badge tints amber `rgba(245,158,11,0.14)` / rose `rgba(244,63,94,0.14)` / blue `rgba(59,130,246,0.14)`.
+
+### 2.2 Typography
+
+- **Font:** **Plus Jakarta Sans** (weights 400–800), loaded via a `@fontsource` package or self-hosted (no SSR font loader in a Vite SPA).
+- **Minimum size 11px** (accessibility; the kit used 8–10px — raised, D-19).
 
 | Use | Size / line | Weight | Tracking |
 |-----|-------------|--------|----------|
-| Page H1 (Home) | 24 / 32 | 800 | -0.6px |
-| Page H1 (Analytics) | 26 / 32.5 | 700 | -0.65px |
-| Sub-page title | 18 / 22.5 or 28 | 700 | -0.45px |
+| Page H1 | 24 / 32 | 800 | -0.6px |
+| Sub-page title | 18 / 22.5 | 700 | -0.45px |
 | Card heading | 15 / 22.5 | 700 | none |
 | Habit title | 14 / 20 | 700 | -0.35px |
-| Body | 12 to 13 / 16 to 19.5 | 400 to 500 | none |
+| Body | 13 / 19.5 | 400–500 | none |
 | Caption | 11 / 16.5 | 500 | none |
-| Micro (tab labels, pills) | 10 / 15 | 500 to 700 | none |
-| Smallest (badge text) | 8 to 9 | 400 | none |
+| Micro (tab labels, pills) | 11 / 15 | 500–700 | none |
 
-### 2.4 Spacing, radii, shadows
+### 2.3 Spacing, radii, shadows
 
-- Page horizontal padding: **20px** (24px on the widgets page)
-- Vertical gap between sections: **16px**; between habit cards: **12px**
-- Card padding: **15 to 17px**
-- Spacing steps seen: 2, 4, 6, 8, 10, 12, 14, 16, 20, 24
-- Radii and shadows: see tokens above
+- Page horizontal padding: **20px** mobile; wider gutters on desktop.
+- Section gap **16px**; habit card gap **12px**; card padding **16px**.
+- Spacing steps: 2, 4, 6, 8, 10, 12, 14, 16, 20, 24.
+
+| Radius | Value | Use |
+|--------|-------|-----|
+| `--radius-sm` | 6px | heatmap cells, reality pills |
+| `--radius-md` | 12px | inputs, icon tiles, difficulty cards |
+| `--radius-lg` | 16px | cards, CTA |
+| `--radius-xl` | 28px | widgets |
+| `--radius-pill` | 9999px | pills, nav |
+
+**Shadows (dark, subtle):** `--shadow-card: 0 4px 20px -2px rgba(0,0,0,0.40)` · `--shadow-fab: 0 10px 22px -4px rgba(124,92,255,0.50)` · `--shadow-cta: 0 10px 15px -3px rgba(124,92,255,0.35)` · `--shadow-widget: 0 8px 24px -4px rgba(0,0,0,0.45)`. Elevation leans on **borders + tinted surfaces** more than shadow.
+
+### 2.4 Iconography
+
+- Library: **`lucide-react`** (D-25). Icons needed: home, bar-chart, trophy, plus, calendar, chevron-down, chevron-right, check, droplet, lotus/meditate, dumbbell, apple, book-open, flame, clock, lock, share, arrow-left.
+- Default stroke 1.75–2px; size 20px in nav, 16–18px inline.
+- Decorative/emoji icons `aria-hidden`; meaningful icons get accessible labels.
 
 ---
 
-## 3. Global layout
+## 3. Global layout and navigation
 
-- **Frame:** 390px wide. Scrollable content area sits between a fixed top and a fixed bottom nav.
-- **Bottom navigation** (screens 1, 2, 5): 4 tabs plus a centered floating add button.
-  - Order: Home, Analytics, **[+ FAB]**, Rewards, Profile
-  - Container: white at 95% opacity, backdrop blur 6px, 1px top border (`#f1f5f9`), height about 76 to 97px including the home-indicator area (do not build the indicator itself)
-  - Tab: 20px icon, 10px label (9px on screen 5), active = purple + bold, inactive = `#94a3b8`
-  - FAB: 46 to 48px circle, brand purple, white "+", raised about 12 to 20px above the bar, purple glow shadow
-  - Scroll content needs about **96 to 114px bottom padding** to clear the bar
-- **Screen 3 (New Habit)** has no bottom nav; it has a back button and centered title.
-- **Screen 5 (Rewards)** has both a back button and the bottom nav. Probably unintended (see section 8).
+### 3.1 Mobile (default)
+- Single scrollable column; content sits between a fixed top area and the bottom nav where present.
+- **Bottom navigation** (Home, Analytics, Rewards + **FAB**), Profile removed (D-16):
+  - Order: Home · Analytics · `[+ FAB]` · Rewards
+  - Container: `--bg-surface` at ~95% opacity, `backdrop-blur(6px)`, 1px top `--border`, height ~76px (excluding any future safe-area inset)
+  - Tab: 20px icon + 11px label; active = primary + bold; inactive = `--text-muted`
+  - **FAB**: 48px circle, `--color-primary`, white "+", raised 16px, `--shadow-fab`, `aria-label="Add habit"`
+  - Scroll content bottom padding ~96–112px to clear the bar
+- **New Habit** has **no bottom nav**; it uses a back-button header.
+
+### 3.2 Desktop *(proposal — O-5)*
+- `md` (768px+): content max-width **~720px**, centered; nav remains at the bottom.
+- `lg` (1024px+): **left sidebar rail** replaces the bottom nav; content max-width **~1100px**; FAB moves to the sidebar (or a top-right button). Layouts expand to two columns (see §4). **Pending review.**
 
 ---
 
 ## 4. Screens
 
-### 4.1 Home: Daily Checklist (`/`)
+### 4.1 Home — Daily Checklist (`/`)
+**Mobile (top→bottom):** header row (date selector + calendar button) · title block · category filter pills (horizontal scroll) · habit checklist · streak callout · bottom nav.
 
-Top to bottom:
+**Desktop (`lg`) proposal:** two columns — checklist on the left (~2/3), streak callout + a summary on the right (~1/3).
 
-1. **Header row:** date dropdown button (text "Mon, 16 Sep", 12px semibold `#64748b`, tracking 0.3px, small chevron) on the left; 36px calendar icon button (radius 12) on the right.
-2. **Title block:** H1 "Today's Ambitions"; tagline "Good luck! You got this... maybe." (12px medium `#94a3b8`).
-3. **Category filter pills** (horizontal scroll, row height 38px): "All 5" (active), "Morning 2", "Afternoon 2", "Evening 1". Each pill has a label and a count (11px).
-   - Active: bg primary, white text, small drop shadow, padding 6/14
-   - Inactive: bg `rgba(255,255,255,0.8)`, border `#f1f5f9`, text `#475569` semibold, count `#94a3b8`, padding 7/15
-4. **Habit cards** (`HabitCard`, 5 in the mock): see component spec. Mock content:
-   - Drink 3L of Water, All day, amber pill "Does iced coffee count?", unchecked
-   - Meditate for 20 mins, Morning, red pill "Scrolled TikTok instead", **checked**
-   - Gym / Workout, Morning, purple pill "Snoozed 5 times", unchecked
-   - Eat Clean, All day, orange pill "Defeated by a midnight slice of pizza", unchecked (the long pill wraps to a second line and the card grows to about 95px)
-   - Read 10 pages, Night, green pill "Actually did it! 🎉", **checked**
-5. **Streak callout card** (tappable, chevron on right): flame icon tile, "0 Days" (16/24 weight 800), "Back to Square One, Champ."
-6. **Bottom nav** (Home active).
+Mock content (kit): 5 habits with reality pills (amber/red/purple/orange/green), a "0 Days" streak callout. Data is **mock/dependent** (Appendix A §A.1).
 
 ### 4.2 Analytics (`/analytics`)
+**Mobile:** header (H1 + "This Week" pill) · segmented control (Overview active; Habits/Patterns disabled) · heatmap card · weekly summary card · line chart card · bottom nav.
 
-Page bg `#faf8fe`.
-
-1. **Header:** H1 "Analytics" + subtitle "An honest look at your habits." Right side: "This Week" dropdown pill (white, border `#dfe0ec`, 12px text, chevron).
-2. **Segmented control:** Overview (active), Habits, Patterns. Track `#eceef5`, radius 12, padding 4; active segment bg primary, white bold text, radius 9, shadow `0 2px 4px rgba(116,84,245,0.35)`. **Only Overview content is designed.**
-3. **Habit Heatmap card:** title; grid with an 80px label column plus 7 equal columns (Mon to Sun), 6px gaps, square cells radius 6; 5 habit rows (Exercise, Reading, Water, Eat Clean, Meditate); legend row below a 1px `#f3f4f6` divider (Productive, Normal, Struggled, Didn't do).
-4. **Weekly Summary card:** title "Weekly Summary", text "You were 80% productive on Tuesday, then remembered you had Netflix.", 😅 emoji top-right, then three metric tiles (equal width, gap 10, radius 12): "3/5 Habits done", "2 Best day (Tue)", "0 Streak (Back again)".
-5. **Chart card:** "Perceived Energy vs. Actual Coffee"; legend (Perceived Energy purple, Cups of Coffee teal); smooth line chart about 314×113px, y-axis 0/5/10 with horizontal gridlines, x-axis Mon to Sun, dots on each point, light purple area fill under the energy line.
-6. **Bottom nav** (Analytics active).
+**Desktop (`lg`) proposal:** heatmap full-width; summary metrics and chart side by side.
 
 ### 4.3 New Habit (`/habits/new`)
+**Mobile:** back header · name input · category pills · difficulty cards · reality-check banner · remind toggle + time · repeat day chips · primary CTA.
 
-Header: back button (32px circle, left), centered title "Create a New Habit", subtitle "Be honest with yourself." (12px `#94a3b8`). Form, 16px gaps:
+**Desktop proposal:** centered single column (max ~600px) — forms stay narrow for readability.
 
-1. **Habit Name:** label (12px bold `#1e293b`, tracking 0.3px) + text input (white, 1px `#e2e8f0`, radius 12, padding 12/15). Placeholder: "e.g., Read 50 pages a day (Be honest with yourself)".
-2. **Category:** pill group (horizontal scroll): Health 💜 (selected), Mind 💬, Growth 📊, Lifestyle ✨.
-3. **Difficulty Level:** label + helper "Select how realistic this is for you." Three equal cards (gap 8, radius 12, padding 11), each with title and example line:
-   - Easy ("Drink 1 glass of water"), Hard ("Gym at 6 AM"), Delusional ("Quitting sugar cold turkey", shown selected)
-4. **Reality Check banner:** ⚠️ + "You've tried adding this habit **4 times** this year. Are you sure?"
-5. **Remind me:** row with label and toggle (44×24, on state). Below it, **Time** row with label and a "8:00 AM" button (bg `#f1f5f9`, radius 12, chevron).
-6. **Repeat:** 7 equal day chips (Mon to Sun), radius 12; Mon to Fri selected, Sat/Sun inactive.
-7. **Primary CTA "Add Habit":** full width, radius 16, vertical padding 14, bold 14px white text, shadow.
+### 4.4 Rewards (`/rewards`)
+**Mobile:** top bar (back + title + share) · level card · milestone stepper · next-level card · achievement badges · bottom nav.
 
-### 4.4 Notifications (reference only)
+**Desktop (`lg`) proposal:** two columns — level/stepper/next-level on the left; badges grid on the right.
 
-Four notification cards on a lock-screen gradient: glass card (bg `rgba(255,255,255,0.72)`, blur 12, border `rgba(255,255,255,0.45)`, radius 16, padding 15), header with 24px tinted app-icon tile + "Habit Tracker" (12px bold `#334155`) + timestamp (11px `#94a3b8`), body 13/17.9px `#1e293b` indented 32px.
-
-Copy in the kit:
-1. "Hey! Your 6 AM workout habit is calling. You tapped snooze 5 times. 🤨"
-2. "Your Duolingo owl is actively judging your life choices right now. 👀"
-3. "You haven't logged water today. You are 70% dried fruit. 💧"
-4. "Netflix again? Your reading habit is crying in the corner. 😭"
-
-You cannot style the real lock screen. A web app controls only the title, body, and icon of a push notification. Messages 2 and 4 name third-party brands (Duolingo, Netflix); consider rewording.
-
-### 4.5 Rewards: Gamified Leveling (`/rewards`)
-
-Page bg `#f8fafc`. Top bar: back button (36px), title "Level Up", subtitle "Small habits. Big progress.", share icon button (36px) on the right.
-
-1. **Current level card:** 48px badge tile (calendar icon, bg `#f3e8ff`), "Level 3" (16/24 bold), "120 / 200 XP" (12px bold `#64748b`, right-aligned), rank title "Functional Caffeine Machine", XP bar (8px track `#f1f5f9`, gradient fill, 60% in the mock).
-2. **Milestone stepper:** 4 nodes (32px circles) joined by a 2px `#e2e8f0` line.
-   - 1 "Habit Newbie" and 2 "Slightly Consistent": completed (bg `#f1f5f9`, border `#cbd5e1`, number `#475569`)
-   - 3 "Functional Caffeine Machine": current (bg `#6d28d9`, white number, 4px ring `#f3e8ff`)
-   - 4 "Has Their Life Together": locked (dashed border, lock icon, label `#94a3b8`)
-3. **Next level card:** "NEXT LEVEL" (11px bold uppercase, tracking 0.55px, `#4f46e5`), "Level 4 — Has Their Life Together", "Unlock at 7-day streak", counter "0 / 7 days" (11px bold `#94a3b8`, right), progress bar (6px track).
-4. **Achievement Badges:** header "Achievement Badges" + "View all" link. Four badge cards (white, border `#f1f5f9`, radius 12): 44px tinted circle with emoji, name (10px bold), description (8px `#64748b`):
-   - 🏆 The Pretender: "Added 10 habits in one day."
-   - ⏰ Snooze Warrior: "Postponed a habit 5 times in a row."
-   - 🍔 Midnight Muncher: "Logged food at 11 PM. Again."
-   - 💧 Hydration Hero: "Drank water 3 days in a row."
-5. **Bottom nav** (Rewards active, purple `#6d28d9`).
-
-### 4.6 Widgets (reference only)
-
-Page bg `#f7f8fc`; title "Widgets", subtitle "Keep the guilt close. You're welcome.", section "Widget Styles". Four widgets (radius 28, `--shadow-widget`), each with a caption underneath (size + purpose):
-- 1x1 Small "Daily reminder": "Did you do it yet?" with pills "No?" (red) and "Expected." (grey)
-- 1x1 Small "Streak tracker": 🔥 + "0 Days" + "Back to square one, champ."
-- 2x1 Medium "Checklist": "Today's Habits", mini progress bar + "2 / 5 done", list of habits with strike-through when done
-- 2x1 Medium "Motivation": "Still scrolling?" + "Your habits aren't going to do themselves." + chevron
-
-These are native iOS widgets. For a web app, either skip them or reuse the layouts as dashboard cards.
+Mock content and per-screen details: Appendix A §A.1.
 
 ---
 
 ## 5. Component library
 
-| Component | Variants / states | Key specs |
-|-----------|-------------------|-----------|
-| `BottomNav` | active tab | 4 tabs + FAB, see section 3 |
-| `FAB` | default | 46 to 48px circle, primary bg, white "+", `--shadow-fab` |
-| `PageHeader` | with/without back button, with/without right action | Title + optional subtitle |
-| `HabitCard` | unchecked, checked | White, border `rgba(241,245,249,0.8)`, radius 16, padding 15, `--shadow-card`; left 44px icon tile (radius 12), title (14/20 bold), meta row (10px clock icon + time label 11px `#94a3b8` + `RealityPill`); right 24px checkbox |
-| `Checkbox` (circle) | unchecked, checked | 24px; unchecked 2px border `#cbd5e1`; checked bg primary + white check (9.6×6.9) |
-| `RealityPill` | amber, red, purple, orange, green | Radius 6, padding 3/9, 10px medium, tinted bg + border |
-| `FilterPill` | active, inactive | Pill radius, label + count |
-| `StreakCallout` | default (tappable) | Gradient card, 44px white flame tile, chevron |
-| `SegmentedControl` | per segment active | See 4.2 |
-| `DropdownPill` | default | White, 1px border, radius pill, text + chevron |
-| `HeatmapGrid` / `HeatmapCell` | productive, normal, struggled, didn't-do, future | Square cells, radius 6, 6px gap |
-| `MetricTile` | green, purple, red | Radius 12, value 17px bold, label 10px |
-| `LineChart` | two series | Gridlines at 0/5/10, 7 x-labels, dots, area fill |
-| `Card` | default | White, border (`#f0edf8` or `#f1f5f9`), radius 16, padding 17 |
-| `TextInput` | **only placeholder shown** | White, 1px `#e2e8f0`, radius 12, padding 12/15, 12px text |
-| `CategoryPill` | selected, unselected | Emoji + label, radius pill |
-| `DifficultyCard` | easy, hard, delusional; selected | Radius 12, padding 11, title + example |
-| `WarningBanner` | default | Amber tint, radius 16, padding 13 |
-| `Toggle` | on (off not designed) | 44×24, knob 20px white |
-| `TimeButton` | default | bg `#f1f5f9`, radius 12, text + chevron |
-| `DayChip` | selected, inactive | Equal width, radius 12 |
-| `PrimaryButton` | default (others not designed) | Primary bg, radius 16, py 14, bold 14px white, `--shadow-cta` |
-| `LevelCard` + `ProgressBar` | n/a | 8px (XP) and 6px (next level) tracks, pill radius |
-| `MilestoneStepper` / `StepNode` | completed, current, locked | 32px circles |
-| `BadgeCard` | earned (locked not designed) | Tinted 44px circle + name + description |
-| `NotificationCard` | n/a | Glass style, reference only |
+| Component | Variants / states | Notes |
+|-----------|-------------------|-------|
+| `BottomNav` | 3 tabs, active | Mobile only |
+| `SidebarNav` | active | Desktop `lg+` proposal |
+| `FAB` | default | 48px, primary, `--shadow-fab` |
+| `PageHeader` | back +/-, right action +/- | Title + optional subtitle |
+| `HabitCard` | unchecked, checked | Icon tile, title, time, `RealityPill`, checkbox; whole row tappable |
+| `Checkbox` | unchecked, checked | 24px visual, ≥44px hit area |
+| `RealityPill` | amber, red, purple, orange, green | Radius 6, 11px |
+| `FilterPill` | active, inactive | label + count |
+| `StreakCallout` | default (tappable) | gradient card |
+| `SegmentedControl` | active, disabled | Overview/Habits/Patterns |
+| `DropdownPill` | default | date, range |
+| `HeatmapGrid` / `HeatmapCell` | productive, normal, struggled, missed, future | radius 6, 6px gap |
+| `MetricTile` | green, purple, red | |
+| `LineChart` | two series | custom SVG, code-split |
+| `Card` | default | radius 16, padding 16 |
+| `TextInput` | focus, filled, error | |
+| `CategoryPill` | selected, unselected | |
+| `DifficultyCard` | easy, hard, delusional; selected | |
+| `WarningBanner` | default | |
+| `Toggle` | on, off | 44×24 |
+| `TimeButton` | default | |
+| `DayChip` | selected, inactive | |
+| `PrimaryButton` | default, loading, disabled | radius 16 |
+| `LevelCard` / `ProgressBar` | n/a | 8px (XP), 6px (next level) |
+| `MilestoneStepper` / `StepNode` | completed, current, locked | 32px |
+| `BadgeCard` | earned, locked* | *locked undesigned (O-3) |
+| `EmptyState` / `ErrorState` / `Skeleton` | default | new, per D-18/§7 |
+| `Toast` | success, error, info | `sonner` |
 
-### Icons needed
-
-home, bar-chart, trophy, user, plus, calendar, chevron-down, chevron-right, check, droplet, lotus/meditate, dumbbell, apple, book-open, flame, clock, lock, share, arrow-left. The kit's SVGs come as temporary Figma URLs that expire after 7 days. Either export them from Figma (select the layer, then Export, then SVG) or substitute an icon library such as `lucide-react`.
-
----
-
-## 6. Data the UI implies (for the API contract with your backend friend)
-
-Inferred from the screens, not specified by Figma. Adjust to your real feature list.
-
-```ts
-type TimeOfDay = 'all-day' | 'morning' | 'afternoon' | 'evening' | 'night';
-type Category = 'health' | 'mind' | 'growth' | 'lifestyle';
-type Difficulty = 'easy' | 'hard' | 'delusional';
-
-interface Habit {
-  id: string;
-  name: string;
-  category: Category;
-  difficulty: Difficulty;
-  timeOfDay: TimeOfDay;
-  reminderEnabled: boolean;
-  reminderTime?: string;   // "08:00"
-  repeatDays: number[];    // 0-6
-}
-
-type LogStatus = 'productive' | 'normal' | 'struggled' | 'missed' | 'future';
-interface HabitLog { habitId: string; date: string; status: LogStatus; }
-
-interface Progress { streakDays: number; level: number; xp: number; xpToNext: number; }
-interface Badge { id: string; name: string; description: string; earnedAt?: string; }
-```
-
-Open data questions the UI raises:
-- The "reality pill" text and the "tried this habit N times this year" banner need data: past attempts per habit name, snooze counts, logged times.
-- The filter counts (Morning 2, Afternoon 2, Evening 1) don't match the cards (All day ×2, Morning ×2, Night ×1). Decide how "all day" and "night" map to filters.
+Component layering: `ui → composed (nav/habits/analytics/rewards) → pages`.
 
 ---
 
-## 7. Missing states and screens (not in the kit)
+## 6. Responsive behavior
 
-- **Loading, empty, and error states** for every list (no habits yet, failed save, offline)
-- **Input states:** focus, filled, validation error (Habit Name); disabled/loading CTA
-- **Toggle off state**, and what happens to the Time row when reminders are off
-- **Dropdown behavior:** date selector, calendar picker, "This Week" range menu, time picker
-- **Analytics tabs:** "Habits" and "Patterns" content
-- **Profile** screen and settings
-- **Locked/unearned badge** state, "View all" badges page
-- **Habit detail / edit / delete**
-- **Desktop and tablet** layouts; **dark mode**
-- **Pressed/hover states** for all buttons and cards
+| Breakpoint | Behavior |
+|-----------|----------|
+| `< 640px` | Mobile: single column, bottom nav |
+| `640–767px` (sm) | Single column, wider padding |
+| `768–1023px` (md) | Centered content (~720px); bottom nav retained |
+| `≥1024px` (lg) | Sidebar rail, ~1100px max-width, two-column layouts (proposal) |
+
+Rules: no horizontal overflow; ≥44px targets; fluid grids for heatmap/badges; forms stay narrow.
 
 ---
 
-## 8. Inconsistencies in the kit (decide before building)
+## 7. UI states
 
-1. **Four different purples** across screens (`#7357f6`, `#7454f5`, `#635bff`, `#6d28d9`). Recommend one primary token.
-2. **Font:** only screen 1 specifies Plus Jakarta Sans; others fall back to a system sans.
-3. **Three neutral palettes:** slate (most screens), purple-tinted (screen 2), and page backgrounds that differ per screen (white, `#faf8fe`, `#f8fafc`, `#f7f8fc`).
-4. **Bottom nav differs per screen:** FAB 46px vs 48px, label 10px vs 9px, blur only on some.
-5. **Rewards screen has a back button *and* a tab bar,** unusual for a tab destination.
-6. **Stepper:** completed steps show numbers instead of checkmarks.
-7. **Badge grid is too tight:** at 390px, four columns truncate names ("The…", "Snooze…") and cards clip. Suggest a 2×2 grid or horizontal scroll.
-8. **Heatmap Sunday column** mixes "future" cells with real data in the mock.
-9. **Widget checklist** says "2 / 5 done" but lists 4 habits.
-10. **Difficulty icons** are mixed (a check SVG for Easy, emoji for the others).
-
-### Accessibility notes
-
-- Text at 8 to 9px (badge descriptions, tab labels on screen 5) is too small. Use at least 10 to 11px.
-- `#94a3b8` on white is roughly 2.6:1, below WCAG AA for small text. Darken for body-size text.
-- 24px checkboxes are small tap targets. Make the whole card row (or at least a 44px hit area) tappable.
-- Emoji used as icons need accessible labels or should be decorative (`aria-hidden`).
+| State | Treatment |
+|-------|-----------|
+| Loading | Skeletons matching final layout |
+| Empty | Message + primary action (e.g. Home → New Habit) |
+| Error | Inline message + Retry |
+| Refetching | Non-blocking subtle indicator |
+| Offline | Notice; actions disabled/queued (no sync in v1) |
+| Action feedback | Success/error **toast** (D-18) |
 
 ---
 
-## 9. Suggested Next.js structure
+## 8. Frontend architecture
+
+### 8.1 Structure
 
 ```
-app/
-  (tabs)/                 # layout with <BottomNav />
-    layout.tsx
-    page.tsx              # Home
-    analytics/page.tsx
-    rewards/page.tsx
-    profile/page.tsx      # not designed
-  habits/new/page.tsx     # no bottom nav
-components/
-  ui/                     # Card, Pill, Button, Toggle, Input, ProgressBar
-  habits/                 # HabitCard, FilterPills, StreakCallout, Form parts
-  analytics/              # Heatmap, MetricTile, LineChart
-  rewards/                # LevelCard, MilestoneStepper, BadgeCard
-  nav/                    # BottomNav, FAB, PageHeader
-lib/
-  api/                    # single module with mock data for now
-  tokens.css
+frontend/
+  index.html · vite.config.ts · tsconfig.json · package.json
+  src/
+    main.tsx
+    app/            App.tsx (providers + RouterProvider) · router.tsx (lazy pages)
+    styles/         tokens.css · globals.css
+    layouts/        TabLayout.tsx · SubPageLayout.tsx
+    pages/          home/ · analytics/ · rewards/ · habits/new/ · NotFound/
+    components/     ui/ · nav/ · habits/ · analytics/ · rewards/
+    state/          DataProvider.tsx (Context + useReducer) · ThemeProvider.tsx
+    lib/            api/ (types, client, mock, index) · utils/
+    hooks/          useHabits · useAnalytics · useProgress · useToggleHabit …
 ```
 
-**Build order:** `tokens.css` and font, then `ui/*`, then `BottomNav` + layouts, then Home, New Habit, Analytics, Rewards. Verify each screen against its Figma screenshot before moving on.
+### 8.2 The `lib/api` seam
+`lib/api/client.ts` defines an **`ApiClient` interface**. `lib/api/mock/` implements it now (in-memory data, simulated latency, injectable errors). A future `HttpApiClient` implements the same interface against the backend — **no page changes** (D-26).
+
+### 8.3 Data flow
+`DataProvider` holds server-derived slices (`habits`, `logs`, `progress`, `analytics`) with explicit `{ status: 'idle'|'loading'|'error'|'ready', error }`. Feature hooks read it. Because there is no query cache (D-05), **invalidation is explicit**: toggling a habit updates local state and refreshes `progress`/`analytics`.
+
+### 8.4 Routing
+
+| Route | Layout |
+|-------|--------|
+| `/` | `TabLayout` |
+| `/analytics` | `TabLayout` |
+| `/rewards` | `TabLayout` |
+| `/habits/new` | `SubPageLayout` |
+| `*` | 404 |
+
+### 8.5 Code splitting
+Route pages lazy-loaded; chart isolated inside `/analytics`.
 
 ---
 
-## 10. Prompt template for opencode
+## 9. Accessibility
 
-```
-Read DESIGN.md and FEATURES.md.
-Build only <screen name>, using the Figma frame <node id> via the Figma MCP as the visual target.
-Reuse components from components/ui before creating new ones.
-Use CSS variables from lib/tokens.css; no hardcoded colors.
-Data comes from lib/api (mock). Do not add features that are not in FEATURES.md.
-Add loading, empty, and error states from section 7 where the screen has a list or a form.
-```
+- WCAG 2.1 **AA**; ≥11px text; ≥44px targets.
+- Contrast re-verified for the dark palette (kit's `#94a3b8`-on-white reasoning no longer applies).
+- Visible focus; full keyboard operation; logical focus order; focus trap for any overlay.
+- Programmatic labels; errors linked and announced.
+- `prefers-reduced-motion` respected; emoji decorative.
+
+---
+
+## 10. Open design items
+
+| ID | Item | Status |
+|----|------|--------|
+| O-1 | Date picker interaction | Frontend to propose |
+| O-2 | "This week" range menu | Frontend to propose |
+| O-3 | Locked/unearned badge state | Frontend to propose |
+| O-4 | **Dark palette values (§2.1)** | **Proposed — needs review** |
+| O-5 | **Desktop layouts (§3.2, §4)** | **Proposed — needs review** |
+| O-6 | Deployment target | Product owner |
+| O-7 | Figma access + license | Product owner |
+| O-8 | Final copy | Product owner |
+
+---
+
+# Appendix A — Original Figma reference (v1.0, preserved)
+
+Retained for traceability. **Light-theme literal values only**; the shipping theme is dark (§2.1).
+
+## A.1 Screen inventory
+
+| # | Figma frame | Node ID | Route | Notes |
+|---|-------------|---------|-------|-------|
+| 1 | Daily Checklist | `1:1447` | `/` | Home |
+| 2 | Log & Analytics | `1:1446` | `/analytics` | Overview only |
+| 3 | New Habit Creation | `1:1444` | `/habits/new` | No bottom nav |
+| 4 | Roast & Relapse Notifications | `1:1445` | n/a | Lock-screen mockup (out of scope) |
+| 5 | Gamified Leveling | `1:1199` | `/rewards` | Rewards |
+| 6 | Widgets | `1:1069` | n/a | Native iOS (out of scope) |
+| n/a | Profile | n/a | — | **Removed from v1** (D-16) |
+
+## A.2 Screen contents (as designed)
+
+- **Home:** date button "Mon, 16 Sep"; H1 "Today's Ambitions"; tagline; filters All 5 / Morning 2 / Afternoon 2 / Evening 1; 5 habit cards (Water/amber, Meditate/red-checked, Gym/purple, Eat Clean/orange, Read/green-checked); "0 Days" streak callout "Back to Square One, Champ."
+- **Analytics:** H1 + "This Week"; segmented Overview/Habits/Patterns; heatmap (Exercise, Reading, Water, Eat Clean, Meditate); weekly summary "You were 80% productive on Tuesday…" 😅 with tiles 3/5, 2 (Tue), 0 streak; chart "Perceived Energy vs. Actual Coffee" (~314×113px).
+- **New Habit:** title "Create a New Habit" / "Be honest with yourself."; name placeholder "e.g., Read 50 pages a day…"; categories Health 💜 (selected) / Mind 💬 / Growth 📊 / Lifestyle ✨; difficulty Easy/Hard/Delusional (Delusional selected); banner "You've tried adding this habit **4 times** this year."; Remind toggle + 8:00 AM; repeat Mon–Fri selected; CTA "Add Habit".
+- **Rewards:** "Level Up"; Level 3, 120/200 XP, rank "Functional Caffeine Machine"; stepper (Habit Newbie, Slightly Consistent, Functional Caffeine Machine, Has Their Life Together); next level "Level 4 — Has Their Life Together", "Unlock at 7-day streak", 0/7 days; badges The Pretender, Snooze Warrior, Midnight Muncher, Hydration Hero.
+- **Notifications copy:** "Your 6 AM workout habit is calling…"; "Your Duolingo owl…"; "You haven't logged water today…"; "Netflix again?…". (Out of scope; note third-party brand names.)
+
+## A.3 Spacing / typography literal values
+Page padding 20px (24px on widgets); section gap 16px; card gap 12px; card padding 15–17px; spacing steps 2,4,6,8,10,12,14,16,20,24. Type sizes 8–28px (see §2.2 for the accessible revised scale).
+
+## A.4 Kit inconsistencies (resolved in v2)
+
+1. Four purples (`#7357f6`, `#7454f5`, `#635bff`, `#6d28d9`) → **one primary** (D-13).
+2. Font only specified on screen 1 → **Plus Jakarta Sans everywhere**.
+3. Three neutral palettes + four page backgrounds → **one neutral scale** (D-13).
+4. Bottom nav differs per screen (FAB 46/48px, label 9/10px, blur variance) → **one nav spec**.
+5. Rewards had back button *and* tab bar → tab-destination convention standardized.
+6. Stepper showed numbers for completed steps → checkmark convention recommended.
+7. Badge grid too tight (4 columns truncate) → **2×2 or scrollable grid**.
+8. Heatmap Sunday mixed future + real data → data must be consistent.
+9. Widget checklist "2 / 5 done" but listed 4 → out of scope.
+10. Difficulty icons mixed (check SVG vs emoji) → unified iconography.
+
+## A.5 Accessibility notes (original)
+8–9px text too small (raised to ≥11px); `#94a3b8` on white ≈2.6:1 (re-derived for dark); 24px checkboxes too small (≥44px hit area); emoji need labels or `aria-hidden`.

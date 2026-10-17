@@ -1,0 +1,237 @@
+/* ==========================================================================
+   Fitency — design tokens (DESIGN.md §2)
+   Dark is the default and only theme (D-12/D-14). Raw values use the names
+   documented in DESIGN.md §2.1; the `@theme` block below maps them onto
+   Tailwind utilities (D-03/D-13).
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg-page: #0b1220;
+  --bg-surface: #131c2e;
+  --bg-surface-raised: #1b2740;
+  --bg-sunken: #080d18;
+  --bg-subtle: rgba(148, 163, 184, 0.06);
+
+  /* Text */
+  --text-strong: #f8fafc;
+  --text: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+
+  /* Borders */
+  --border: rgba(148, 163, 184, 0.16);
+  --border-subtle: rgba(148, 163, 184, 0.1);
+  --border-strong: rgba(148, 163, 184, 0.28);
+
+  /* Brand — unified from the kit's four purples */
+  --color-primary: #7c5cff;
+  --color-primary-strong: #a78bfa;
+  --color-primary-soft: rgba(124, 92, 255, 0.16);
+  --color-on-primary: #ffffff;
+
+  /* Semantic pill recipe: tinted bg + light text + soft border */
+  --success-bg: rgba(34, 197, 94, 0.14);
+  --success-fg: #4ade80;
+  --success-bd: rgba(34, 197, 94, 0.28);
+  --warning-bg: rgba(245, 158, 11, 0.14);
+  --warning-fg: #fbbf24;
+  --warning-bd: rgba(245, 158, 11, 0.28);
+  --danger-bg: rgba(239, 68, 68, 0.14);
+  --danger-fg: #f87171;
+  --danger-bd: rgba(239, 68, 68, 0.28);
+  --orange-bg: rgba(249, 115, 22, 0.14);
+  --orange-fg: #fb923c;
+  --orange-bd: rgba(249, 115, 22, 0.28);
+  --purple-bg: rgba(124, 92, 255, 0.16);
+  --purple-fg: #a78bfa;
+  --purple-bd: rgba(124, 92, 255, 0.32);
+
+  /* Habit icon tiles (44px) — bg / border / glyph */
+  --tile-water-bg: rgba(56, 189, 248, 0.12);
+  --tile-water-bd: rgba(56, 189, 248, 0.24);
+  --tile-water-fg: #7dd3fc;
+  --tile-meditate-bg: rgba(168, 85, 247, 0.12);
+  --tile-meditate-bd: rgba(168, 85, 247, 0.24);
+  --tile-meditate-fg: #c084fc;
+  --tile-gym-bg: rgba(99, 102, 241, 0.14);
+  --tile-gym-bd: rgba(99, 102, 241, 0.26);
+  --tile-gym-fg: #a5b4fc;
+  --tile-food-bg: rgba(244, 63, 94, 0.12);
+  --tile-food-bd: rgba(244, 63, 94, 0.24);
+  --tile-food-fg: #fda4af;
+  --tile-reading-bg: rgba(148, 163, 184, 0.12);
+  --tile-reading-bd: rgba(148, 163, 184, 0.22);
+  --tile-reading-fg: #cbd5e1;
+  --tile-default-bg: rgba(124, 92, 255, 0.14);
+  --tile-default-bd: rgba(124, 92, 255, 0.26);
+  --tile-default-fg: #a78bfa;
+
+  /* Heatmap cells */
+  --heat-productive: #22c55e;
+  --heat-normal: rgba(34, 197, 94, 0.45);
+  --heat-struggled: rgba(248, 113, 113, 0.5);
+  --heat-missed: #ef4444;
+  --heat-future: rgba(148, 163, 184, 0.1);
+
+  /* Chart series */
+  --chart-energy: #8b7cff;
+  --chart-coffee: #2dd4bf;
+
+  /* Streak callout */
+  --streak-from: rgba(249, 115, 22, 0.16);
+  --streak-to: rgba(249, 115, 22, 0.08);
+  --streak-bd: rgba(249, 115, 22, 0.24);
+  --streak-subtitle: #fdba74;
+
+  /* Create-habit form */
+  --cat-active-bg: rgba(124, 92, 255, 0.16);
+  --cat-active-bd: rgba(139, 92, 246, 0.5);
+  --cat-active-fg: #c4b5fd;
+  --diff-easy-bg: rgba(16, 185, 129, 0.1);
+  --diff-easy-bd: rgba(16, 185, 129, 0.24);
+  --diff-hard-bg: rgba(245, 158, 11, 0.1);
+  --diff-hard-bd: rgba(245, 158, 11, 0.24);
+  --diff-delusional-bg: rgba(244, 63, 94, 0.12);
+  --diff-delusional-bd: rgba(244, 63, 94, 0.4);
+  --banner-bg: rgba(245, 158, 11, 0.12);
+  --banner-bd: rgba(245, 158, 11, 0.28);
+  --banner-fg: #fde68a;
+
+  /* Rewards */
+  --reward-badge-bg: rgba(168, 85, 247, 0.16);
+  --reward-step-ring: rgba(168, 85, 247, 0.25);
+  --reward-xp-from: #a855f7;
+  --reward-xp-to: #6366f1;
+  --badge-amber-bg: rgba(245, 158, 11, 0.14);
+  --badge-amber-fg: #fbbf24;
+  --badge-rose-bg: rgba(244, 63, 94, 0.14);
+  --badge-rose-fg: #fb7185;
+  --badge-blue-bg: rgba(59, 130, 246, 0.14);
+  --badge-blue-fg: #60a5fa;
+
+  /* Layout */
+  --nav-height: 76px;
+  --content-max-mobile: 720px;
+  --content-max-desktop: 1100px;
+  --rail-width: 248px;
+}
+
+@theme inline {
+  /* Colors — mapped onto utilities (bg-page, text-muted, border-line, …) */
+  --color-page: var(--bg-page);
+  --color-surface: var(--bg-surface);
+  --color-raised: var(--bg-surface-raised);
+  --color-sunken: var(--bg-sunken);
+  --color-subtle: var(--bg-subtle);
+
+  --color-ink: var(--text-strong);
+  --color-body: var(--text);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+
+  --color-line: var(--border);
+  --color-line-subtle: var(--border-subtle);
+  --color-line-strong: var(--border-strong);
+
+  --color-brand: var(--color-primary);
+  --color-brand-strong: var(--color-primary-strong);
+  --color-brand-soft: var(--color-primary-soft);
+  --color-on-brand: var(--color-on-primary);
+
+  --color-success: var(--success-bg);
+  --color-success-fg: var(--success-fg);
+  --color-success-line: var(--success-bd);
+  --color-warning: var(--warning-bg);
+  --color-warning-fg: var(--warning-fg);
+  --color-warning-line: var(--warning-bd);
+  --color-danger: var(--danger-bg);
+  --color-danger-fg: var(--danger-fg);
+  --color-danger-line: var(--danger-bd);
+  --color-orange: var(--orange-bg);
+  --color-orange-fg: var(--orange-fg);
+  --color-orange-line: var(--orange-bd);
+  --color-purple: var(--purple-bg);
+  --color-purple-fg: var(--purple-fg);
+  --color-purple-line: var(--purple-bd);
+
+  --color-heat-productive: var(--heat-productive);
+  --color-heat-normal: var(--heat-normal);
+  --color-heat-struggled: var(--heat-struggled);
+  --color-heat-missed: var(--heat-missed);
+  --color-heat-future: var(--heat-future);
+
+  --color-chart-energy: var(--chart-energy);
+  --color-chart-coffee: var(--chart-coffee);
+
+  /* Habit icon tiles */
+  --color-tile-water-bg: var(--tile-water-bg);
+  --color-tile-water-line: var(--tile-water-bd);
+  --color-tile-water-fg: var(--tile-water-fg);
+  --color-tile-meditate-bg: var(--tile-meditate-bg);
+  --color-tile-meditate-line: var(--tile-meditate-bd);
+  --color-tile-meditate-fg: var(--tile-meditate-fg);
+  --color-tile-gym-bg: var(--tile-gym-bg);
+  --color-tile-gym-line: var(--tile-gym-bd);
+  --color-tile-gym-fg: var(--tile-gym-fg);
+  --color-tile-food-bg: var(--tile-food-bg);
+  --color-tile-food-line: var(--tile-food-bd);
+  --color-tile-food-fg: var(--tile-food-fg);
+  --color-tile-reading-bg: var(--tile-reading-bg);
+  --color-tile-reading-line: var(--tile-reading-bd);
+  --color-tile-reading-fg: var(--tile-reading-fg);
+  --color-tile-default-bg: var(--tile-default-bg);
+  --color-tile-default-line: var(--tile-default-bd);
+  --color-tile-default-fg: var(--tile-default-fg);
+
+  /* Create-habit form */
+  --color-cat-active-bg: var(--cat-active-bg);
+  --color-cat-active-line: var(--cat-active-bd);
+  --color-cat-active-fg: var(--cat-active-fg);
+  --color-diff-easy-bg: var(--diff-easy-bg);
+  --color-diff-easy-line: var(--diff-easy-bd);
+  --color-diff-hard-bg: var(--diff-hard-bg);
+  --color-diff-hard-line: var(--diff-hard-bd);
+  --color-diff-delusional-bg: var(--diff-delusional-bg);
+  --color-diff-delusional-line: var(--diff-delusional-bd);
+  --color-banner-bg: var(--banner-bg);
+  --color-banner-line: var(--banner-bd);
+  --color-banner-fg: var(--banner-fg);
+
+  /* Rewards */
+  --color-reward-badge-bg: var(--reward-badge-bg);
+  --color-reward-step-ring: var(--reward-step-ring);
+  --color-badge-amber-bg: var(--badge-amber-bg);
+  --color-badge-amber-fg: var(--badge-amber-fg);
+  --color-badge-rose-bg: var(--badge-rose-bg);
+  --color-badge-rose-fg: var(--badge-rose-fg);
+  --color-badge-blue-bg: var(--badge-blue-bg);
+  --color-badge-blue-fg: var(--badge-blue-fg);
+}
+
+@theme {
+  /* Typography (DESIGN.md §2.2) */
+  --font-sans:
+    'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, sans-serif;
+
+  /* Radii (DESIGN.md §2.3) — also emitted as `--radius-*` custom properties */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+  --radius-pill: 9999px;
+
+  /* Elevation — borders + tinted surfaces carry most of the weight */
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+  --shadow-fab: 0 10px 22px -4px rgba(124, 92, 255, 0.5);
+  --shadow-cta: 0 10px 15px -3px rgba(124, 92, 255, 0.35);
+  --shadow-widget: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+
+  /* Breakpoints (DESIGN.md §6) */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+}

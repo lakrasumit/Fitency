@@ -15,6 +15,8 @@ import {
 type AuthState = {
   user: User | null
   loading: boolean
+  /** True once the stored session has been checked at least once. */
+  initialized: boolean
   error: string | null
   loadCurrentUser: () => Promise<void>
   signUp: (input: SignUpInput) => Promise<boolean>
@@ -28,16 +30,18 @@ type AuthState = {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   loading: false,
+  initialized: false,
   error: null,
 
   loadCurrentUser: async () => {
     set({ loading: true, error: null })
     try {
       const user = await getCurrentUser()
-      set({ user, loading: false })
+      set({ user, loading: false, initialized: true })
     } catch (error) {
       set({
         loading: false,
+        initialized: true,
         error: getServiceErrorMessage(error, "Could not load your account."),
       })
     }

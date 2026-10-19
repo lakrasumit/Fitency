@@ -31,7 +31,7 @@
 | 0 | Project setup | Done | 7 / 7 |
 | 1 | Design system foundation | Done | 8 / 8 |
 | 2 | Data layer and logic | Done | 8 / 8 |
-| 3 | App shell, routing, and auth | Not started | 0 / 7 |
+| 3 | App shell, routing, and auth | Done | 7 / 7 |
 | 4 | Habits page | Not started | 0 / 8 |
 | 5 | Home (Dashboard) | Not started | 0 / 7 |
 | 6 | Analytics | Not started | 0 / 8 |
@@ -96,13 +96,13 @@ Status values: Not started, In progress, Done.
 ## Phase 3: App shell, routing, and auth
 *PRD refs: sections 6 and 7.5.*
 
-- [ ] **3.1** Set up **React Router** with routes: `/` (Home), `/analytics`, `/habits`, `/account`, `/login`, `/signup`, and a not-found route.
-- [ ] **3.2** Build the **route guard**: unauthenticated users go to Login; authenticated users skip Login and Sign up.
-- [ ] **3.3** Build the **app shell**: **BottomTabBar** below 768px, **Sidebar** at 768px and up, **PageHeader**, content max-width and grid behavior.
-- [ ] **3.4** Build **LoginForm** (email, password) with validation, disabled submit while submitting, and clear errors such as "Incorrect email or password".
-- [ ] **3.5** Build **SignupForm** (name, email, password) with the same standards.
-- [ ] **3.6** Wire both forms to the mock auth service and redirect to Home on success.
-- [ ] **3.7** Add placeholder pages for Home, Analytics, Habits, and Account so navigation can be tested end to end.
+- [x] **3.1** Set up **React Router** with routes: `/` (Home), `/analytics`, `/habits`, `/account`, `/login`, `/signup`, and a not-found route.
+- [x] **3.2** Build the **route guard**: unauthenticated users go to Login; authenticated users skip Login and Sign up.
+- [x] **3.3** Build the **app shell**: **BottomTabBar** below 768px, **Sidebar** at 768px and up, **PageHeader**, content max-width and grid behavior.
+- [x] **3.4** Build **LoginForm** (email, password) with validation, disabled submit while submitting, and clear errors such as "Incorrect email or password".
+- [x] **3.5** Build **SignupForm** (name, email, password) with the same standards.
+- [x] **3.6** Wire both forms to the mock auth service and redirect to Home on success.
+- [x] **3.7** Add placeholder pages for Home, Analytics, Habits, and Account so navigation can be tested end to end.
 
 **Done when:** a user can sign up, land on Home, move between all four tabs on mobile and desktop, log out, and be redirected to Login.
 **Commit:** `feat: add routing, app shell, and mock auth screens`
@@ -234,6 +234,13 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | 2.6 | Added typed `ServiceError` and guarded storage reads/writes with validators; unavailable or corrupted localStorage rejects with a user-facing message instead of crashing. Temporary check verified both paths. | frontend/src/lib/services/storage.ts, frontend/src/lib/services/errors.ts |
 | 2026-10-20 | 2.7 | Added habits, completions, and auth Zustand stores with loading/error state, optimistic completion toggle with rollback, and reset actions for account deletion. Temporary store check confirmed habit creation, check-in toggle, 100% recompute, and rollback on an invalid date. | frontend/src/store/** |
 | 2026-10-20 | 2.8 | Added `habitFieldsSchema` plus `createHabitSchema` (trim, required, max 40, case-insensitive unique, at least one weekday) and wired the habit service to it. Rules verified in the temporary check. | frontend/src/lib/schemas.ts, frontend/src/lib/services/habits.ts |
+| 2026-10-20 | 3.1 | Wired React Router (v8) with `/`, `/analytics`, `/habits`, `/account`, `/login`, `/signup`, and a not-found route; added temporary placeholder pages for the four tab destinations. Verified live: guest at `/` lands on `/login`, `/nope` renders the 404 page, no console errors. | frontend/src/routes/app-routes.tsx, frontend/src/routes/not-found-page.tsx, frontend/src/features/** |
+| 2026-10-20 | 3.2 | Added `RequireAuth` and `PublicOnly` layout-route guards backed by an `initialized` flag in the auth store (one session check per load, no redirect flash). Verified live at 375px and 1280px: signed-out users are sent to Login, signed-in users visiting `/signup` bounce back to Home. | frontend/src/routes/require-auth.tsx, frontend/src/routes/public-only.tsx, frontend/src/store/auth-store.ts |
+| 2026-10-20 | 3.3 | Built AppShell with a 240px sidebar at ≥768px and a bottom tab bar below it (NavLink active states, safe-area padding), plus PageHeader and a shared nav item list. Verified live: at 375px the sidebar is `display:none` and the tab bar is visible; at 1280px the reverse; both themes and no console warnings. | frontend/src/components/layout/**, frontend/src/components/full-page-loader.tsx |
+| 2026-10-20 | 3.4 | Built LoginForm with react-hook-form + zod inline errors, `aria-invalid`/`aria-describedby`, focus moved to the first invalid field, disabled submit while saving, and store errors shown in a `role="alert"` message. Verified live: empty submit shows both inline errors; wrong password shows "Incorrect email or password." while staying on `/login`; submit is disabled with a "Signing in…" label mid-request. | frontend/src/features/auth/login-form.tsx, frontend/src/features/auth/auth-field.tsx |
+| 2026-10-20 | 3.5 | Built SignupForm (name, email, password) to the same standards, sharing AuthField and AuthShell. Verified live: created an account from the 375px frame with inline validation and a disabled submitting state. | frontend/src/features/auth/signup-form.tsx, frontend/src/features/auth/auth-shell.tsx |
+| 2026-10-20 | 3.6 | Wired both forms to the mock auth store/service; success shows a toast, redirects to Home, and persists the session (`fitency:auth`). Verified live: sign up and log in both land on `/` with the session stored. | frontend/src/features/auth/**, frontend/src/store/auth-store.ts |
+| 2026-10-20 | 3.7 | Added placeholder Home, Analytics, Habits, and Account pages so all four destinations navigate end to end. Verified live: clicking each tab updates the URL, heading, and `aria-current` at both widths. | frontend/src/features/*/*-page.tsx |
 
 ---
 
@@ -281,3 +288,8 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | Habit validation lives in `src/lib/schemas.ts`; `createHabitSchema(habits, editingId?)` covers field rules plus case-insensitive uniqueness, and the service parses inputs through it. | PRD 2.8 asks for one validation source shared by the future form and the service. |
 | 2026-10-20 | Vitest 5 added as a dev-only dependency with `npm run test`. | Plan 2.4 explicitly allows Vitest; helpers are pure and need no DOM environment. |
 | 2026-10-20 | Mock auth stores the typed password as-is in localStorage and returns only `User` fields to the UI. | It is a fake auth layer for the MVP; no real credentials or backend exist. To be replaced by the real auth service later. |
+| 2026-10-20 | Routing uses one `AppRoutes` component with `BrowserRouter` and nested layout routes; `RequireAuth` and `PublicOnly` are layout routes that render `Outlet`. | Keeps guarded/public areas declared once instead of wrapping every page. |
+| 2026-10-20 | Auth store exposes an `initialized` flag; guards trigger the session check once and render `FullPageLoader` until it finishes. | Prevents a redirect-to-Login flash on first paint and avoids a duplicate session read when moving between Login and the protected shell. |
+| 2026-10-20 | Navigation lives in `src/components/layout/nav-items.ts` with lucide icons House, ChartColumn, ListChecks, UserRound. | Sidebar and bottom tab bar must render the same four destinations in the same order. |
+| 2026-10-20 | Auth validation schemas (`loginSchema`, `signupSchema`, `MIN_PASSWORD_LENGTH = 8`) live in `src/lib/schemas.ts` beside the habit schema. | Keeps every zod rule in the "one place" the plan asks for; 8 characters comes from the resolved blocker entry. |
+| 2026-10-20 | Login/Sign up share `AuthShell` (centered card, no nav) and `AuthField` (label + input + inline error). | PRD requires public screens without tab bar or sidebar, and both forms need identical field markup. |

@@ -3,6 +3,32 @@ import type { Habit } from "@/lib/types"
 
 export const HABIT_NAME_MAX_LENGTH = 40
 
+export const MIN_PASSWORD_LENGTH = 8
+
+const emailField = z
+  .string()
+  .trim()
+  .min(1, "Enter your email address.")
+  .pipe(z.email("Enter a valid email address."))
+
+const passwordField = z
+  .string()
+  .min(
+    MIN_PASSWORD_LENGTH,
+    `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
+  )
+
+export const loginSchema = z.object({
+  email: emailField,
+  password: passwordField,
+})
+
+export const signupSchema = z.object({
+  name: z.string().trim().min(1, "Enter your name."),
+  email: emailField,
+  password: passwordField,
+})
+
 export const habitFieldsSchema = z.object({
   name: z
     .string()

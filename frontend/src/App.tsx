@@ -1,5 +1,6 @@
 import { StylePreview } from "@/components/style-preview"
 import { Toaster } from "@/components/ui/sonner"
+import { AppRoutes } from "@/routes/app-routes"
 
 function App() {
   const showPreview =
@@ -8,15 +9,7 @@ function App() {
 
   return (
     <>
-      {showPreview ? (
-        <StylePreview />
-      ) : (
-        <main className="grid min-h-svh place-items-center p-4">
-          <p className="text-muted-foreground">
-            Fitency is being built phase by phase.
-          </p>
-        </main>
-      )}
+      {showPreview ? <StylePreview /> : <AppRoutes />}
       <Toaster position="top-center" />
     </>
   )

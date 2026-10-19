@@ -1,11 +1,24 @@
-import { Button } from "@/components/ui/button"
+import { StylePreview } from "@/components/style-preview"
+import { Toaster } from "@/components/ui/sonner"
 
 function App() {
+  const showPreview =
+    import.meta.env.DEV &&
+    new URLSearchParams(window.location.search).has("preview")
+
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-4">
-      <h1 className="font-heading text-2xl font-bold">Fitency</h1>
-      <Button>shadcn works</Button>
-    </div>
+    <>
+      {showPreview ? (
+        <StylePreview />
+      ) : (
+        <main className="grid min-h-svh place-items-center p-4">
+          <p className="text-muted-foreground">
+            Fitency is being built phase by phase.
+          </p>
+        </main>
+      )}
+      <Toaster position="top-center" />
+    </>
   )
 }
 

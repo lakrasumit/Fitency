@@ -29,7 +29,7 @@
 | Phase | Name | Status | Done / Total |
 |---|---|---|---|
 | 0 | Project setup | Done | 7 / 7 |
-| 1 | Design system foundation | Not started | 0 / 8 |
+| 1 | Design system foundation | Done | 8 / 8 |
 | 2 | Data layer and logic | Not started | 0 / 8 |
 | 3 | App shell, routing, and auth | Not started | 0 / 7 |
 | 4 | Habits page | Not started | 0 / 8 |
@@ -62,14 +62,14 @@ Status values: Not started, In progress, Done.
 ## Phase 1: Design system foundation
 *PRD refs: section 5.*
 
-- [ ] **1.1** Define **CSS-variable color tokens** for light and dark (soft charcoal dark), including accent orange, completed green, surfaces, text, borders, and chart colors.
-- [ ] **1.2** Load fonts: **Roboto Condensed** (headings, numbers) and **Roboto** (body). Add Tailwind font families and utility classes for each.
-- [ ] **1.3** Implement **theming** (Light / Dark / System) with no flash on load, persisted across reloads.
-- [ ] **1.4** Set the soft, rounded shape language (radius, shadow tokens) in the Tailwind config.
-- [ ] **1.5** Build base UI components: **Button, Input, Skeleton, EmptyState, Toast (sonner setup)**.
-- [ ] **1.6** Build **ProgressRing** (accessible, accepts value and label).
-- [ ] **1.7** Build **BottomSheet/Modal** (bottom sheet on mobile, modal on desktop) and **ConfirmDialog**.
-- [ ] **1.8** Create a temporary dev-only **style preview** route to eyeball all components in both themes, then remove it before Phase 9 ends.
+- [x] **1.1** Define **CSS-variable color tokens** for light and dark (soft charcoal dark), including accent orange, completed green, surfaces, text, borders, and chart colors.
+- [x] **1.2** Load fonts: **Roboto Condensed** (headings, numbers) and **Roboto** (body). Add Tailwind font families and utility classes for each.
+- [x] **1.3** Implement **theming** (Light / Dark / System) with no flash on load, persisted across reloads.
+- [x] **1.4** Set the soft, rounded shape language (radius, shadow tokens) in the Tailwind config.
+- [x] **1.5** Build base UI components: **Button, Input, Skeleton, EmptyState, Toast (sonner setup)**.
+- [x] **1.6** Build **ProgressRing** (accessible, accepts value and label).
+- [x] **1.7** Build **BottomSheet/Modal** (bottom sheet on mobile, modal on desktop) and **ConfirmDialog**.
+- [x] **1.8** Create a temporary dev-only **style preview** route to eyeball all components in both themes, then remove it before Phase 9 ends.
 
 **Done when:** every base component renders correctly in light and dark at 375px and 1280px, with visible focus states.
 **Commit:** `feat: add design tokens, theming, and base UI components`
@@ -218,6 +218,14 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | 0.5 | Added Prettier with .prettierrc/.prettierignore and `format` script; scoped react-refresh rule exception for generated shadcn primitives. Lint + build pass. | frontend/eslint.config.js, frontend/.prettierrc, frontend/package.json |
 | 2026-10-20 | 0.6 | Created PRD folder structure (features, lib/services, store, routes, styles) with .gitkeep; moved the Tailwind entry to src/styles/index.css and updated components.json. | frontend/src/**, frontend/components.json |
 | 2026-10-20 | 0.7 | `@/` alias in tsconfigs and Vite; import.meta.env typing via `types: ["vite/client"]`; README rewritten; .gitignore now covers .env files. | frontend/README.md, frontend/.gitignore, frontend/tsconfig.app.json |
+| 2026-10-20 | 1.1 | Defined light + dark CSS-variable tokens (warm neutral surfaces, orange primary, green success, destructive, 5 chart colors, input/border/ring, sidebar). Key text pairs checked with a WCAG contrast script: body 16.4:1 / muted 5.2:1 / white-on-primary 5.2:1 (light), all ≥4.5:1; dark equivalents ≥6:1; input borders ≥3:1. Verified rendered tokens in both themes. | frontend/src/styles/index.css |
+| 2026-10-20 | 1.2 | Loaded Roboto (400/500/700) and Roboto Condensed (400/500/600/700) via @fontsource; removed Geist; added `font-sans`/`font-heading` theme tokens. Verified computed fonts in the browser (h1 = Roboto Condensed, body = Roboto) and woff2 files in the build. | frontend/src/styles/index.css, frontend/package.json |
+| 2026-10-20 | 1.3 | Custom ThemeProvider (Light/Dark/System, class on `<html>`), persisted in localStorage under `fitency-theme`; inline script in index.html applies the theme before first paint (no flash). System mode reacts to OS changes. Verified toggle, reload persistence, and system mode in the browser with a clean console. | frontend/src/components/theme/**, frontend/index.html, frontend/src/main.tsx |
+| 2026-10-20 | 1.4 | Set `--radius: 1rem` and theme-dependent `--shadow-soft`/`--shadow-float`; exposed them as `shadow-soft`/`shadow-float` utilities. Verified computed shadows differ correctly between light and dark. | frontend/src/styles/index.css |
+| 2026-10-20 | 1.5 | Added shadcn Input, Skeleton, sonner Toaster (adapted to the custom theme hook), plus Button sizes bumped for touch (default h-10, lg h-11, icon size-10; Input h-10), EmptyState, and mounted the Toaster at app root. Verified all states in both themes. | frontend/src/components/ui/**, frontend/src/components/empty-state.tsx, frontend/src/App.tsx |
+| 2026-10-20 | 1.6 | Built ProgressRing (SVG, clamps value, `role="progressbar"` with aria value min/max/now and label, themed track/progress, reduced-motion guard). Verified semantics and visuals at 0/40/100%. | frontend/src/components/progress-ring.tsx |
+| 2026-10-20 | 1.7 | Built BottomSheet (Vaul drawer below 768px, Radix dialog at ≥768px, shared title/description/content/footer) and ConfirmDialog (AlertDialog). Verified drawer at 375px, centered modal at 1280px, and confirm/cancel behavior. | frontend/src/components/bottom-sheet.tsx, frontend/src/components/confirm-dialog.tsx, frontend/src/components/use-media-query.ts |
+| 2026-10-20 | 1.8 | Added temporary dev-only style preview at `?preview` (StylePreview) covering tokens, type, buttons, inputs, skeleton, ring, empty state, sheet/modal, confirm, and toasts. Verified in the browser at 375px and 1280px, light and dark, with visible focus ring. To be removed in Phase 8. | frontend/src/components/style-preview.tsx, frontend/src/App.tsx |
 
 ---
 
@@ -232,7 +240,7 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | 0.1 | Where should the frontend app live? The repo has an empty `frontend/` folder. | resolved: scaffold inside `frontend/` |
 | 2026-10-20 | 3.4 | PRD requires a minimum password length but gives no number. | resolved: 8 characters |
 | 2026-10-20 | 2.3 / 5.5 / 6 | Do future days in the current Week/Month/Year count toward completion %? | resolved: count only through today; heatmap shows the full period with future days neutral and not clickable |
-| 2026-10-20 | 2.8 / 4.5 | @hookform/resolvers (zodResolver) is not in the PRD stack list, but react-hook-form cannot consume zod schemas without a resolver; shadcn's official RHF guide uses it. Add it, or write a small custom resolver against the same zod schemas? | open |
+| 2026-10-20 | 2.8 / 4.5 | @hookform/resolvers (zodResolver) is not in the PRD stack list, but react-hook-form cannot consume zod schemas without a resolver; shadcn's official RHF guide uses it. Add it, or write a small custom resolver against the same zod schemas? | resolved: user approved adding `@hookform/resolvers` |
 
 ---
 
@@ -248,3 +256,12 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | shadcn preset `nova` (neutral base color, lucide icons) as the starting point. | PRD requires lucide-react; the starting palette is replaced by Fitency tokens in Phase 1. |
 | 2026-10-20 | `react-refresh/only-export-components` disabled for `src/components/ui/**` only. | Generated shadcn primitives intentionally export variant helpers next to components. |
 | 2026-10-20 | Global CSS lives at `src/styles/index.css` (moved from `src/index.css`). | Matches PRD folder structure (`styles/`); `components.json` updated so future `shadcn add` appends there. |
+| 2026-10-20 | Fitency palette: light bg `#FAF9F7`, card `#FFFFFF`, primary `#C2410C`, success `#15803D`, input border `#948C82`; dark bg `#1C1A17`, card `#262320`, primary `#FB923C`, success `#4ADE80`, input border `#766F66`; chart colors orange/blue/green/purple/pink. | Warm neutrals + orange accent per PRD; darker light-mode orange and lighter dark-mode orange keep white/dark button labels ≥4.5:1. Input borders meet 3:1. Contrast checked numerically. |
+| 2026-10-20 | Theme preference (`light`/`dark`/`system`) stored directly in localStorage under `fitency-theme`, read by an inline script in index.html. | Theme is presentation state, not app data; the no-flash requirement needs a synchronous read before React mounts. Service layer remains the only path for habits/auth data. |
+| 2026-10-20 | Font weights: Roboto 400/500/700; Roboto Condensed 400/500/600/700. Default UI font is Roboto; headings and numbers use `font-heading`. | Covers body, labels, bold headings, and large stat numbers; avoids loading unused weights/italics. |
+| 2026-10-20 | Radius 1rem (soft rounded); two shadow tokens (`shadow-soft` for cards, `shadow-float` for overlays), both theme-dependent CSS vars. | PRD asks for soft rounded shapes and gentle depth; vars let dark mode use stronger shadows. |
+| 2026-10-20 | shadcn Button/Input sizes increased for touch: default h-10, sm h-9, lg h-11, icon size-10; Input h-10. | PRD requires large thumb-friendly tap targets on mobile; generated defaults were 32px. |
+| 2026-10-20 | `@hookform/resolvers` pinned to v5.9.2 (not v6). | v6's optional peer set conflicts with `effect@4` under npm's resolver; v5.9 supports zod 4 and the same `zodResolver` API. |
+| 2026-10-20 | Responsive overlay: `BottomSheet` renders a Vaul drawer below 768px and a Radix dialog at ≥768px; media query via `useMediaQuery`. | Matches PRD (bottom sheet on mobile, modal on desktop) and the 768px breakpoint used by navigation. |
+| 2026-10-20 | Dev style preview lives at `src/components/style-preview.tsx`, shown when `?preview` is present in dev builds. | Temporary per plan; easy to find and delete in Phase 8. Not included in production routing. |
+| 2026-10-20 | shadcn's sonner wrapper imports the custom `useTheme` instead of `next-themes`. | Keeps a single theme source; `next-themes` is not installed. |

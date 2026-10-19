@@ -28,7 +28,7 @@
 
 | Phase | Name | Status | Done / Total |
 |---|---|---|---|
-| 0 | Project setup | Not started | 0 / 7 |
+| 0 | Project setup | Done | 7 / 7 |
 | 1 | Design system foundation | Not started | 0 / 8 |
 | 2 | Data layer and logic | Not started | 0 / 8 |
 | 3 | App shell, routing, and auth | Not started | 0 / 7 |
@@ -46,13 +46,13 @@ Status values: Not started, In progress, Done.
 ## Phase 0: Project setup
 *PRD refs: sections 3 and 4.*
 
-- [ ] **0.1** Scaffold a **React + Vite + TypeScript** project (strict mode on).
-- [ ] **0.2** Install and configure **Tailwind CSS**.
-- [ ] **0.3** Initialize **shadcn/ui** (with Radix and Vaul) and confirm one component renders.
-- [ ] **0.4** Install the remaining PRD stack: React Router, Zustand, react-hook-form, zod, date-fns, Recharts, lucide-react, sonner, `@fontsource` (Roboto Condensed, Roboto), and the theme library (`next-themes` or a custom ThemeProvider).
-- [ ] **0.5** Configure **ESLint + Prettier**, and add `lint`, `format`, and `build` scripts.
-- [ ] **0.6** Create the **folder structure** from PRD section 4 (empty folders get a placeholder file only if needed).
-- [ ] **0.7** Set up path alias (`@/`), `import.meta.env` typing, and a clean `README` with run instructions.
+- [x] **0.1** Scaffold a **React + Vite + TypeScript** project (strict mode on).
+- [x] **0.2** Install and configure **Tailwind CSS**.
+- [x] **0.3** Initialize **shadcn/ui** (with Radix and Vaul) and confirm one component renders.
+- [x] **0.4** Install the remaining PRD stack: React Router, Zustand, react-hook-form, zod, date-fns, Recharts, lucide-react, sonner, `@fontsource` (Roboto Condensed, Roboto), and the theme library (`next-themes` or a custom ThemeProvider).
+- [x] **0.5** Configure **ESLint + Prettier**, and add `lint`, `format`, and `build` scripts.
+- [x] **0.6** Create the **folder structure** from PRD section 4 (empty folders get a placeholder file only if needed).
+- [x] **0.7** Set up path alias (`@/`), `import.meta.env` typing, and a clean `README` with run instructions.
 
 **Done when:** `npm run dev`, `npm run lint`, and `npm run build` all succeed on the empty app.
 **Commit:** `chore: scaffold Fitency with Vite, React, TypeScript, and Tailwind`
@@ -211,7 +211,13 @@ Status values: Not started, In progress, Done.
 
 | Date | Task | What was done | Key files |
 |---|---|---|---|
-| | | | |
+| 2026-10-20 | 0.1 | Scaffolded React + Vite + TS (strict) in `frontend/`; pinned TypeScript ~6.0.3 because typescript-eslint does not support TS 7 yet. Lint + build pass. | frontend/package.json, frontend/tsconfig.app.json |
+| 2026-10-20 | 0.2 | Installed Tailwind CSS v4 + @tailwindcss/vite; wired Vite plugin; global CSS at src/styles/index.css. Lint + build pass. | frontend/vite.config.ts, frontend/src/styles/index.css |
+| 2026-10-20 | 0.3 | Initialized shadcn/ui (radix base, nova preset); Button renders in dev verified at 375px and 1280px via iframe harness. | frontend/components.json, frontend/src/components/ui/button.tsx |
+| 2026-10-20 | 0.4 | Installed react-router, zustand, react-hook-form, zod, date-fns, recharts, sonner, @fontsource roboto + roboto-condensed. Theme provider deferred to Phase 1 (custom). | frontend/package.json |
+| 2026-10-20 | 0.5 | Added Prettier with .prettierrc/.prettierignore and `format` script; scoped react-refresh rule exception for generated shadcn primitives. Lint + build pass. | frontend/eslint.config.js, frontend/.prettierrc, frontend/package.json |
+| 2026-10-20 | 0.6 | Created PRD folder structure (features, lib/services, store, routes, styles) with .gitkeep; moved the Tailwind entry to src/styles/index.css and updated components.json. | frontend/src/**, frontend/components.json |
+| 2026-10-20 | 0.7 | `@/` alias in tsconfigs and Vite; import.meta.env typing via `types: ["vite/client"]`; README rewritten; .gitignore now covers .env files. | frontend/README.md, frontend/.gitignore, frontend/tsconfig.app.json |
 
 ---
 
@@ -222,7 +228,11 @@ Status values: Not started, In progress, Done.
 
 | Date | Task | Question or blocker | Status |
 |---|---|---|---|
-| | | | |
+| 2026-10-20 | 0.1 | This plan references `PRD.md` (sections 7.1 Home, 7.2 Habits, 7.3 Analytics, 7.4 Account, 11 edge cases; stack: Zustand, shadcn/ui + Radix + Vaul, Recharts, Roboto fonts, light + dark themes, Login/Signup/Account screens). The only PRD present is `docs/PRD.md`, which specifies different screens (Home / Analytics / New Habit / Rewards), a different stack (Context + useReducer, custom SVG chart, no component library), Plus Jakarta Sans, and a dark-only theme with no auth UI. The referenced `PRD.md` may be missing from the repo. Cannot start Phase 0 until the correct source of truth is confirmed. | resolved: stale entry from an earlier session, written before commit 003c4e8 replaced the old design-doc-era PRD. The current committed `docs/PRD.md` matches this plan exactly (Home/Analytics/Habits/Account, Login/Signup, Zustand, shadcn/ui + Radix + Vaul, Recharts, Roboto, light + dark). User confirmed: build from `docs/PRD.md`. |
+| 2026-10-20 | 0.1 | Where should the frontend app live? The repo has an empty `frontend/` folder. | resolved: scaffold inside `frontend/` |
+| 2026-10-20 | 3.4 | PRD requires a minimum password length but gives no number. | resolved: 8 characters |
+| 2026-10-20 | 2.3 / 5.5 / 6 | Do future days in the current Week/Month/Year count toward completion %? | resolved: count only through today; heatmap shows the full period with future days neutral and not clickable |
+| 2026-10-20 | 2.8 / 4.5 | @hookform/resolvers (zodResolver) is not in the PRD stack list, but react-hook-form cannot consume zod schemas without a resolver; shadcn's official RHF guide uses it. Add it, or write a small custom resolver against the same zod schemas? | open |
 
 ---
 
@@ -232,4 +242,9 @@ Status values: Not started, In progress, Done.
 
 | Date | Decision | Reason |
 |---|---|---|
-| | | |
+| 2026-10-20 | Tailwind CSS v4 (CSS-first tokens in `src/styles/index.css`; no `tailwind.config.js`). | Current stable; the shadcn CLI validated v4. Needs no separate config file, tokens stay as CSS variables. |
+| 2026-10-20 | Custom ThemeProvider (class on `<html>` + pre-hydration script) instead of `next-themes`. | PRD allows either; avoids an extra dependency. |
+| 2026-10-20 | TypeScript pinned to `~6.0.3` (template default was ~7.0.2). | typescript-eslint@8 does not support TS 7 yet (peer `<6.1.0`); ESLint is required. |
+| 2026-10-20 | shadcn preset `nova` (neutral base color, lucide icons) as the starting point. | PRD requires lucide-react; the starting palette is replaced by Fitency tokens in Phase 1. |
+| 2026-10-20 | `react-refresh/only-export-components` disabled for `src/components/ui/**` only. | Generated shadcn primitives intentionally export variant helpers next to components. |
+| 2026-10-20 | Global CSS lives at `src/styles/index.css` (moved from `src/index.css`). | Matches PRD folder structure (`styles/`); `components.json` updated so future `shadcn add` appends there. |

@@ -32,7 +32,7 @@
 | 1 | Design system foundation | Done | 8 / 8 |
 | 2 | Data layer and logic | Done | 8 / 8 |
 | 3 | App shell, routing, and auth | Done | 7 / 7 |
-| 4 | Habits page | Not started | 0 / 8 |
+| 4 | Habits page | Done | 8 / 8 |
 | 5 | Home (Dashboard) | Not started | 0 / 7 |
 | 6 | Analytics | Not started | 0 / 8 |
 | 7 | Account | Not started | 0 / 5 |
@@ -114,14 +114,14 @@ Status values: Not started, In progress, Done.
 
 *(Built before Home because Home depends on habits existing.)*
 
-- [ ] **4.1** Build **HabitList** and **HabitCard** (icon, name, weekday chips, Edit and Delete actions; long names truncate with ellipsis).
-- [ ] **4.2** Add the preset **fitness icon set** and the **IconPicker** grid.
-- [ ] **4.3** Build **ColorPicker** (small palette).
-- [ ] **4.4** Build **WeekdayPicker** (7 toggle chips, plus "Every day" and "Weekdays" shortcuts).
-- [ ] **4.5** Build **HabitForm** (shared for add and edit; full screen on mobile, modal on desktop) with react-hook-form + zod, inline errors, disabled submit while saving, and a success toast.
-- [ ] **4.6** Wire **"+ New habit"**, **Edit**, and **Delete** (hard delete with ConfirmDialog; completions for that habit are removed too).
-- [ ] **4.7** Add **loading** (skeleton), **empty** ("No habits yet" with a call to action), and **error** states.
-- [ ] **4.8** Check keyboard access and screen-reader labels for all controls on this page.
+- [x] **4.1** Build **HabitList** and **HabitCard** (icon, name, weekday chips, Edit and Delete actions; long names truncate with ellipsis).
+- [x] **4.2** Add the preset **fitness icon set** and the **IconPicker** grid.
+- [x] **4.3** Build **ColorPicker** (small palette).
+- [x] **4.4** Build **WeekdayPicker** (7 toggle chips, plus "Every day" and "Weekdays" shortcuts).
+- [x] **4.5** Build **HabitForm** (shared for add and edit; full screen on mobile, modal on desktop) with react-hook-form + zod, inline errors, disabled submit while saving, and a success toast.
+- [x] **4.6** Wire **"+ New habit"**, **Edit**, and **Delete** (hard delete with ConfirmDialog; completions for that habit are removed too).
+- [x] **4.7** Add **loading** (skeleton), **empty** ("No habits yet" with a call to action), and **error** states.
+- [x] **4.8** Check keyboard access and screen-reader labels for all controls on this page.
 
 **Done when:** a user can add, edit, and delete habits with every validation rule enforced, and data persists across reloads.
 **Commit:** `feat: add Habits page with create, edit, and delete`
@@ -241,6 +241,14 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | 3.5 | Built SignupForm (name, email, password) to the same standards, sharing AuthField and AuthShell. Verified live: created an account from the 375px frame with inline validation and a disabled submitting state. | frontend/src/features/auth/signup-form.tsx, frontend/src/features/auth/auth-shell.tsx |
 | 2026-10-20 | 3.6 | Wired both forms to the mock auth store/service; success shows a toast, redirects to Home, and persists the session (`fitency:auth`). Verified live: sign up and log in both land on `/` with the session stored. | frontend/src/features/auth/**, frontend/src/store/auth-store.ts |
 | 2026-10-20 | 3.7 | Added placeholder Home, Analytics, Habits, and Account pages so all four destinations navigate end to end. Verified live: clicking each tab updates the URL, heading, and `aria-current` at both widths. | frontend/src/features/*/*-page.tsx |
+| 2026-10-20 | 4.1 | Built HabitList/HabitCard: colored icon chip, name with ellipsis, weekday chips ("Every day" when all seven), Edit/Delete icon buttons with `aria-label`s. Verified live at 375px and 1280px: a 36-character name truncates (scrollWidth 257 vs clientWidth 174, `text-overflow: ellipsis`, `title` holds the full name), chips render Mon-Fri or Every day. | frontend/src/features/habits/habit-list.tsx, frontend/src/features/habits/habit-card.tsx |
+| 2026-10-20 | 4.2 | Added a 17-icon fitness preset (lucide keys stored in `Habit.icon`, unknown keys fall back to Dumbbell) and the IconPicker grid with `aria-pressed` and per-icon labels. Verified live: 17 buttons in the "Icon" group, selection moves on click. | frontend/src/features/habits/habit-icons.ts, frontend/src/features/habits/icon-picker.tsx |
+| 2026-10-20 | 4.3 | Built ColorPicker with an 8-color palette (green deliberately excluded) and an auto-picked white/charcoal glyph color. Verified live: 8 swatches in the "Color" group; the saved teal chip renders rgb(13,148,136) with a charcoal glyph, purple with white (both ≥4.6:1). | frontend/src/features/habits/habit-colors.ts, frontend/src/features/habits/color-picker.tsx |
+| 2026-10-20 | 4.4 | Built WeekdayPicker: 7 toggle chips (Mon-Sun) plus "Every day" and "Weekdays" shortcuts, `aria-pressed`, full weekday names as labels, and an inline error when nothing is selected. Verified live: shortcuts select 5/7 days, deselecting all shows "Choose at least one weekday." | frontend/src/features/habits/weekday-picker.tsx, frontend/src/features/habits/weekdays.ts |
+| 2026-10-20 | 4.5 | Built HabitForm (one Radix dialog styled full screen below 768px and a centered modal above) with RHF + zod, inline errors, disabled "Saving…" state, and success toasts. Verified live: at 375px the dialog measures 375x780 at (0,0) with radius 0 and a pinned footer; at 1280px it is a centered 448px modal; duplicate names (case-insensitive) and empty names show inline errors, Enter/Escape work. | frontend/src/features/habits/habit-form.tsx |
+| 2026-10-20 | 4.6 | Wired "+ New habit" (header and empty state), Edit (pre-filled values) and Delete (ConfirmDialog naming the habit and its check-ins). Verified live: create/update/delete all toast and update the list and storage; a seeded check-in for the deleted habit was also removed from `completions`. | frontend/src/features/habits/habits-page.tsx, frontend/src/components/confirm-dialog.tsx |
+| 2026-10-20 | 4.7 | Added the loading skeleton (`aria-busy`, "Loading habits"), the "No habits yet" empty state with a CTA, and an error state with "Try again". Verified live: the skeleton was observed during a reload, empty state on a fresh account, and a corrupted-storage reload showed the corrupted-data message, then recovered the list after restoring data and pressing Try again. | frontend/src/features/habits/habits-page.tsx |
+| 2026-10-20 | 4.8 | Checked keyboard access and labels: full Tab traversal (name -> 17 icons -> 8 colors -> shortcuts -> 7 days -> Cancel -> submit), Escape closes, focus returns to the opener (custom `onCloseAutoFocus`, since Radix only restores with DialogTrigger), dialog labelled by title/description, groups labelled Icon/Color/Days, every icon button labelled; browser console clean. | frontend/src/features/habits/habits-page.tsx, frontend/src/features/habits/habit-form.tsx |
 
 ---
 
@@ -293,3 +301,9 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | Navigation lives in `src/components/layout/nav-items.ts` with lucide icons House, ChartColumn, ListChecks, UserRound. | Sidebar and bottom tab bar must render the same four destinations in the same order. |
 | 2026-10-20 | Auth validation schemas (`loginSchema`, `signupSchema`, `MIN_PASSWORD_LENGTH = 8`) live in `src/lib/schemas.ts` beside the habit schema. | Keeps every zod rule in the "one place" the plan asks for; 8 characters comes from the resolved blocker entry. |
 | 2026-10-20 | Login/Sign up share `AuthShell` (centered card, no nav) and `AuthField` (label + input + inline error). | PRD requires public screens without tab bar or sidebar, and both forms need identical field markup. |
+| 2026-10-20 | Habit icon is a preset key from a 17-icon lucide set in `habit-icons.ts`; unknown keys fall back to the dumbbell. | The PRD asks for a preset set, and the fallback keeps hand-edited or corrupted `localStorage` data from crashing a card. |
+| 2026-10-20 | Habit colors are the 8 hex values in `habit-colors.ts` (orange, amber, red, pink, purple, blue, cyan, teal); the glyph color is auto-picked (white or `#1C1B19`) from luminance. | One stored hex must stay legible in both themes; green is left out because the PRD reserves it for "completed". |
+| 2026-10-20 | New habits default to all seven days; the card shows one "Every day" chip when all are selected, otherwise the short day names. | Daily is the safest default for a habit tracker and keeps long weekday rows readable at 375px. |
+| 2026-10-20 | HabitForm uses one Radix dialog styled as a full-screen sheet below 768px and a centered `max-w-md` modal above. | PRD asks for "full screen on mobile, modal on desktop" without the extra complexity of a second component. |
+| 2026-10-20 | Focus after closing the habit form/delete confirms is restored by an `onCloseAutoFocus` handler that remembers the opener; after a delete it falls back to the "New habit" button. | Radix only restores focus when a `DialogTrigger` is used and our dialogs are opened from external buttons (and the deleted row disappears). |
+| 2026-10-20 | The form reads picker values with `useWatch` instead of RHF `watch`. | `watch()` trips the React Compiler lint rule (`react-hooks/incompatible-library`); `useWatch` is the compiler-safe API. |

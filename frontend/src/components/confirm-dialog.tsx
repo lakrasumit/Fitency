@@ -17,6 +17,7 @@ type ConfirmDialogProps = {
   confirmLabel: string
   onConfirm: () => void
   destructive?: boolean
+  onCloseAutoFocus?: (event: Event) => void
 }
 
 export function ConfirmDialog({
@@ -27,10 +28,11 @@ export function ConfirmDialog({
   confirmLabel,
   onConfirm,
   destructive = true,
+  onCloseAutoFocus,
 }: ConfirmDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent onCloseAutoFocus={onCloseAutoFocus}>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>

@@ -30,7 +30,7 @@
 |---|---|---|---|
 | 0 | Project setup | Done | 7 / 7 |
 | 1 | Design system foundation | Done | 8 / 8 |
-| 2 | Data layer and logic | Not started | 0 / 8 |
+| 2 | Data layer and logic | Done | 8 / 8 |
 | 3 | App shell, routing, and auth | Not started | 0 / 7 |
 | 4 | Habits page | Not started | 0 / 8 |
 | 5 | Home (Dashboard) | Not started | 0 / 7 |
@@ -79,14 +79,14 @@ Status values: Not started, In progress, Done.
 ## Phase 2: Data layer and logic
 *PRD refs: sections 8, 9, and the placeholder data shapes.*
 
-- [ ] **2.1** Add the placeholder **types** (`Habit`, `Completion`, `User`) in a shared types file.
-- [ ] **2.2** Build **date helpers** (local `YYYY-MM-DD`, weekday numbering Mon=1 to Sun=7, range builders for week, month, year, all).
-- [ ] **2.3** Build **logic helpers** in `lib/utils/`: `isScheduled`, `completionRate`, `currentStreak`, `bestStreak`, and per-day completion %, exactly following PRD section 8 (including zero-scheduled handling with no NaN).
-- [ ] **2.4** Verify the helpers with **unit tests** covering: habit created mid-range, days with no scheduled habits (skipped in streaks), unfinished today not breaking a streak, empty ranges, and weekday filtering. (Vitest is the Vite-native choice and is a dev-only dependency; if not permitted, use a plain verification script and note it in the log.)
-- [ ] **2.5** Build the **service layer** in `lib/services/` with simulated delay and `localStorage` persistence: habits (`getHabits`, `createHabit`, `updateHabit`, `deleteHabit`), completions (`getCompletions`, `toggleCompletion`), and mock auth (`signUp`, `logIn`, `logOut`, `getCurrentUser`, `updateName`, `deleteAccount`).
-- [ ] **2.6** Make the service layer **fail gracefully** if `localStorage` is unavailable or corrupted (return an error, never crash).
-- [ ] **2.7** Build **Zustand stores** (habits, completions, auth) that call only the service layer, expose loading and error state, and use `persist` only where appropriate.
-- [ ] **2.8** Enforce validation rules in one place (zod schemas): habit name required, trimmed, max 40 chars, unique (case-insensitive), at least one weekday.
+- [x] **2.1** Add the placeholder **types** (`Habit`, `Completion`, `User`) in a shared types file.
+- [x] **2.2** Build **date helpers** (local `YYYY-MM-DD`, weekday numbering Mon=1 to Sun=7, range builders for week, month, year, all).
+- [x] **2.3** Build **logic helpers** in `lib/utils/`: `isScheduled`, `completionRate`, `currentStreak`, `bestStreak`, and per-day completion %, exactly following PRD section 8 (including zero-scheduled handling with no NaN).
+- [x] **2.4** Verify the helpers with **unit tests** covering: habit created mid-range, days with no scheduled habits (skipped in streaks), unfinished today not breaking a streak, empty ranges, and weekday filtering. (Vitest is the Vite-native choice and is a dev-only dependency; if not permitted, use a plain verification script and note it in the log.)
+- [x] **2.5** Build the **service layer** in `lib/services/` with simulated delay and `localStorage` persistence: habits (`getHabits`, `createHabit`, `updateHabit`, `deleteHabit`), completions (`getCompletions`, `toggleCompletion`), and mock auth (`signUp`, `logIn`, `logOut`, `getCurrentUser`, `updateName`, `deleteAccount`).
+- [x] **2.6** Make the service layer **fail gracefully** if `localStorage` is unavailable or corrupted (return an error, never crash).
+- [x] **2.7** Build **Zustand stores** (habits, completions, auth) that call only the service layer, expose loading and error state, and use `persist` only where appropriate.
+- [x] **2.8** Enforce validation rules in one place (zod schemas): habit name required, trimmed, max 40 chars, unique (case-insensitive), at least one weekday.
 
 **Done when:** logic helpers pass their tests, and the stores can create a habit, toggle a completion, and recompute stats in a quick throwaway check.
 **Commit:** `feat: add types, logic helpers, mock service layer, and stores`
@@ -226,6 +226,14 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | 1.6 | Built ProgressRing (SVG, clamps value, `role="progressbar"` with aria value min/max/now and label, themed track/progress, reduced-motion guard). Verified semantics and visuals at 0/40/100%. | frontend/src/components/progress-ring.tsx |
 | 2026-10-20 | 1.7 | Built BottomSheet (Vaul drawer below 768px, Radix dialog at ≥768px, shared title/description/content/footer) and ConfirmDialog (AlertDialog). Verified drawer at 375px, centered modal at 1280px, and confirm/cancel behavior. | frontend/src/components/bottom-sheet.tsx, frontend/src/components/confirm-dialog.tsx, frontend/src/components/use-media-query.ts |
 | 2026-10-20 | 1.8 | Added temporary dev-only style preview at `?preview` (StylePreview) covering tokens, type, buttons, inputs, skeleton, ring, empty state, sheet/modal, confirm, and toasts. Verified in the browser at 375px and 1280px, light and dark, with visible focus ring. To be removed in Phase 8. | frontend/src/components/style-preview.tsx, frontend/src/App.tsx |
+| 2026-10-20 | 2.1 | Added the shared `Habit`, `Completion`, and `User` types matching PRD section 9. Lint + build pass. | frontend/src/lib/types.ts |
+| 2026-10-20 | 2.2 | Added local `YYYY-MM-DD` helpers, Monday=1 weekday numbering, and week/month/year/all range builders that separate full-period days from elapsed days (future days excluded from stats). Lint + build pass. | frontend/src/lib/utils/date.ts |
+| 2026-10-20 | 2.3 | Added `isScheduled`, `completionRate`, `perDayCompletion`, `currentStreak`, and `bestStreak` with creation-date capping, weekday filtering, skipped unscheduled days, unfinished-today handling, and `null` percentages when nothing is scheduled. | frontend/src/lib/utils/habits.ts |
+| 2026-10-20 | 2.4 | Added Vitest (dev-only, plan-approved) with a `test` script and 25 unit tests covering mid-range creation, weekday filtering, zero-scheduled/empty ranges, streak gaps, unfinished today, and all-habits-required days. `npm run test`, lint, and build pass. | frontend/src/lib/utils/habits.test.ts, frontend/package.json |
+| 2026-10-20 | 2.5 | Built the mock service layer for auth, habits, and completions with 200-500ms simulated delay, per-user localStorage keys, ISO `createdAt`, duplicate-name checks, and cascade delete of completions. Verified with a temporary in-memory-storage check (signup/login, CRUD, toggle, stats); check file removed afterwards. | frontend/src/lib/services/** |
+| 2026-10-20 | 2.6 | Added typed `ServiceError` and guarded storage reads/writes with validators; unavailable or corrupted localStorage rejects with a user-facing message instead of crashing. Temporary check verified both paths. | frontend/src/lib/services/storage.ts, frontend/src/lib/services/errors.ts |
+| 2026-10-20 | 2.7 | Added habits, completions, and auth Zustand stores with loading/error state, optimistic completion toggle with rollback, and reset actions for account deletion. Temporary store check confirmed habit creation, check-in toggle, 100% recompute, and rollback on an invalid date. | frontend/src/store/** |
+| 2026-10-20 | 2.8 | Added `habitFieldsSchema` plus `createHabitSchema` (trim, required, max 40, case-insensitive unique, at least one weekday) and wired the habit service to it. Rules verified in the temporary check. | frontend/src/lib/schemas.ts, frontend/src/lib/services/habits.ts |
 
 ---
 
@@ -265,3 +273,11 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | Responsive overlay: `BottomSheet` renders a Vaul drawer below 768px and a Radix dialog at ≥768px; media query via `useMediaQuery`. | Matches PRD (bottom sheet on mobile, modal on desktop) and the 768px breakpoint used by navigation. |
 | 2026-10-20 | Dev style preview lives at `src/components/style-preview.tsx`, shown when `?preview` is present in dev builds. | Temporary per plan; easy to find and delete in Phase 8. Not included in production routing. |
 | 2026-10-20 | shadcn's sonner wrapper imports the custom `useTheme` instead of `next-themes`. | Keeps a single theme source; `next-themes` is not installed. |
+| 2026-10-20 | Shared app types live in `src/lib/types.ts`; `HabitInput` is derived from `Habit` for forms and the service. | One place for the PRD's data shapes plus the create/edit payload without repeating fields. |
+| 2026-10-20 | `Habit.createdAt` is stored as a full ISO timestamp (`new Date().toISOString()`) and converted to a local `YYYY-MM-DD` key for scheduling. | Matches the PRD's "ISO date" shape while keeping weekday/creation comparisons in device-local time. |
+| 2026-10-20 | Mock data is namespaced per user under `fitency:data:<userId>:habits|completions`; the mock session and credentials live under `fitency:auth`. | Keeps accounts private if two people use the same browser and lets delete-account remove only that user's data. |
+| 2026-10-20 | Zustand stores use no `persist` middleware. | The service layer already owns localStorage; persisting store snapshots would create a second source of truth and bypass the single data-access point. |
+| 2026-10-20 | Completion toggles update the store optimistically and roll back to the previous list if the service fails. | PRD requires check-off updates immediately; the 200-500ms mock delay would otherwise make the UI feel unresponsive. |
+| 2026-10-20 | Habit validation lives in `src/lib/schemas.ts`; `createHabitSchema(habits, editingId?)` covers field rules plus case-insensitive uniqueness, and the service parses inputs through it. | PRD 2.8 asks for one validation source shared by the future form and the service. |
+| 2026-10-20 | Vitest 5 added as a dev-only dependency with `npm run test`. | Plan 2.4 explicitly allows Vitest; helpers are pure and need no DOM environment. |
+| 2026-10-20 | Mock auth stores the typed password as-is in localStorage and returns only `User` fields to the UI. | It is a fake auth layer for the MVP; no real credentials or backend exist. To be replaced by the real auth service later. |

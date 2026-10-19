@@ -33,7 +33,7 @@
 | 2 | Data layer and logic | Done | 8 / 8 |
 | 3 | App shell, routing, and auth | Done | 7 / 7 |
 | 4 | Habits page | Done | 8 / 8 |
-| 5 | Home (Dashboard) | Not started | 0 / 7 |
+| 5 | Home (Dashboard) | Done | 7 / 7 |
 | 6 | Analytics | Not started | 0 / 8 |
 | 7 | Account | Not started | 0 / 5 |
 | 8 | Polish: states, responsive, accessibility | Not started | 0 / 6 |
@@ -131,13 +131,13 @@ Status values: Not started, In progress, Done.
 ## Phase 5: Home (Dashboard)
 *PRD refs: section 7.1.*
 
-- [ ] **5.1** Build **GreetingHeader** (greeting, today's date, avatar).
-- [ ] **5.2** Build **TodayProgressCard** (ProgressRing with "X / Y done" and percentage).
-- [ ] **5.3** Build **StreakBadge** using the PRD streak rule.
-- [ ] **5.4** Build **HabitItem** (accessible checkbox) and the **Pending / Completed** lists. Only habits scheduled today appear; checking and un-checking is **today only**.
-- [ ] **5.5** Build **OverallProgressCard** (completed % vs left %, donut or bar) with the **Week / Month / All** toggle (default Week).
-- [ ] **5.6** Add states: **loading** (skeletons), **empty, no habits** ("Add your first habit" button), **empty, nothing scheduled today**, **all done** (positive message), and **error**.
-- [ ] **5.7** Confirm that every check or un-check updates the ring, lists, percentages, and streak immediately.
+- [x] **5.1** Build **GreetingHeader** (greeting, today's date, avatar).
+- [x] **5.2** Build **TodayProgressCard** (ProgressRing with "X / Y done" and percentage).
+- [x] **5.3** Build **StreakBadge** using the PRD streak rule.
+- [x] **5.4** Build **HabitItem** (accessible checkbox) and the **Pending / Completed** lists. Only habits scheduled today appear; checking and un-checking is **today only**.
+- [x] **5.5** Build **OverallProgressCard** (completed % vs left %, donut or bar) with the **Week / Month / All** toggle (default Week).
+- [x] **5.6** Add states: **loading** (skeletons), **empty, no habits** ("Add your first habit" button), **empty, nothing scheduled today**, **all done** (positive message), and **error**.
+- [x] **5.7** Confirm that every check or un-check updates the ring, lists, percentages, and streak immediately.
 
 **Done when:** the full Home flow works end to end against mock data at 375px and 1280px, in both themes.
 **Commit:** `feat: add Home dashboard with today's habits, streak, and overall progress`
@@ -249,6 +249,13 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | 4.6 | Wired "+ New habit" (header and empty state), Edit (pre-filled values) and Delete (ConfirmDialog naming the habit and its check-ins). Verified live: create/update/delete all toast and update the list and storage; a seeded check-in for the deleted habit was also removed from `completions`. | frontend/src/features/habits/habits-page.tsx, frontend/src/components/confirm-dialog.tsx |
 | 2026-10-20 | 4.7 | Added the loading skeleton (`aria-busy`, "Loading habits"), the "No habits yet" empty state with a CTA, and an error state with "Try again". Verified live: the skeleton was observed during a reload, empty state on a fresh account, and a corrupted-storage reload showed the corrupted-data message, then recovered the list after restoring data and pressing Try again. | frontend/src/features/habits/habits-page.tsx |
 | 2026-10-20 | 4.8 | Checked keyboard access and labels: full Tab traversal (name -> 17 icons -> 8 colors -> shortcuts -> 7 days -> Cancel -> submit), Escape closes, focus returns to the opener (custom `onCloseAutoFocus`, since Radix only restores with DialogTrigger), dialog labelled by title/description, groups labelled Icon/Color/Days, every icon button labelled; browser console clean. | frontend/src/features/habits/habits-page.tsx, frontend/src/features/habits/habit-form.tsx |
+| 2026-10-20 | 5.1 | Built GreetingHeader: time-of-day greeting with the user's first name, formatted date, and initials avatar (decorative). Verified live at 375px and 1280px, light and dark: "Good morning, Alex", "Tuesday, 20 October", "AR". | frontend/src/features/home/greeting-header.tsx |
+| 2026-10-20 | 5.2 | Built TodayProgressCard around ProgressRing with "X / Y done" and percentage. Verified live: 0/1 -> 0%, 1/1 -> 100%, 1/3 -> 33%, 3/3 -> 100%, with the aria-label and visual ring updating. | frontend/src/features/home/today-progress-card.tsx |
+| 2026-10-20 | 5.3 | Built StreakBadge from currentStreak. Verified live: no completions -> "No streak yet"; all three habits completed today with the previous day missed -> "1 day streak". | frontend/src/features/home/streak-badge.tsx |
+| 2026-10-20 | 5.4 | Built HabitItem with a Radix checkbox (`role="checkbox"`, "Check off/Uncheck {name}") and the Pending/Completed sections. Verified live: a Monday-only habit was absent on Tuesday; Space checked a habit into Completed (line-through) and back; only today's habits render. | frontend/src/features/home/habit-item.tsx, frontend/src/features/home/home-page.tsx |
+| 2026-10-20 | 5.5 | Built OverallProgressCard with a stacked completed/left bar and Week/Month/All `aria-pressed` buttons (Week default). Verified against seeded history: Week 25%, Month/All 22%, all-done Week 75%; a range with no scheduled days shows "Nothing scheduled in this period." | frontend/src/features/home/overall-progress-card.tsx |
+| 2026-10-20 | 5.6 | Added loading skeletons (`aria-busy`, "Loading your dashboard"), the no-habits empty state with an "Add your first habit" CTA, nothing-scheduled-today, all-done, and the corrupted-storage error with "Try again". Verified live: each state appeared; the CTA navigated to `/habits`; retry recovered after restoring data. | frontend/src/features/home/home-page.tsx |
+| 2026-10-20 | 5.7 | Confirmed every check/uncheck updates the ring, Pending/Completed lists, percentages, streak, and storage without a reload, and survives a reload. Screenshots checked at 375px and 1280px in light and dark; console had no errors or warnings. | frontend/src/features/home/home-page.tsx, frontend/src/store/completions-store.ts |
 
 ---
 
@@ -307,3 +314,9 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | HabitForm uses one Radix dialog styled as a full-screen sheet below 768px and a centered `max-w-md` modal above. | PRD asks for "full screen on mobile, modal on desktop" without the extra complexity of a second component. |
 | 2026-10-20 | Focus after closing the habit form/delete confirms is restored by an `onCloseAutoFocus` handler that remembers the opener; after a delete it falls back to the "New habit" button. | Radix only restores focus when a `DialogTrigger` is used and our dialogs are opened from external buttons (and the deleted row disappears). |
 | 2026-10-20 | The form reads picker values with `useWatch` instead of RHF `watch`. | `watch()` trips the React Compiler lint rule (`react-hooks/incompatible-library`); `useWatch` is the compiler-safe API. |
+| 2026-10-20 | Home completions use the already-installed `radix-ui` `Checkbox.Root` in HabitItem, labelled "Check off {name}" / "Uncheck {name}". | PRD asks for a tap-to-complete checkbox; Radix was already installed through shadcn and provides keyboard/focus behavior without a new dependency. |
+| 2026-10-20 | Greeting is "Good morning" before 12:00, "Good afternoon" before 18:00, and "Good evening" after; it uses the user's first name, and the initials avatar is decorative (`aria-hidden`, no click action). | PRD only asks for a greeting, date, and avatar; the Account tab already provides account access, so no undefined avatar action was added. |
+| 2026-10-20 | A zero current streak renders "No streak yet" instead of "0 days". | Friendly empty label for the badge while the PRD gives no zero-streak copy. |
+| 2026-10-20 | When no habits are scheduled today, the Today's progress card is replaced by the "Nothing scheduled today" empty state; the streak badge and overall card remain. | A 0/0 ring would be misleading, and overall progress is still meaningful on a rest day. |
+| 2026-10-20 | Overall progress is a stacked completed/left bar with Week/Month/All segmented buttons (`aria-pressed`); an empty range says "Nothing scheduled in this period." | PRD allows a donut or bar, asks for completed vs left, and requires the three ranges, default Week. |
+| 2026-10-20 | Home keeps the app shell's single capped content column at 768px and up, with cards stacked in the PRD's top-to-bottom order, instead of a multi-column dashboard grid. | PRD section 7.1 fixes the Home order; the single column matches the already-approved shell. Flagged for the user if a desktop card grid is preferred. |

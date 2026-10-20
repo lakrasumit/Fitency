@@ -37,7 +37,7 @@
 | 6 | Analytics | Done | 8 / 8 |
 | 7 | Account | Done | 5 / 5 |
 | 8 | Polish: states, responsive, accessibility | Done | 6 / 6 |
-| 9 | Final QA | Not started | 0 / 6 |
+| 9 | Final QA | Done | 6 / 6 |
 
 Status values: Not started, In progress, Done.
 
@@ -192,12 +192,12 @@ Status values: Not started, In progress, Done.
 
 ## Phase 9: Final QA
 
-- [ ] **9.1** `npm run lint` passes with no warnings.
-- [ ] **9.2** `npm run build` passes with no errors, and `npm run preview` works.
-- [ ] **9.3** Full manual walkthrough as a new user: sign up, create habits, check them off, view Analytics, change theme, edit name, log out, log back in, delete a habit, delete the account.
-- [ ] **9.4** Confirm **no backend or API code** exists and the service layer is the only data access point.
-- [ ] **9.5** Confirm **nothing from "Future / out of scope"** was built.
-- [ ] **9.6** Update `README` with setup steps, scripts, and a short note on the service layer (so the backend developer knows what to replace).
+- [x] **9.1** `npm run lint` passes with no warnings.
+- [x] **9.2** `npm run build` passes with no errors, and `npm run preview` works.
+- [x] **9.3** Full manual walkthrough as a new user: sign up, create habits, check them off, view Analytics, change theme, edit name, log out, log back in, delete a habit, delete the account.
+- [x] **9.4** Confirm **no backend or API code** exists and the service layer is the only data access point.
+- [x] **9.5** Confirm **nothing from "Future / out of scope"** was built.
+- [x] **9.6** Update `README` with setup steps, scripts, and a short note on the service layer (so the backend developer knows what to replace).
 
 **Done when:** every box in this file is `[x]` or has a logged reason.
 **Commit:** `docs: finalize README and complete MVP frontend`
@@ -275,6 +275,12 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | 8.4 | Added a global `prefers-reduced-motion: reduce` rule that collapses animations, transitions, and smooth scrolling to 0.01ms for all elements and pseudo-elements; Recharts animations are already disabled. | frontend/src/styles/index.css |
 | 2026-10-20 | 8.5 | Walked PRD section 11 and confirmed each case: no-habits, none-scheduled, and all-done states; mid-range creation and zero-scheduled ranges covered by 30 unit tests; duplicate/over-length/no-weekday validation; habit delete cascades completions; long names truncate with a full-name tooltip; Analytics first-use empty state; corrupted localStorage errors; no-flash theme persistence; keyboard and screen-reader use of checkboxes, heatmap cells, and sheets. | frontend/src/lib/utils/habits.test.ts, frontend/src/lib/services/** |
 | 2026-10-20 | 8.6 | Removed the dev-only style preview component/route and the temporary `public/__audit.html` harness; searched `src/` for preview code and console statements (none left). `npm run lint`, 30/30 tests, and `npm run build` pass. | frontend/src/App.tsx, frontend/src/components/style-preview.tsx (deleted) |
+| 2026-10-20 | 9.1 | `npm run lint` produced no output, and `npx eslint . --max-warnings 0` exited 0. | frontend/eslint.config.js |
+| 2026-10-20 | 9.2 | `npm run build` passed TypeScript and Vite (3154 modules); only Vite's advisory chunk-size warning appeared. `npm run preview -- --port 4173 --strictPort` served the production build with HTTP 200 at `localhost:4173`. | frontend/dist/**, frontend/package.json |
+| 2026-10-20 | 9.3 | Full new-user walkthrough against the production preview: signed up; saw the no-habits Home empty state; created "Morning run" (daily) and "Strength training" (Mon/Wed/Fri); confirmed only today's habit showed; checked it off (100%, 1-day streak, all-done state); reviewed Analytics Month/Week/Year, today's heatmap cell and DayDetailSheet; switched to Dark and reloaded; renamed the profile; logged out and back in; deleted Strength training with its confirmation; deleted the account and landed on Sign up. Console was clean and the only network requests were the preview origin's static assets. | frontend/src/features/** |
+| 2026-10-20 | 9.4 | Searched `src/` for `fetch(`, axios, XMLHttpRequest, WebSocket, EventSource, `/api/`, and `http(s)://` (no matches). Habit/completion/auth data access only appears in `src/lib/services/**`; the only other storage user is the documented theme preference in `components/theme/theme-storage.ts`. | frontend/src/lib/services/**, frontend/src/store/** |
+| 2026-10-20 | 9.5 | Confirmed the router has only `/`, `/analytics`, `/habits`, `/account`, `/login`, `/signup`, and a not-found route. No PWA manifest, service worker, or install prompt exists, and searches found none of the out-of-scope features (workout logging, exercise library, body stats, routines, targets, reminders, archive, per-habit detail, social sign-in, week-start setting). | frontend/src/routes/app-routes.tsx, frontend/public/ |
+| 2026-10-20 | 9.6 | README now lists `npm run test`, the production preview steps, and a service-layer table naming each file's functions and the current mock keys, plus the note that only the service layer needs replacing for a real backend. Prettier check passes; lint, 30/30 tests, and build pass. | frontend/README.md |
 
 ---
 
@@ -351,3 +357,4 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | Toggling a Home habit sets a `focusHabitId` and passes `autoFocus` to the moved row, so keyboard focus follows the habit between Pending and Completed. | Radix keeps focus on a checkbox that stays mounted, but the row remounts in the other list; without this, focus fell back to the page body after every Space press. |
 | 2026-10-20 | Light `--destructive` is `#B91C1C` and the Account avatar tint is `primary/5`. | Lighthouse found 4.25:1 and 3.66:1 destructive text and 4.48:1 avatar initials on tinted surfaces; the darker red and lighter tint clear 4.5:1 without changing the palette's hue. |
 | 2026-10-20 | Active navigation uses `font-semibold` (plus the existing sidebar filled pill) in addition to the primary color. | WCAG 1.4.1: active state must not rely on color alone; weight and the pill remain visible in both themes. |
+| 2026-10-20 | The production build keeps a single ~936 kB JS chunk (285 kB gzip) and the Vite >500 kB advisory warning is left unaddressed. | The MVP has two users and no observed loading problem; code-splitting would be speculative optimization, which AGENTS.md forbids without a real need. Logged here so the warning is not mistaken for a failure. |

@@ -34,7 +34,7 @@
 | 3 | App shell, routing, and auth | Done | 7 / 7 |
 | 4 | Habits page | Done | 8 / 8 |
 | 5 | Home (Dashboard) | Done | 7 / 7 |
-| 6 | Analytics | Not started | 0 / 8 |
+| 6 | Analytics | Done | 8 / 8 |
 | 7 | Account | Not started | 0 / 5 |
 | 8 | Polish: states, responsive, accessibility | Not started | 0 / 6 |
 | 9 | Final QA | Not started | 0 / 6 |
@@ -147,14 +147,14 @@ Status values: Not started, In progress, Done.
 ## Phase 6: Analytics
 *PRD refs: section 7.3.*
 
-- [ ] **6.1** Build **RangeSwitcher** (Week / Month / Year, default Month).
-- [ ] **6.2** Build **StatCard** and the 2x2 summary grid: completion rate, current streak, best streak, total check-ins.
-- [ ] **6.3** Build the custom **Heatmap** (CSS grid, days shaded by completion %, keyboard-focusable cells, accessible labels).
-- [ ] **6.4** Build **DayDetailSheet** (read-only; bottom sheet on mobile, modal on desktop) listing which habits were done and not done that day.
-- [ ] **6.5** Build **TrendChart** with Recharts, including an accessible text summary.
-- [ ] **6.6** Build **HabitBreakdown** (per-habit completion %).
-- [ ] **6.7** Add states: **loading** (skeletons), **empty** ("Complete a few habits to see your analytics" with a link to Home), and **error**.
-- [ ] **6.8** Cross-check every figure against the logic helpers on a small hand-calculated dataset.
+- [x] **6.1** Build **RangeSwitcher** (Week / Month / Year, default Month).
+- [x] **6.2** Build **StatCard** and the 2x2 summary grid: completion rate, current streak, best streak, total check-ins.
+- [x] **6.3** Build the custom **Heatmap** (CSS grid, days shaded by completion %, keyboard-focusable cells, accessible labels).
+- [x] **6.4** Build **DayDetailSheet** (read-only; bottom sheet on mobile, modal on desktop) listing which habits were done and not done that day.
+- [x] **6.5** Build **TrendChart** with Recharts, including an accessible text summary.
+- [x] **6.6** Build **HabitBreakdown** (per-habit completion %).
+- [x] **6.7** Add states: **loading** (skeletons), **empty** ("Complete a few habits to see your analytics" with a link to Home), and **error**.
+- [x] **6.8** Cross-check every figure against the logic helpers on a small hand-calculated dataset.
 
 **Done when:** all Analytics sections respond correctly to the range switcher, and numbers match the hand-calculated check.
 **Commit:** `feat: add Analytics with heatmap, trend chart, and per-habit breakdown`
@@ -256,6 +256,14 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | 5.5 | Built OverallProgressCard with a stacked completed/left bar and Week/Month/All `aria-pressed` buttons (Week default). Verified against seeded history: Week 25%, Month/All 22%, all-done Week 75%; a range with no scheduled days shows "Nothing scheduled in this period." | frontend/src/features/home/overall-progress-card.tsx |
 | 2026-10-20 | 5.6 | Added loading skeletons (`aria-busy`, "Loading your dashboard"), the no-habits empty state with an "Add your first habit" CTA, nothing-scheduled-today, all-done, and the corrupted-storage error with "Try again". Verified live: each state appeared; the CTA navigated to `/habits`; retry recovered after restoring data. | frontend/src/features/home/home-page.tsx |
 | 2026-10-20 | 5.7 | Confirmed every check/uncheck updates the ring, Pending/Completed lists, percentages, streak, and storage without a reload, and survives a reload. Screenshots checked at 375px and 1280px in light and dark; console had no errors or warnings. | frontend/src/features/home/home-page.tsx, frontend/src/store/completions-store.ts |
+| 2026-10-20 | 6.1 | Built RangeSwitcher (Week / Month / Year segmented control, `aria-pressed`, 36px targets), defaulting to Month. Verified in iframes at 375px and 1280px in both themes: Month is selected on load, clicking Year moves the pressed state, no horizontal scroll, sidebar/tab-bar switch correct. | frontend/src/features/analytics/range-switcher.tsx, frontend/src/features/analytics/analytics-page.tsx |
+| 2026-10-20 | 6.2 | Built StatCard and the 2x2 summary grid (completion rate, current streak, best streak, total check-ins). Verified against a hand-built dataset at 375px and 1280px in both themes: Month 86% (38 of 44), 4-day current streak, 6-day best streak, 38 check-ins; Week 100% (5 of 5), 2/2-day streaks, 5 check-ins; no horizontal scroll. | frontend/src/features/analytics/stat-card.tsx, frontend/src/features/analytics/analytics-page.tsx, frontend/src/lib/utils/habits.ts |
+| 2026-10-20 | 6.3 | Built the custom Heatmap: a Monday-first calendar grid for Week/Month with day numbers, and a horizontally scrolling contribution grid for Year with month labels and auto-scroll to current data. Six shade levels (future/none/0%/1-49%/50-99%/100%), disabled future and unscheduled cells, full date + count labels on every cell. Verified at 375px and 1280px in both themes: 31 month cells (20 enabled, 11 future), 365 year cells, 12 month labels, page never scrolls horizontally, programmatic focus reaches the first enabled cell. | frontend/src/features/analytics/heatmap.tsx, frontend/src/features/analytics/analytics-page.tsx |
+| 2026-10-20 | 6.4 | Built the read-only DayDetailSheet with Done/Not done lists. Verified live at 375px (375x331 bottom drawer, auto-focused Close) and 1280px (384px centered modal) in light and dark: Oct 16 showed "1 of 3 habits completed (33%)." with Morning run done and both other habits not done; Escape and Close both closed it and returned focus to the triggering heatmap cell; no horizontal scroll. | frontend/src/features/analytics/day-detail-sheet.tsx, frontend/src/features/analytics/analytics-page.tsx, frontend/src/components/bottom-sheet.tsx |
+| 2026-10-20 | 6.5 | Built TrendChart with Recharts (line, 0-100% axis, no dots in Year, gaps for unscheduled days) and a visible figcaption summary. Verified live at 375px and 1280px in light and dark across all three ranges: Month showed "1 Oct to 20 Oct: 20 days ... 16 at 100%, lowest 0%", Week 2 fully-completed elapsed days, Year 81 scheduled days; chart re-rendered on each range switch, no horizontal overflow. | frontend/src/features/analytics/trend-chart.tsx, frontend/src/features/analytics/analytics-page.tsx |
+| 2026-10-20 | 6.6 | Built HabitBreakdown with a color-matched progress bar and "completed of scheduled" detail for every habit. Verified live at 375px and 1280px in light and dark: Month showed Morning run 90% (18/20), Strength training 88% (7/8), Evening walk 81% (13/16); Week 100% for all, Year 22% (18/81), 33% (7/21), 81% (13/16), summing to the 32% Year summary; no horizontal overflow. | frontend/src/features/analytics/habit-breakdown.tsx, frontend/src/features/analytics/analytics-page.tsx |
+| 2026-10-20 | 6.7 | Added the loading skeletons (range, 2x2 cards, heatmap, trend, breakdown; `aria-busy` + "Loading your analytics"), the empty state with the exact copy and a "Go to Home" link to `/`, and an error card with "Try again". Verified live: 8 skeletons appeared during reloads at 375px and 1280px; empty state in both themes at both widths with no charts/range shown; a corrupted completions read showed the storage error, then restoring the data and pressing Try again brought back 86% / 38 of 44; no horizontal overflow. | frontend/src/features/analytics/analytics-page.tsx |
+| 2026-10-20 | 6.8 | Added range-bounded streak tests and a hand-calculated 3-habit, 7-day dataset (scheduled 15, completed 11 = 73%; daily 6/7 = 86%, MWF 2/3 = 67%, late habit 3/5 = 60%; per-day 100/100/67/100/0/100/50%; best streak 2, current 1). Every summary, heatmap, trend, streak, and breakdown figure is produced by the same helpers. `npm run test` passes 30/30, plus lint and build. | frontend/src/lib/utils/habits.test.ts |
 
 ---
 
@@ -320,3 +328,9 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | When no habits are scheduled today, the Today's progress card is replaced by the "Nothing scheduled today" empty state; the streak badge and overall card remain. | A 0/0 ring would be misleading, and overall progress is still meaningful on a rest day. |
 | 2026-10-20 | Overall progress is a stacked completed/left bar with Week/Month/All segmented buttons (`aria-pressed`); an empty range says "Nothing scheduled in this period." | PRD allows a donut or bar, asks for completed vs left, and requires the three ranges, default Week. |
 | 2026-10-20 | Home keeps the app shell's single capped content column at 768px and up, with cards stacked in the PRD's top-to-bottom order, instead of a multi-column dashboard grid. | PRD section 7.1 fixes the Home order; the single column matches the already-approved shell. Flagged for the user if a desktop card grid is preferred. |
+| 2026-10-20 | Analytics uses an optional `fromKey` argument on `currentStreak`/`bestStreak` so both are bounded by the selected Week/Month/Year start; completion rate and total check-ins use elapsed days only. | PRD 7.3 says all figures respect the selected range, and the resolved question says future days are excluded from stats. Existing callers keep the old all-history behaviour by omitting the argument. |
+| 2026-10-20 | Heatmap layout: calendar grid (7 columns, day numbers) for Week and Month, contribution grid (7 weekday rows, week columns) for Year, with the year view auto-scrolled to today. Shade levels are neutral (no habits), success/10 (0%), success/25 (1-49%), success/45 (50-99%), solid success (100%). | The calendar is easier to scan for short ranges; the contribution grid keeps a whole year visible at a glance. Auto-scroll avoids opening on months before the account existed. Future days and days with nothing scheduled are disabled, per the resolved plan question. |
+| 2026-10-20 | The mobile `BottomSheet` sets Vaul's `autoFocus`, moving focus to the sheet's first control; `DayDetailSheet` uses the same `onCloseAutoFocus` opener-restore pattern as the habit dialogs. | Vaul defaults `autoFocus` to false, leaving keyboard focus on the page behind the modal; closing must return focus to the heatmap cell that opened it. |
+| 2026-10-20 | Completion trend uses a line chart for all ranges; elapsed days with no scheduled habits are gaps, and a visible `figcaption` gives the period, scheduled-day count, number of 100% days, and the lowest day. | A line stays readable for a year's elapsed days where bars would be too narrow; the caption is the accessible summary required by the plan. |
+| 2026-10-20 | Habit breakdown keeps the habit list order, uses each habit's saved color for its bar, and shows both the rounded percentage and `completed of scheduled`. | Matches the order users see on the Habits page; the count makes a rounded percentage auditable, and the per-habit figures sum to the summary totals. |
+| 2026-10-20 | Analytics shows the empty state when the user has no habits **or** no completions at all; an error replaces the analytics content with a retry card instead of showing partial or stale figures. | Both cases mean there is no progress to analyse, and hiding sections on failure prevents a failed completions read from looking like 0% progress. |

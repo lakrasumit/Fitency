@@ -66,15 +66,17 @@ export function currentStreak(
   habits: Habit[],
   completions: Completion[],
   todayKey: string,
+  fromKey?: string,
 ): number {
   const earliest = earliestHabitDateKey(habits)
   if (!earliest) return 0
 
+  const stopKey = fromKey && fromKey > earliest ? fromKey : earliest
   const completedKeys = buildCompletionKeys(completions)
   let cursor = parseDateKey(todayKey)
   let streak = 0
 
-  while (toDateKey(cursor) >= earliest) {
+  while (toDateKey(cursor) >= stopKey) {
     const key = toDateKey(cursor)
     const scheduled = getScheduledHabits(habits, key)
 
@@ -99,12 +101,16 @@ export function bestStreak(
   habits: Habit[],
   completions: Completion[],
   todayKey: string,
+  fromKey?: string,
 ): number {
   const earliest = earliestHabitDateKey(habits)
   if (!earliest) return 0
 
+  const startKey = fromKey && fromKey > earliest ? fromKey : earliest
+  if (startKey > todayKey) return 0
+
   const completedKeys = buildCompletionKeys(completions)
-  let cursor = parseDateKey(earliest)
+  let cursor = parseDateKey(startKey)
   let run = 0
   let best = 0
 

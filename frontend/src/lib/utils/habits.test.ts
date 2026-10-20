@@ -318,3 +318,101 @@ describe("bestStreak", () => {
     expect(bestStreak([makeHabit()], [], TODAY_KEY)).toBe(0)
   })
 })
+
+describe("range-bounded streaks", () => {
+  const habit = makeHabit()
+  const completions = [
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16",
+    "2026-10-17",
+    "2026-10-18",
+    "2026-10-19",
+  ].map((date) => done(habit.id, date))
+
+  it("counts the same run when no range start is given", () => {
+    expect(currentStreak([habit], completions, TODAY_KEY)).toBe(6)
+    expect(bestStreak([habit], completions, TODAY_KEY)).toBe(6)
+  })
+
+  it("cuts the run at the selected range start", () => {
+    expect(currentStreak([habit], completions, TODAY_KEY, "2026-10-17")).toBe(3)
+    expect(bestStreak([habit], completions, TODAY_KEY, "2026-10-17")).toBe(3)
+    expect(currentStreak([habit], completions, TODAY_KEY, TODAY_KEY)).toBe(0)
+  })
+})
+
+describe("analytics cross-check", () => {
+  // Hand-calculated over Wed 14 Oct through Tue 20 Oct 2026.
+  const daily = makeHabit({ id: "daily", name: "Daily" })
+  const mwf = makeHabit({
+    id: "mwf",
+    name: "MWF",
+    weekdays: [1, 3, 5],
+  })
+  const addedLate = makeHabit({
+    id: "late",
+    name: "Added late",
+    createdAt: localIso(2026, 9, 16),
+  })
+  const habits = [daily, mwf, addedLate]
+  const days = [
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16",
+    "2026-10-17",
+    "2026-10-18",
+    "2026-10-19",
+    "2026-10-20",
+  ]
+  const completions = [
+    done("daily", "2026-10-14"),
+    done("mwf", "2026-10-14"),
+    done("daily", "2026-10-15"),
+    done("daily", "2026-10-16"),
+    done("late", "2026-10-16"),
+    done("daily", "2026-10-17"),
+    done("late", "2026-10-17"),
+    done("daily", "2026-10-19"),
+    done("mwf", "2026-10-19"),
+    done("late", "2026-10-19"),
+    done("daily", "2026-10-20"),
+  ]
+
+  it("matches the hand-calculated summary and per-day figures", () => {
+    expect(completionRate(habits, completions, days)).toEqual({
+      completed: 11,
+      scheduled: 15,
+      percent: 73,
+    })
+    expect(
+      days.map((day) => perDayCompletion(habits, completions, day).percent),
+    ).toEqual([100, 100, 67, 100, 0, 100, 50])
+    expect(currentStreak(habits, completions, TODAY_KEY, days[0])).toBe(1)
+    expect(bestStreak(habits, completions, TODAY_KEY, days[0])).toBe(2)
+  })
+
+  it("per-habit figures add up to the summary totals", () => {
+    const perHabit = habits.map((habit) => ({
+      id: habit.id,
+      ...completionRate([habit], completions, days),
+    }))
+
+    expect(perHabit).toEqual([
+      { id: "daily", completed: 6, scheduled: 7, percent: 86 },
+      { id: "mwf", completed: 2, scheduled: 3, percent: 67 },
+      { id: "late", completed: 3, scheduled: 5, percent: 60 },
+    ])
+    expect(perHabit.reduce((total, habit) => total + habit.completed, 0)).toBe(
+      11,
+    )
+    expect(perHabit.reduce((total, habit) => total + habit.scheduled, 0)).toBe(
+      15,
+    )
+  })
+
+  it("returns zero when the selected range starts today and today is unfinished", () => {
+    expect(currentStreak(habits, completions, TODAY_KEY, TODAY_KEY)).toBe(0)
+    expect(bestStreak(habits, completions, TODAY_KEY, TODAY_KEY)).toBe(0)
+  })
+})

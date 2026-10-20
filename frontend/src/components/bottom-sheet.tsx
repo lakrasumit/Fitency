@@ -25,6 +25,7 @@ type BottomSheetProps = {
   className?: string
   children: ReactNode
   footer?: ReactNode
+  onCloseAutoFocus?: (event: Event) => void
 }
 
 /** Bottom sheet below 768px, centered modal from 768px up. */
@@ -36,13 +37,17 @@ export function BottomSheet({
   className,
   children,
   footer,
+  onCloseAutoFocus,
 }: BottomSheetProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className={className}>
+        <DialogContent
+          className={className}
+          onCloseAutoFocus={onCloseAutoFocus}
+        >
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             {description ? (
@@ -57,8 +62,8 @@ export function BottomSheet({
   }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className={className}>
+    <Drawer open={open} onOpenChange={onOpenChange} autoFocus>
+      <DrawerContent className={className} onCloseAutoFocus={onCloseAutoFocus}>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
           {description ? (

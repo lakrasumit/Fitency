@@ -29,6 +29,10 @@ export const signupSchema = z.object({
   password: passwordField,
 })
 
+export const accountNameSchema = z.object({
+  name: z.string().trim().min(1, "Enter your name."),
+})
+
 export const habitFieldsSchema = z.object({
   name: z
     .string()

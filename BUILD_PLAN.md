@@ -35,7 +35,7 @@
 | 4 | Habits page | Done | 8 / 8 |
 | 5 | Home (Dashboard) | Done | 7 / 7 |
 | 6 | Analytics | Done | 8 / 8 |
-| 7 | Account | Not started | 0 / 5 |
+| 7 | Account | Done | 5 / 5 |
 | 8 | Polish: states, responsive, accessibility | Not started | 0 / 6 |
 | 9 | Final QA | Not started | 0 / 6 |
 
@@ -164,11 +164,11 @@ Status values: Not started, In progress, Done.
 ## Phase 7: Account
 *PRD refs: section 7.4.*
 
-- [ ] **7.1** Build **ProfileCard** (avatar with initials fallback, name, email).
-- [ ] **7.2** Build **NameEditForm** (required, trimmed, validation, success toast).
-- [ ] **7.3** Build **ThemeSelect** (Light / Dark / System), wired to the theme system.
-- [ ] **7.4** Wire **Log out** (clear mock session, redirect to Login).
-- [ ] **7.5** Build the **DangerZone** with **Delete account** behind a ConfirmDialog (clears the user's mock data and session, then redirects).
+- [x] **7.1** Build **ProfileCard** (avatar with initials fallback, name, email).
+- [x] **7.2** Build **NameEditForm** (required, trimmed, validation, success toast).
+- [x] **7.3** Build **ThemeSelect** (Light / Dark / System), wired to the theme system.
+- [x] **7.4** Wire **Log out** (clear mock session, redirect to Login).
+- [x] **7.5** Build the **DangerZone** with **Delete account** behind a ConfirmDialog (clears the user's mock data and session, then redirects).
 
 **Done when:** all Account actions work and persist correctly, including theme across reloads.
 **Commit:** `feat: add Account page with profile, theme, logout, and delete account`
@@ -264,6 +264,11 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | 6.6 | Built HabitBreakdown with a color-matched progress bar and "completed of scheduled" detail for every habit. Verified live at 375px and 1280px in light and dark: Month showed Morning run 90% (18/20), Strength training 88% (7/8), Evening walk 81% (13/16); Week 100% for all, Year 22% (18/81), 33% (7/21), 81% (13/16), summing to the 32% Year summary; no horizontal overflow. | frontend/src/features/analytics/habit-breakdown.tsx, frontend/src/features/analytics/analytics-page.tsx |
 | 2026-10-20 | 6.7 | Added the loading skeletons (range, 2x2 cards, heatmap, trend, breakdown; `aria-busy` + "Loading your analytics"), the empty state with the exact copy and a "Go to Home" link to `/`, and an error card with "Try again". Verified live: 8 skeletons appeared during reloads at 375px and 1280px; empty state in both themes at both widths with no charts/range shown; a corrupted completions read showed the storage error, then restoring the data and pressing Try again brought back 86% / 38 of 44; no horizontal overflow. | frontend/src/features/analytics/analytics-page.tsx |
 | 2026-10-20 | 6.8 | Added range-bounded streak tests and a hand-calculated 3-habit, 7-day dataset (scheduled 15, completed 11 = 73%; daily 6/7 = 86%, MWF 2/3 = 67%, late habit 3/5 = 60%; per-day 100/100/67/100/0/100/50%; best streak 2, current 1). Every summary, heatmap, trend, streak, and breakdown figure is produced by the same helpers. `npm run test` passes 30/30, plus lint and build. | frontend/src/lib/utils/habits.test.ts |
+| 2026-10-20 | 7.1 | Built ProfileCard with a 64px initials avatar, name, and email. Verified in 375px and 1280px iframes in light and dark: the seeded account showed "AT", "Analytics Tester", and the email; name/email truncate without layout overflow, and the console had no errors. | frontend/src/features/account/profile-card.tsx, frontend/src/features/account/account-page.tsx |
+| 2026-10-20 | 7.2 | Built the NameEditForm with zod validation (required after trim), a disabled submit showing "Saving…", an inline service error, and a "Name updated." toast. Verified at 375px and 1280px in both themes: whitespace-only input showed "Enter your name."; "  Analytics Tester II  " saved trimmed, updated the profile card and Home greeting, and survived a reload; corrupting auth storage showed the inline corrupted-data error, and restoring it recovered. | frontend/src/features/account/name-edit-form.tsx, frontend/src/features/account/account-page.tsx, frontend/src/lib/schemas.ts |
+| 2026-10-20 | 7.3 | Built ThemeSelect as a three-option Light / Dark / System segmented group with icons, `aria-pressed`, and 40px targets, wired to the existing ThemeProvider. Verified live at 375px and 1280px in both themes: selecting Light/Dark/System updates `<html class="dark">` and `fitency-theme`, System matches the OS preference, the selection survives a reload, and icons/labels fit without overflow. | frontend/src/features/account/theme-select.tsx, frontend/src/features/account/account-page.tsx |
+| 2026-10-20 | 7.4 | Added the Session card with a Log out button. Verified live at 375px and 1280px: the button showed "Logging out…" and disabled while working, the mock session's `sessionUserId` became `null`, and the app redirected to `/login` with no app navigation; signing back in returned to Home. Corrupting auth storage showed the inline storage error and re-enabled the button, then restoring the session recovered. | frontend/src/features/account/account-page.tsx |
+| 2026-10-20 | 7.5 | Built the DangerZone with a destructive **Delete account** button and a ConfirmDialog (Cancel / Delete account). Verified at 375px and 1280px in both themes with no horizontal overflow and 40px targets: Cancel and Escape closed the dialog and returned focus to the trigger; deleting a disposable account with 1 habit and 1 completion removed its habits/completions keys, removed the user from auth, cleared the session, preserved the theme, and redirected to Sign up. Signing back into the seeded account showed its 3 habits and 38 completions intact. | frontend/src/features/account/danger-zone.tsx, frontend/src/features/account/account-page.tsx |
 
 ---
 
@@ -334,3 +339,6 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | Completion trend uses a line chart for all ranges; elapsed days with no scheduled habits are gaps, and a visible `figcaption` gives the period, scheduled-day count, number of 100% days, and the lowest day. | A line stays readable for a year's elapsed days where bars would be too narrow; the caption is the accessible summary required by the plan. |
 | 2026-10-20 | Habit breakdown keeps the habit list order, uses each habit's saved color for its bar, and shows both the rounded percentage and `completed of scheduled`. | Matches the order users see on the Habits page; the count makes a rounded percentage auditable, and the per-habit figures sum to the summary totals. |
 | 2026-10-20 | Analytics shows the empty state when the user has no habits **or** no completions at all; an error replaces the analytics content with a retry card instead of showing partial or stale figures. | Both cases mean there is no progress to analyse, and hiding sections on failure prevents a failed completions read from looking like 0% progress. |
+| 2026-10-20 | Account is a single-column stack of cards: profile, always-visible name form, appearance, session, and danger zone. The theme selector is a three-option `aria-pressed` segmented control with icons. | PRD allows an inline edit or small form; the single column matches the shell, and the segmented control matches the app's existing range controls while keeping all three options visible. |
+| 2026-10-20 | Deleting an account redirects to `/signup` after the user, habits, completions, and session are cleared. | PRD allows Sign up or Login; the account no longer exists, so the Sign up screen is the clearer next step. |
+| 2026-10-20 | Account action errors are tagged with the action that produced them and shown only inside that action's card; the DangerZone restores focus to its Delete account button when the confirm dialog closes. | The auth store has a single error field, so tagging avoids showing a name error in the danger zone. Radix does not restore focus to a non-trigger opener, which would otherwise leave focus on the page body. |

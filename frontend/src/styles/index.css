@@ -72,7 +72,7 @@
   --muted-foreground: #6e6963;
   --accent: #f4efea;
   --accent-foreground: #1c1b19;
-  --destructive: #dc2626;
+  --destructive: #b91c1c;
   --border: #e8e5e0;
   --input: #948c82;
   --ring: #c2410c;
@@ -154,4 +154,15 @@
 
 @utility shadow-float {
   box-shadow: var(--shadow-float);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

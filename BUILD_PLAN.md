@@ -36,7 +36,7 @@
 | 5 | Home (Dashboard) | Done | 7 / 7 |
 | 6 | Analytics | Done | 8 / 8 |
 | 7 | Account | Done | 5 / 5 |
-| 8 | Polish: states, responsive, accessibility | Not started | 0 / 6 |
+| 8 | Polish: states, responsive, accessibility | Done | 6 / 6 |
 | 9 | Final QA | Not started | 0 / 6 |
 
 Status values: Not started, In progress, Done.
@@ -178,12 +178,12 @@ Status values: Not started, In progress, Done.
 ## Phase 8: Polish: states, responsive, accessibility
 *PRD refs: sections 5, 6, and 11.*
 
-- [ ] **8.1** Walk every screen and confirm **loading, empty, and error** states exist and look right.
-- [ ] **8.2** Responsive pass at **375px, 768px, and 1280px**: no horizontal scroll, comfortable tap targets, correct nav switch at 768px.
-- [ ] **8.3** Accessibility pass: semantic landmarks and heading order, WCAG AA contrast in both themes, visible focus rings, ARIA labels on icon buttons and charts, full keyboard use of checkboxes, heatmap cells, and sheets.
-- [ ] **8.4** Respect **`prefers-reduced-motion`** for all animations and transitions.
-- [ ] **8.5** Go through the PRD **edge case list** (section 11) and confirm each one is handled.
-- [ ] **8.6** Remove the dev-only style preview route and any dead code or leftover logs.
+- [x] **8.1** Walk every screen and confirm **loading, empty, and error** states exist and look right.
+- [x] **8.2** Responsive pass at **375px, 768px, and 1280px**: no horizontal scroll, comfortable tap targets, correct nav switch at 768px.
+- [x] **8.3** Accessibility pass: semantic landmarks and heading order, WCAG AA contrast in both themes, visible focus rings, ARIA labels on icon buttons and charts, full keyboard use of checkboxes, heatmap cells, and sheets.
+- [x] **8.4** Respect **`prefers-reduced-motion`** for all animations and transitions.
+- [x] **8.5** Go through the PRD **edge case list** (section 11) and confirm each one is handled.
+- [x] **8.6** Remove the dev-only style preview route and any dead code or leftover logs.
 
 **Done when:** all edge cases in the PRD are handled and the audit finds no open accessibility or responsive issues.
 **Commit:** `fix: polish states, responsiveness, and accessibility`
@@ -269,6 +269,12 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | 7.3 | Built ThemeSelect as a three-option Light / Dark / System segmented group with icons, `aria-pressed`, and 40px targets, wired to the existing ThemeProvider. Verified live at 375px and 1280px in both themes: selecting Light/Dark/System updates `<html class="dark">` and `fitency-theme`, System matches the OS preference, the selection survives a reload, and icons/labels fit without overflow. | frontend/src/features/account/theme-select.tsx, frontend/src/features/account/account-page.tsx |
 | 2026-10-20 | 7.4 | Added the Session card with a Log out button. Verified live at 375px and 1280px: the button showed "Logging out…" and disabled while working, the mock session's `sessionUserId` became `null`, and the app redirected to `/login` with no app navigation; signing back in returned to Home. Corrupting auth storage showed the inline storage error and re-enabled the button, then restoring the session recovered. | frontend/src/features/account/account-page.tsx |
 | 2026-10-20 | 7.5 | Built the DangerZone with a destructive **Delete account** button and a ConfirmDialog (Cancel / Delete account). Verified at 375px and 1280px in both themes with no horizontal overflow and 40px targets: Cancel and Escape closed the dialog and returned focus to the trigger; deleting a disposable account with 1 habit and 1 completion removed its habits/completions keys, removed the user from auth, cleared the session, preserved the theme, and redirected to Sign up. Signing back into the seeded account showed its 3 habits and 38 completions intact. | frontend/src/features/account/danger-zone.tsx, frontend/src/features/account/account-page.tsx |
+| 2026-10-20 | 8.1 | Audited loading, empty, and error states on Home, Habits, Analytics, Account, and Login: skeletons, no-habits/rest-day/all-done states, the first-use Analytics empty state, corrupted-storage errors with retry, and inline form errors. Fixed Home so any load error shows a retry card instead of stale stats, and added a retry button to the Habits partial-error state. | frontend/src/features/home/home-page.tsx, frontend/src/features/habits/habits-page.tsx |
+| 2026-10-20 | 8.2 | Responsive pass at exact 375px, 768px, and 1280px in light and dark: measured `innerWidth`/`clientWidth`/`scrollWidth` on every screen and confirmed no horizontal overflow; the sidebar is visible at 768px and the bottom tab bar below it; active nav is not color-only; nav, range controls, habit actions, swatches, weekday chips, and dialog close meet 40px targets. | frontend/src/styles/index.css, frontend/src/components/layout/**, frontend/src/features/** |
+| 2026-10-20 | 8.3 | Accessibility pass: one h1 per screen with ordered h2/h3 sections; header/nav/main landmarks; Lighthouse accessibility 1.0 on Home, Habits, Analytics, Account, and Login; fixed the account avatar and destructive-text contrast (light `--destructive` now `#B91C1C`); visible 3px focus rings; Space toggles a habit and focus follows it between Pending and Completed; Enter opens a heatmap day and Escape restores focus to the cell; the habit dialog traps focus and returns it to the opener. | frontend/src/styles/index.css, frontend/src/features/home/**, frontend/src/features/account/profile-card.tsx |
+| 2026-10-20 | 8.4 | Added a global `prefers-reduced-motion: reduce` rule that collapses animations, transitions, and smooth scrolling to 0.01ms for all elements and pseudo-elements; Recharts animations are already disabled. | frontend/src/styles/index.css |
+| 2026-10-20 | 8.5 | Walked PRD section 11 and confirmed each case: no-habits, none-scheduled, and all-done states; mid-range creation and zero-scheduled ranges covered by 30 unit tests; duplicate/over-length/no-weekday validation; habit delete cascades completions; long names truncate with a full-name tooltip; Analytics first-use empty state; corrupted localStorage errors; no-flash theme persistence; keyboard and screen-reader use of checkboxes, heatmap cells, and sheets. | frontend/src/lib/utils/habits.test.ts, frontend/src/lib/services/** |
+| 2026-10-20 | 8.6 | Removed the dev-only style preview component/route and the temporary `public/__audit.html` harness; searched `src/` for preview code and console statements (none left). `npm run lint`, 30/30 tests, and `npm run build` pass. | frontend/src/App.tsx, frontend/src/components/style-preview.tsx (deleted) |
 
 ---
 
@@ -342,3 +348,6 @@ Status values: Not started, In progress, Done.
 | 2026-10-20 | Account is a single-column stack of cards: profile, always-visible name form, appearance, session, and danger zone. The theme selector is a three-option `aria-pressed` segmented control with icons. | PRD allows an inline edit or small form; the single column matches the shell, and the segmented control matches the app's existing range controls while keeping all three options visible. |
 | 2026-10-20 | Deleting an account redirects to `/signup` after the user, habits, completions, and session are cleared. | PRD allows Sign up or Login; the account no longer exists, so the Sign up screen is the clearer next step. |
 | 2026-10-20 | Account action errors are tagged with the action that produced them and shown only inside that action's card; the DangerZone restores focus to its Delete account button when the confirm dialog closes. | The auth store has a single error field, so tagging avoids showing a name error in the danger zone. Radix does not restore focus to a non-trigger opener, which would otherwise leave focus on the page body. |
+| 2026-10-20 | Toggling a Home habit sets a `focusHabitId` and passes `autoFocus` to the moved row, so keyboard focus follows the habit between Pending and Completed. | Radix keeps focus on a checkbox that stays mounted, but the row remounts in the other list; without this, focus fell back to the page body after every Space press. |
+| 2026-10-20 | Light `--destructive` is `#B91C1C` and the Account avatar tint is `primary/5`. | Lighthouse found 4.25:1 and 3.66:1 destructive text and 4.48:1 avatar initials on tinted surfaces; the darker red and lighter tint clear 4.5:1 without changing the palette's hue. |
+| 2026-10-20 | Active navigation uses `font-semibold` (plus the existing sidebar filled pill) in addition to the primary color. | WCAG 1.4.1: active state must not rely on color alone; weight and the pill remain visible in both themes. |

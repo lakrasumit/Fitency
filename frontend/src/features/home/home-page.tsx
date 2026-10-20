@@ -39,6 +39,7 @@ export function HomePage() {
   )
 
   const [range, setRange] = useState<OverallRange>("week")
+  const [focusHabitId, setFocusHabitId] = useState<string | null>(null)
 
   useEffect(() => {
     void loadHabits()
@@ -76,6 +77,11 @@ export function HomePage() {
     void loadCompletions()
   }
 
+  function toggleHabit(habitId: string) {
+    setFocusHabitId(habitId)
+    void toggleCompletion(habitId, todayKey)
+  }
+
   if (!user) return null
 
   return (
@@ -96,7 +102,7 @@ export function HomePage() {
           </div>
           <Skeleton className="h-40 rounded-xl" />
         </div>
-      ) : error && habits.length === 0 ? (
+      ) : error ? (
         <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-4">
           <p role="alert" className="text-sm text-destructive">
             {error}
@@ -153,9 +159,8 @@ export function HomePage() {
                         <HabitItem
                           habit={habit}
                           completed={false}
-                          onToggle={() =>
-                            void toggleCompletion(habit.id, todayKey)
-                          }
+                          autoFocus={habit.id === focusHabitId}
+                          onToggle={() => toggleHabit(habit.id)}
                         />
                       </li>
                     ))}
@@ -180,9 +185,8 @@ export function HomePage() {
                         <HabitItem
                           habit={habit}
                           completed
-                          onToggle={() =>
-                            void toggleCompletion(habit.id, todayKey)
-                          }
+                          autoFocus={habit.id === focusHabitId}
+                          onToggle={() => toggleHabit(habit.id)}
                         />
                       </li>
                     ))}
@@ -191,12 +195,6 @@ export function HomePage() {
               ) : null}
             </>
           )}
-
-          {error ? (
-            <p role="alert" className="text-sm text-destructive">
-              {error}
-            </p>
-          ) : null}
 
           <OverallProgressCard
             stats={overallStats}

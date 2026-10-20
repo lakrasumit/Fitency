@@ -18,7 +18,7 @@ export function BottomTabBar() {
                 cn(
                   "flex h-16 flex-col items-center justify-center gap-1 text-[0.7rem] font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset",
                   isActive
-                    ? "text-primary"
+                    ? "font-semibold text-primary"
                     : "text-muted-foreground hover:text-foreground",
                 )
               }

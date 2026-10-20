@@ -5,14 +5,21 @@ import type { Habit } from "@/lib/types"
 type HabitItemProps = {
   habit: Habit
   completed: boolean
+  autoFocus?: boolean
   onToggle: () => void
 }
 
-export function HabitItem({ habit, completed, onToggle }: HabitItemProps) {
+export function HabitItem({
+  habit,
+  completed,
+  autoFocus,
+  onToggle,
+}: HabitItemProps) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-3">
       <Checkbox.Root
         checked={completed}
+        autoFocus={autoFocus}
         onCheckedChange={() => onToggle()}
         aria-label={
           completed ? `Uncheck ${habit.name}` : `Check off ${habit.name}`
@@ -26,6 +33,7 @@ export function HabitItem({ habit, completed, onToggle }: HabitItemProps) {
         </span>
       </Checkbox.Root>
       <p
+        title={habit.name}
         className={
           completed
             ? "min-w-0 flex-1 truncate text-sm text-muted-foreground line-through"

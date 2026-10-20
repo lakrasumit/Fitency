@@ -50,7 +50,7 @@ export function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
         <Button
           type="button"
           variant="ghost"
-          size="icon-sm"
+          size="icon"
           aria-label={`Edit ${habit.name}`}
           onClick={() => onEdit(habit)}
         >
@@ -59,7 +59,7 @@ export function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
         <Button
           type="button"
           variant="ghost"
-          size="icon-sm"
+          size="icon"
           aria-label={`Delete ${habit.name}`}
           onClick={() => onDelete(habit)}
         >

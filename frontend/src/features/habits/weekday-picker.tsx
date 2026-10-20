@@ -41,7 +41,8 @@ export function WeekdayPicker({
           <Button
             type="button"
             variant="ghost"
-            size="xs"
+            size="sm"
+            className="min-h-10"
             onClick={() => onChange([...EVERY_DAY])}
           >
             Every day
@@ -49,7 +50,8 @@ export function WeekdayPicker({
           <Button
             type="button"
             variant="ghost"
-            size="xs"
+            size="sm"
+            className="min-h-10"
             onClick={() => onChange([...WEEKDAYS])}
           >
             Weekdays
@@ -70,7 +72,7 @@ export function WeekdayPicker({
               key={option.value}
               type="button"
               variant="outline"
-              size="sm"
+              size="default"
               aria-label={option.label}
               aria-pressed={selected}
               className={cn(

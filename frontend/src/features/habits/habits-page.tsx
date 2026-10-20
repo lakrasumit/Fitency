@@ -129,9 +129,19 @@ export function HabitsPage() {
       ) : (
         <div className="space-y-3">
           {error ? (
-            <p role="alert" className="text-sm text-destructive">
-              {error}
-            </p>
+            <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-4">
+              <p role="alert" className="text-sm text-destructive">
+                {error}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                onClick={() => void loadHabits()}
+              >
+                Try again
+              </Button>
+            </div>
           ) : null}
           <HabitList
             habits={habits}

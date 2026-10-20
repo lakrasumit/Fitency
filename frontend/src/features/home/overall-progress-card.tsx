@@ -48,7 +48,7 @@ export function OverallProgressCard({
                 type="button"
                 aria-pressed={selected}
                 className={cn(
-                  "rounded-full px-3 py-1 text-xs font-medium outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+                  "flex min-h-10 min-w-10 items-center justify-center rounded-full px-3 text-xs font-medium outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
                   selected
                     ? "bg-background text-foreground shadow-soft"
                     : "text-muted-foreground hover:text-foreground",

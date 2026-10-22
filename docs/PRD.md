@@ -69,7 +69,7 @@ Fitency is currently:
 | Analytics | Implemented with caveats | Summary, heatmap, trend, breakdown, and history exist; planned totals include unsaved suggested weekdays. |
 | Local persistence | Implemented with caveats | `localStorage` services, validation, and serialised writes exist; no export, versioning, or sync. |
 | Responsive shell | Implemented | Desktop sidebar and mobile bottom tab bar; three active destinations. |
-| Light/dark theming | Partially implemented | Theme engine and tokens exist, but the only theme picker was on the now-hidden Account page. System theme is still implemented. |
+| Light/dark theming | Implemented | Theme engine, tokens, and a compact header toggle are available on every active route; the choice persists locally. A stored `system` preference is resolved on use. |
 | Account/auth UI | Intentionally hidden | `/account`, `/login`, and `/signup` are not routed; no active navigation links to them. Source files remain. |
 | Habit management | Missing | No habit model, service, store, route, navigation item, or UI exists. |
 | Light/dark-only theme policy | Missing / pending | Current code supports `light`, `dark`, and `system`; the decision requires removing `system`. |
@@ -82,12 +82,12 @@ Fitency is currently:
 - `npm run lint` — passed.
 - `npm run build` — passed; production bundle emitted with a chunk-size warning.
 - Live smoke test — active navigation showed Home, Analytics, and Library; `/account`, `/login`, and `/signup` resolved to the 404 page.
+- Theme toggle smoke test — the control appeared in the Home, Analytics, and Library headers; it switched Light/Dark immediately, updated its accessible label, and persisted the choice to `fitency-theme`.
 - Source inspection — all status claims above were checked against the current files.
 
 ### Requires Verification Before Future Work
 
 - Whether analytics should count unsaved suggested workouts as planned days.
-- Where theme selection should live after removing the Account page.
 - What “relevant” means for displaying the future New Habit FAB.
 - Whether a future backend or data migration will replace the current local persistence model.
 - Whether hidden account/auth features will be reactivated, and under what security requirements.
@@ -261,7 +261,8 @@ No habit functionality is implemented. See [Habit Management](#9-habit-managemen
 - An inline script in `index.html` applies the stored theme before first paint to prevent a flash.
 - The theme provider persists changes and listens for operating-system theme changes while the theme is `system`.
 - The current `Theme` type is `light | dark | system`; the default is `system`.
-- The only theme selector is `ThemeSelect` inside the Account page, which is no longer routed. The active application therefore has no visible theme control, although saved or system-derived theme values still apply.
+- A compact `ThemeToggle` in the Home greeting header and the shared page header (Analytics and Library) switches between Light and Dark. When the stored value is `system`, it resolves the current appearance and then stores an explicit choice.
+- The toggle exposes a dynamic accessible label describing the next theme and remains keyboard accessible.
 
 ### 6.2 Target Policy
 
@@ -273,6 +274,7 @@ No habit functionality is implemented. See [Habit Management](#9-habit-managemen
 ### 6.3 Theme Requirements
 
 - Theme changes must apply immediately and persist locally.
+- The theme control must be available in the header on every active route.
 - Both themes must retain accessible text and control contrast.
 - Theme handling must not cause a flash of the wrong theme on load.
 - Removing the System option must not break stored preferences or the initial theme bootstrap.
@@ -448,7 +450,6 @@ No habit requirements should be treated as implemented until code exists and is 
 | Medium | Date context can become stale across midnight | Home’s selected date and `todayKey` are not refreshed by a timer or visibility event; an app left open can record to the previous day. | Verified by source inspection |
 | Medium | Analytics includes unsaved suggested weekdays | `aggregateStats`, heatmap, trend, and breakdown use `resolveWorkout`, which falls back to templates. Copy says figures come from recorded reps/statuses. | Verified; product semantics need confirmation |
 | Medium | Library replacement lacks a confirmation step | Template sheet warns about replacement and then adds immediately when the button is pressed. | Verified |
-| Medium | No visible theme control after Account removal | Theme picker exists only inside the unrouted Account page; saved/system theme still applies. | Verified |
 | Medium | System theme still supported despite Light/Dark-only decision | `Theme` includes `system`; provider listens to OS changes; picker lists System. | Verified; change pending |
 | Medium | Accessibility target and label issues | Date-strip accessible names do not contain visible text on 15 buttons; year heatmap cells are 12 px; some exercise controls are below recommended touch size. | Verified by live audit/source |
 | Medium | Bundle and font payload are large | Build warning for >500 kB chunk; eager routes and all font subsets included. | Verified by build |
@@ -469,6 +470,7 @@ Do not re-plan these as future work:
 - Removal of Account, Login, and Sign Up from the active navigation and routing.
 - Preservation of account/auth components in source.
 - Three-item responsive navigation.
+- Compact Light/Dark theme toggle in the header on every active route.
 - Local profile bootstrap for normal application operation.
 
 ### 12.2 Confirmed but Not Implemented
@@ -488,7 +490,6 @@ These require explicit approval before implementation:
 - Refresh “today” automatically across midnight and visibility changes.
 - Resolve analytics semantics for unsaved suggested days.
 - Add a confirmation or undo step before replacing a Library workout.
-- Relocate or redesign theme selection so Light/Dark remains accessible after account removal.
 - Lazy-load Analytics, subset fonts to Latin, and evaluate chunk splitting.
 - Improve touch targets and date-strip accessible names.
 - Add integration tests for persistence, rollback, routing, date rollover, and theme behaviour.

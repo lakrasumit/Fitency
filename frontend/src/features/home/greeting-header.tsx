@@ -1,4 +1,5 @@
 import { format } from "date-fns"
+import { ThemeToggle } from "@/components/theme/theme-toggle"
 import type { User } from "@/lib/types"
 
 type GreetingHeaderProps = {
@@ -36,12 +37,15 @@ export function GreetingHeader({ user }: GreetingHeaderProps) {
           {format(today, "EEEE, d MMMM")}
         </p>
       </div>
-      <span
-        aria-hidden
-        className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 via-primary/10 to-transparent font-heading text-sm font-semibold text-primary shadow-soft ring-1 ring-primary/20"
-      >
-        {initials(user.name)}
-      </span>
+      <div className="flex shrink-0 items-center gap-2">
+        <ThemeToggle />
+        <span
+          aria-hidden
+          className="flex size-11 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 via-primary/10 to-transparent font-heading text-sm font-semibold text-primary shadow-soft ring-1 ring-primary/20"
+        >
+          {initials(user.name)}
+        </span>
+      </div>
     </header>
   )
 }

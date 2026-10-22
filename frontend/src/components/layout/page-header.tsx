@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { ThemeToggle } from "@/components/theme/theme-toggle"
 
 type PageHeaderProps = {
   title: string
@@ -21,7 +22,10 @@ export function PageHeader({ title, description, children }: PageHeaderProps) {
           <p className="text-sm text-muted-foreground">{description}</p>
         ) : null}
       </div>
-      {children}
+      <div className="flex items-center gap-2">
+        {children}
+        <ThemeToggle />
+      </div>
     </header>
   )
 }

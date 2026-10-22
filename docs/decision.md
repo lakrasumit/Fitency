@@ -154,7 +154,7 @@ Contrary to the confirmed target, the current source still supports three values
 - `ThemeProvider` listens for `prefers-color-scheme` changes while the theme is `system`.
 - `ThemeSelect` includes a System option.
 - The inline theme bootstrap in `index.html` treats missing or `system` values as device-driven.
-- The only theme selector is inside the Account page, which is no longer routed. The active app therefore has no visible theme control.
+- A compact `ThemeToggle` in the Home greeting header and the shared page header switches between Light and Dark. When the stored value is `system`, the toggle uses the current appearance and stores an explicit Light or Dark choice.
 
 ### Constraints
 
@@ -163,7 +163,7 @@ Contrary to the confirmed target, the current source still supports three values
 - Define a deterministic default for users with no stored preference.
 - Define how existing stored `system` values migrate or fall back; do not leave an unsupported value in storage without handling.
 - Keep both Light and Dark token sets and verify contrast in both.
-- Decide where the theme control lives now that the Account page is hidden. Reusing the old Account page is not an acceptable active solution.
+- Keep the compact header toggle as the primary Light/Dark control on all active routes; do not reactivate the Account page as a settings surface.
 
 ### Status Rationale
 
@@ -367,7 +367,6 @@ The production JavaScript bundle is approximately 957.75 kB raw / 290.91 kB gzip
 - Re-enabling Login, Sign Up, Account, or auth guards.
 - Changing analytics semantics for suggested days.
 - Changing persistence, storage schema, or adding a backend.
-- Relocating theme controls.
 - Adding new navigation destinations.
 - Large visual redesigns or component-library replacements.
 - Adding a data export/import feature.
@@ -403,8 +402,6 @@ The following questions are intentionally left open. Do not infer answers from t
 
 - What is the default theme when no preference exists after System is removed?
 - How should stored `system` values be migrated?
-- Where should the Light/Dark control live now that the Account page is hidden?
-- Should the theme control appear on all screens, only settings surfaces, or a compact persistent control?
 
 ### Analytics
 

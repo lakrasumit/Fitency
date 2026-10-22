@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router"
 import { AppShell } from "@/components/layout/app-shell"
-import { AccountPage } from "@/features/account/account-page"
 import { AnalyticsPage } from "@/features/analytics/analytics-page"
 import { LibraryPage } from "@/features/library/library-page"
 import { HomePage } from "@/features/home/home-page"
@@ -16,7 +15,6 @@ export function AppRoutes() {
             <Route index element={<HomePage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="library" element={<LibraryPage />} />
-            <Route path="account" element={<AccountPage />} />
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />

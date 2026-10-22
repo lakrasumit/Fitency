@@ -9,7 +9,7 @@ export function LoginPage() {
       description="Pick up your workouts where you left off."
       footer={
         <span>
-          New to Everyday?{" "}
+          New to Fitency?{" "}
           <Link
             to="/signup"
             className="font-medium text-primary underline-offset-4 hover:underline"

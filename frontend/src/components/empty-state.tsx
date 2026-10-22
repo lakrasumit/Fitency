@@ -18,7 +18,7 @@ export function EmptyState({
       {Icon ? (
         <span
           aria-hidden
-          className="flex size-14 items-center justify-center rounded-full bg-muted text-muted-foreground"
+          className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-muted to-muted/40 text-muted-foreground shadow-soft ring-1 ring-border/60"
         >
           <Icon className="size-6" />
         </span>

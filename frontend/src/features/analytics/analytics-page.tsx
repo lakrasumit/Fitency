@@ -134,7 +134,7 @@ export function AnalyticsPage() {
             <h2 id="analytics-summary-title" className="sr-only">
               Summary
             </h2>
-            <dl className="grid grid-cols-2 gap-3">
+            <dl className="stagger-children grid grid-cols-2 gap-3">
               <StatCard
                 icon={Target}
                 label="Workout completion"

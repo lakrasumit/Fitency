@@ -35,7 +35,7 @@ export function ExerciseCard({
   const progress = Math.round(exerciseProgress(exercise) * 100)
 
   return (
-    <li className="rounded-xl border border-border/60 bg-card p-4">
+    <li className="surface-card interactive-card rounded-xl border border-border/60 bg-card p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <button
@@ -109,7 +109,10 @@ export function ExerciseCard({
         aria-hidden
         className="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-muted"
       >
-        <div className="bg-success" style={{ width: `${progress}%` }} />
+        <div
+          className="bg-gradient-to-r from-success to-success/70 transition-[width] duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        />
       </div>
 
       <div className="mt-3 flex flex-wrap gap-1 border-t border-border/60 pt-2">
@@ -152,7 +155,7 @@ function RepInput({
   onCommit,
 }: RepInputProps) {
   return (
-    <label className="flex items-center justify-between gap-2 rounded-lg bg-muted/50 px-2.5 py-1.5">
+    <label className="flex items-center justify-between gap-2 rounded-lg bg-muted/50 px-2.5 py-1.5 transition-colors duration-200 hover:bg-muted/80 focus-within:bg-muted/80 focus-within:ring-2 focus-within:ring-ring/20">
       <span className="text-xs text-muted-foreground">{label}</span>
       <span className="flex items-center gap-1">
         <Input

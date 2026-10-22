@@ -18,7 +18,7 @@ export function RangeSwitcher({ range, onRangeChange }: RangeSwitcherProps) {
     <div
       role="group"
       aria-label="Analytics range"
-      className="flex w-full gap-1 rounded-full bg-muted p-1 sm:w-fit"
+      className="flex w-full gap-1 rounded-full bg-muted/80 p-1 ring-1 ring-border/50 ring-inset sm:w-fit"
     >
       {RANGES.map((option) => {
         const selected = range === option.value
@@ -28,7 +28,7 @@ export function RangeSwitcher({ range, onRangeChange }: RangeSwitcherProps) {
             type="button"
             aria-pressed={selected}
             className={cn(
-              "flex min-h-10 flex-1 items-center justify-center rounded-full px-4 text-sm font-medium outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 sm:flex-none",
+              "flex min-h-10 flex-1 items-center justify-center rounded-full px-4 text-sm font-medium outline-none transition-all duration-200 focus-visible:ring-3 focus-visible:ring-ring/50 sm:flex-none",
               selected
                 ? "bg-background text-foreground shadow-soft"
                 : "text-muted-foreground hover:text-foreground",

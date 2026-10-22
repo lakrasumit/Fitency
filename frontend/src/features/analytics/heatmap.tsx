@@ -55,7 +55,7 @@ export function Heatmap({
   return (
     <section
       aria-labelledby="heatmap-title"
-      className="rounded-xl border border-border/60 bg-card p-5"
+      className="surface-card rounded-xl border border-border/60 p-5"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="heatmap-title" className="font-heading text-base font-semibold">
@@ -248,9 +248,9 @@ function HeatmapCell({
       title={label}
       onClick={() => onSelectDay(day.date)}
       className={cn(
-        "outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+        "relative outline-none transition-[transform,background-color,color,box-shadow] duration-150 ease-out focus-visible:ring-3 focus-visible:ring-ring/50",
         day.interactive
-          ? "cursor-pointer hover:ring-2 hover:ring-foreground/25"
+          ? "cursor-pointer hover:ring-2 hover:ring-foreground/25 motion-safe:hover:scale-110"
           : "cursor-default",
         levelClass(levelFor(day)),
         className,
@@ -279,12 +279,15 @@ function levelFor(day: HeatmapDay): Level {
 type Level = "future" | "none" | "zero" | "some" | "high" | "full"
 
 const LEVEL_CLASSES: Record<Level, string> = {
-  future: "bg-muted/40 text-muted-foreground/40",
+  future: "bg-muted/30 text-muted-foreground/40",
   none: "bg-muted/40 text-muted-foreground/60",
   zero: "bg-muted text-muted-foreground",
-  some: "bg-success/25 text-foreground",
-  high: "bg-success/45 text-foreground",
-  full: "bg-success text-success-foreground",
+  some:
+    "bg-gradient-to-br from-success/30 to-success/15 text-foreground",
+  high:
+    "bg-gradient-to-br from-success/55 to-success/35 text-foreground",
+  full:
+    "bg-gradient-to-br from-success to-success/80 text-success-foreground shadow-[0_0_0_1px_color-mix(in_oklab,var(--success)_35%,transparent)]",
 }
 
 function levelClass(level: Level): string {

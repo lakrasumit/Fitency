@@ -38,7 +38,7 @@ export function GreetingHeader({ user }: GreetingHeaderProps) {
       </div>
       <span
         aria-hidden
-        className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 font-heading text-sm font-semibold text-primary"
+        className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 via-primary/10 to-transparent font-heading text-sm font-semibold text-primary shadow-soft ring-1 ring-primary/20"
       >
         {initials(user.name)}
       </span>

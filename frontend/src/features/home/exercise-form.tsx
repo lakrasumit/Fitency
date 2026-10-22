@@ -108,7 +108,7 @@ export function ExerciseForm({
           onSubmit={handleSubmit(onSubmit)}
           className="flex h-full min-h-0 flex-col"
         >
-          <div className="space-y-1 border-b px-4 py-4 sm:px-6">
+          <div className="space-y-1 border-b bg-gradient-to-r from-primary/5 via-transparent to-transparent px-4 py-4 sm:px-6">
             <DialogTitle className="text-lg">
               {exercise ? "Edit exercise" : "Add exercise"}
             </DialogTitle>
@@ -216,7 +216,7 @@ export function ExerciseForm({
             </div>
           </div>
 
-          <div className="flex gap-2 border-t px-4 py-4 sm:px-6">
+          <div className="flex gap-2 border-t bg-gradient-to-t from-muted/60 to-muted/20 px-4 py-4 sm:px-6">
             <Button
               type="button"
               variant="outline"

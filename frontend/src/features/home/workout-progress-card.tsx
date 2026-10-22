@@ -29,7 +29,7 @@ export function WorkoutProgressCard({
   return (
     <section
       aria-labelledby="workout-progress-title"
-      className="rounded-xl border border-border/60 bg-card p-5"
+      className="surface-card rounded-xl border border-border/60 p-5"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2
@@ -41,7 +41,7 @@ export function WorkoutProgressCard({
         <div
           role="group"
           aria-label="Training progress range"
-          className="flex gap-1 rounded-full bg-muted p-1"
+          className="flex gap-1 rounded-full bg-muted/80 p-1 ring-1 ring-border/50 ring-inset"
         >
           {RANGES.map((option) => {
             const selected = range === option.value
@@ -51,7 +51,7 @@ export function WorkoutProgressCard({
                 type="button"
                 aria-pressed={selected}
                 className={cn(
-                  "flex min-h-10 min-w-10 items-center justify-center rounded-full px-3 text-xs font-medium outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+                  "flex min-h-10 min-w-10 items-center justify-center rounded-full px-3 text-xs font-medium outline-none transition-all duration-200 focus-visible:ring-3 focus-visible:ring-ring/50",
                   selected
                     ? "bg-background text-foreground shadow-soft"
                     : "text-muted-foreground hover:text-foreground",
@@ -74,18 +74,18 @@ export function WorkoutProgressCard({
           <div
             role="img"
             aria-label={`${completedPercent}% of workouts completed, ${partialPercent}% partially completed, ${leftPercent}% not started`}
-            className="mt-4 flex h-3 w-full overflow-hidden rounded-full bg-muted"
+            className="mt-4 flex h-3 w-full overflow-hidden rounded-full bg-muted ring-1 ring-border/50 ring-inset"
           >
             <div
-              className="bg-success"
+              className="bg-gradient-to-r from-success to-success/70 transition-[width] duration-700 ease-out"
               style={{ width: `${completedPercent}%` }}
             />
             <div
-              className="bg-primary"
+              className="bg-gradient-to-r from-primary to-primary/70 transition-[width] duration-700 ease-out"
               style={{ width: `${partialPercent}%` }}
             />
             <div
-              className="bg-muted-foreground/20"
+              className="bg-muted-foreground/20 transition-[width] duration-700 ease-out"
               style={{ width: `${leftPercent}%` }}
             />
           </div>

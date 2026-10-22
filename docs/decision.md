@@ -90,10 +90,12 @@ Preserve the existing UI, layout, visual language, and design system unless a ch
 
 - Tailwind CSS tokens and shadcn/Radix primitives.
 - Warm neutral palette with an orange primary accent.
+- Subtle surface gradients on the page background, cards, headers, sidebar, and bottom navigation.
 - Roboto body text and Roboto Condensed headings.
 - Desktop sidebar, mobile bottom tab bar.
 - Rounded cards, soft shadows, compact analytics cards, responsive dialogs and bottom sheets.
 - Light and dark token sets in `src/styles/index.css`.
+- CSS-only hover, focus, entrance, and state transitions, reduced under `prefers-reduced-motion`.
 
 ### Constraints
 

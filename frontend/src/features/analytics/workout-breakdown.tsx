@@ -57,7 +57,7 @@ export function WorkoutBreakdown({ days, records }: WorkoutBreakdownProps) {
   return (
     <section
       aria-labelledby="breakdown-title"
-      className="rounded-xl border border-border/60 bg-card p-5"
+      className="surface-card rounded-xl border border-border/60 p-5"
     >
       <h2 id="breakdown-title" className="font-heading text-base font-semibold">
         Workout breakdown
@@ -83,7 +83,7 @@ export function WorkoutBreakdown({ days, records }: WorkoutBreakdownProps) {
                   <div className="flex min-w-0 items-center gap-2">
                     <span
                       aria-hidden
-                      className="flex size-7 shrink-0 items-center justify-center rounded-full text-white"
+                      className="flex size-7 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
                       style={{ backgroundColor: meta.color }}
                     >
                       <Icon className="size-3.5" />
@@ -99,10 +99,10 @@ export function WorkoutBreakdown({ days, records }: WorkoutBreakdownProps) {
 
                 <div
                   aria-hidden
-                  className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-muted"
+                  className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-muted ring-1 ring-border/40 ring-inset"
                 >
                   <div
-                    className="h-full rounded-full"
+                    className="h-full rounded-full transition-[width] duration-700 ease-out"
                     style={{
                       width: `${percent}%`,
                       backgroundColor: meta.color,

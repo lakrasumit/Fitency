@@ -58,10 +58,10 @@ export function LibraryPage() {
         description="Pre-filled sessions you can add to any date."
       />
 
-      <div className="mb-6 flex items-start gap-3 rounded-xl border border-border/60 bg-card p-4">
+      <div className="surface-card mb-6 flex items-start gap-3 rounded-xl border border-border/60 p-4">
         <span
           aria-hidden
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
+          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 text-primary ring-1 ring-primary/15"
         >
           <Dumbbell className="size-4" />
         </span>
@@ -99,7 +99,7 @@ export function LibraryPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="stagger-children grid gap-3 sm:grid-cols-2">
           {WORKOUT_TEMPLATES.map((template) => (
             <TemplateCard
               key={template.id}

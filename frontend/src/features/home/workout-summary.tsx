@@ -25,13 +25,13 @@ export function WorkoutSummary({
   return (
     <section
       aria-labelledby="workout-summary-title"
-      className="rounded-xl border border-border/60 bg-card p-5"
+      className="surface-card rounded-xl border border-border/60 p-5"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
           <span
             aria-hidden
-            className="flex size-11 shrink-0 items-center justify-center rounded-full text-white"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
             style={{ backgroundColor: meta.color }}
           >
             <Icon className="size-5" />
@@ -85,7 +85,7 @@ export function WorkoutSummary({
           </ProgressRing>
 
           <dl className="grid w-full grid-cols-3 gap-2 text-center">
-            <div className="rounded-lg bg-muted/60 px-2 py-3">
+            <div className="rounded-lg bg-success/10 px-2 py-3 ring-1 ring-success/15 ring-inset">
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase">
                 Done
               </dt>
@@ -93,7 +93,7 @@ export function WorkoutSummary({
                 {stats.completedExercises}
               </dd>
             </div>
-            <div className="rounded-lg bg-muted/60 px-2 py-3">
+            <div className="rounded-lg bg-primary/10 px-2 py-3 ring-1 ring-primary/15 ring-inset">
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase">
                 Partial
               </dt>
@@ -101,7 +101,7 @@ export function WorkoutSummary({
                 {stats.partialExercises}
               </dd>
             </div>
-            <div className="rounded-lg bg-muted/60 px-2 py-3">
+            <div className="rounded-lg bg-muted/60 px-2 py-3 ring-1 ring-border/50 ring-inset">
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase">
                 Left
               </dt>

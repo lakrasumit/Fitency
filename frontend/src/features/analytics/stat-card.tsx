@@ -9,9 +9,14 @@ type StatCardProps = {
 
 export function StatCard({ icon: Icon, label, value, detail }: StatCardProps) {
   return (
-    <div className="rounded-xl border border-border/60 bg-card p-4">
+    <div className="surface-card interactive-card rounded-xl border border-border/60 p-4">
       <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-        <Icon aria-hidden className="size-4" />
+        <span
+          aria-hidden
+          className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/10"
+        >
+          <Icon className="size-3.5" />
+        </span>
         {label}
       </dt>
       <dd className="mt-2">

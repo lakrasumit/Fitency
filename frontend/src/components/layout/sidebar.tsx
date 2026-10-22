@@ -6,9 +6,9 @@ export function Sidebar() {
   return (
     <nav
       aria-label="Main"
-      className="sticky top-0 hidden h-svh w-60 shrink-0 flex-col gap-6 border-r border-sidebar-border bg-sidebar px-4 py-6 md:flex"
+      className="sidebar-surface sticky top-0 hidden h-svh w-60 shrink-0 flex-col gap-6 border-r border-sidebar-border px-4 py-6 md:flex"
     >
-      <p className="px-3 font-heading text-xl font-semibold text-primary">
+      <p className="brand-gradient px-3 font-heading text-xl font-semibold">
         Fitency
       </p>
       <ul className="space-y-1">
@@ -19,14 +19,17 @@ export function Sidebar() {
               end={item.to === "/"}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                  "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 outline-none focus-visible:ring-3 focus-visible:ring-ring/50 motion-safe:hover:translate-x-0.5",
                   isActive
-                    ? "bg-sidebar-accent font-semibold text-sidebar-accent-foreground"
+                    ? "nav-item-active font-semibold text-sidebar-accent-foreground"
                     : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground",
                 )
               }
             >
-              <item.icon className="size-5" aria-hidden="true" />
+              <item.icon
+                className="size-5 transition-transform duration-200 group-hover:scale-105"
+                aria-hidden="true"
+              />
               {item.label}
             </NavLink>
           </li>

@@ -67,10 +67,10 @@ export function TemplateDetailSheet({
       }
     >
       <div className="space-y-5">
-        <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-4">
+        <div className="surface-inset flex items-start gap-3 rounded-lg p-4 ring-1 ring-border/40 ring-inset">
           <span
             aria-hidden
-            className="flex size-10 shrink-0 items-center justify-center rounded-full text-white"
+            className="flex size-10 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
             style={{ backgroundColor: meta.color }}
           >
             <Icon className="size-5" />
@@ -98,7 +98,7 @@ export function TemplateDetailSheet({
                 className="rounded-lg border border-border/60"
               >
                 <details className="group">
-                  <summary className="flex cursor-pointer list-none items-start justify-between gap-3 px-3 py-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-3 px-3 py-2 transition-colors duration-200 outline-none hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
                     <span className="flex min-w-0 gap-2">
                       <span className="text-xs text-muted-foreground tabular-nums">
                         {index + 1}.

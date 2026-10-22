@@ -71,11 +71,11 @@ export function DayDetailSheet({
         </p>
       ) : (
         <div className="space-y-4">
-          <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-4">
+          <div className="surface-inset flex items-start gap-3 rounded-lg p-4 ring-1 ring-border/40 ring-inset">
             {Icon && meta ? (
               <span
                 aria-hidden
-                className="flex size-10 shrink-0 items-center justify-center rounded-full text-white"
+                className="flex size-10 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
                 style={{ backgroundColor: meta.color }}
               >
                 <Icon className="size-5" />

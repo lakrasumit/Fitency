@@ -36,7 +36,7 @@ export function ExerciseDetailSheet({
       }
     >
       <div className="space-y-5">
-        <dl className="grid grid-cols-2 gap-3 rounded-lg bg-muted/50 p-4 text-sm">
+        <dl className="surface-inset grid grid-cols-2 gap-3 rounded-lg p-4 text-sm ring-1 ring-border/40 ring-inset">
           <div>
             <dt className="text-xs text-muted-foreground">Target</dt>
             <dd className="mt-0.5 font-medium">

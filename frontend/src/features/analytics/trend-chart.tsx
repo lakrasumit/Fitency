@@ -34,7 +34,7 @@ export function TrendChart({ range, days, records }: TrendChartProps) {
   return (
     <section
       aria-labelledby="trend-title"
-      className="rounded-xl border border-border/60 bg-card p-5"
+      className="surface-card rounded-xl border border-border/60 p-5"
     >
       <h2 id="trend-title" className="font-heading text-base font-semibold">
         Completion trend

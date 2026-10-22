@@ -62,7 +62,7 @@ export function DateStrip({ selectedDate, records, onSelect }: DateStripProps) {
   return (
     <section
       aria-labelledby="date-strip-title"
-      className="rounded-xl border border-border/60 bg-card p-3"
+      className="surface-card rounded-xl border border-border/60 p-3"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2
@@ -138,10 +138,10 @@ export function DateStrip({ selectedDate, records, onSelect }: DateStripProps) {
                 aria-label={`${format(day, "EEEE, d MMMM yyyy")}: ${statusLabel}`}
                 onClick={() => onSelect(day)}
                 className={cn(
-                  "flex min-h-16 w-12 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border px-1 py-2 outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50",
+                  "flex min-h-16 w-12 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border px-1 py-2 outline-none transition-[background-color,color,border-color,box-shadow,transform] duration-200 ease-out focus-visible:ring-3 focus-visible:ring-ring/50 motion-safe:hover:-translate-y-0.5",
                   selected
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-transparent hover:bg-muted",
+                    ? "primary-gradient border-primary text-primary-foreground"
+                    : "border-transparent hover:bg-muted hover:shadow-soft",
                   currentDay && !selected && "border-primary/40",
                 )}
               >
@@ -154,7 +154,7 @@ export function DateStrip({ selectedDate, records, onSelect }: DateStripProps) {
                 <span
                   aria-hidden
                   className={cn(
-                    "size-1.5 rounded-full",
+                    "size-1.5 rounded-full transition-colors duration-200",
                     selected
                       ? "bg-primary-foreground"
                       : !stats.hasPlan

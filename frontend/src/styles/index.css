@@ -95,6 +95,37 @@
   --sidebar-accent-foreground: #1c1b19;
   --sidebar-border: #e8e5e0;
   --sidebar-ring: #c2410c;
+
+  /* Layered surfaces and motion accents */
+  --primary-gradient: linear-gradient(180deg, #d9531a 0%, #b93d0b 100%);
+  --primary-shadow: 0 8px 18px -10px rgb(194 65 12 / 0.65);
+  --primary-shadow-hover: 0 12px 24px -10px rgb(194 65 12 / 0.72);
+  --surface-gradient:
+    radial-gradient(
+      120% 140% at 100% 0%,
+      color-mix(in oklab, var(--primary) 7%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      165deg,
+      var(--card) 0%,
+      color-mix(in oklab, var(--card) 96%, var(--background)) 60%,
+      color-mix(in oklab, var(--card) 90%, var(--background)) 100%
+    );
+  --sidebar-gradient: linear-gradient(
+    180deg,
+    var(--sidebar) 0%,
+    color-mix(in oklab, var(--sidebar) 90%, var(--background)) 100%
+  );
+  --page-glow-1: rgb(194 65 12 / 0.07);
+  --page-glow-2: rgb(37 99 235 / 0.045);
+  --page-glow-3: rgb(22 163 74 / 0.035);
+  --card-shadow:
+    0 1px 2px rgb(28 27 25 / 0.05), 0 12px 32px -22px rgb(28 27 25 / 0.35);
+  --card-shadow-hover:
+    0 2px 4px rgb(28 27 25 / 0.06), 0 20px 44px -24px rgb(28 27 25 / 0.45);
+  --skeleton-highlight: rgb(255 255 255 / 0.6);
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .dark {
@@ -134,6 +165,19 @@
   --sidebar-accent-foreground: #f4f2ef;
   --sidebar-border: #3a3530;
   --sidebar-ring: #fb923c;
+
+  /* Layered surfaces and motion accents */
+  --primary-gradient: linear-gradient(180deg, #fba25f 0%, #f2842b 100%);
+  --primary-shadow: 0 8px 20px -10px rgb(251 146 60 / 0.45);
+  --primary-shadow-hover: 0 12px 26px -10px rgb(251 146 60 / 0.55);
+  --page-glow-1: rgb(251 146 60 / 0.1);
+  --page-glow-2: rgb(96 165 250 / 0.07);
+  --page-glow-3: rgb(74 222 128 / 0.05);
+  --card-shadow:
+    0 1px 2px rgb(0 0 0 / 0.4), 0 14px 34px -22px rgb(0 0 0 / 0.8);
+  --card-shadow-hover:
+    0 2px 6px rgb(0 0 0 / 0.45), 0 22px 46px -22px rgb(0 0 0 / 0.9);
+  --skeleton-highlight: rgb(255 255 255 / 0.08);
 }
 
 @layer base {
@@ -142,9 +186,135 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(
+        56rem 38rem at 6% -10%,
+        var(--page-glow-1),
+        transparent 62%
+      ),
+      radial-gradient(
+        48rem 32rem at 104% -6%,
+        var(--page-glow-2),
+        transparent 60%
+      ),
+      radial-gradient(
+        44rem 32rem at 50% 108%,
+        var(--page-glow-3),
+        transparent 65%
+      );
+    background-repeat: no-repeat;
+    transition:
+      background-color 300ms var(--motion-ease),
+      color 300ms var(--motion-ease);
   }
   html {
     @apply font-sans;
+    background-color: var(--background);
+  }
+  ::selection {
+    background-color: color-mix(in oklab, var(--primary) 22%, transparent);
+  }
+}
+
+@layer components {
+  /* Soft layered surface used by cards, panels, and sheets. */
+  .surface-card {
+    background-image: var(--surface-gradient);
+    box-shadow: var(--card-shadow);
+  }
+
+  .surface-inset {
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--muted) 85%, transparent) 0%,
+      color-mix(in oklab, var(--muted) 55%, transparent) 100%
+    );
+  }
+
+  .sidebar-surface {
+    background-image: var(--sidebar-gradient);
+  }
+
+  .brand-gradient {
+    background-image: linear-gradient(
+      135deg,
+      var(--primary) 0%,
+      color-mix(in oklab, var(--primary) 62%, var(--foreground)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Opt-in lift and shadow response for interactive cards. */
+  .interactive-card {
+    transition:
+      transform 240ms var(--motion-ease),
+      box-shadow 240ms var(--motion-ease);
+  }
+
+  .interactive-card:hover {
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .primary-gradient {
+    background-image: var(--primary-gradient);
+    box-shadow: var(--primary-shadow);
+  }
+
+  .primary-gradient:hover {
+    box-shadow: var(--primary-shadow-hover);
+    filter: brightness(1.035);
+  }
+
+  .primary-gradient:active {
+    filter: brightness(0.97);
+  }
+
+  .nav-item-active {
+    position: relative;
+    background-image: linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--primary) 15%, transparent) 0%,
+      color-mix(in oklab, var(--primary) 4%, transparent) 100%
+    );
+  }
+
+  .nav-item-active::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 1.15rem;
+    width: 3px;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background-color: var(--primary);
+  }
+
+  .progress-ring-indicator {
+    filter: drop-shadow(
+      0 1px 4px color-mix(in oklab, var(--primary) 32%, transparent)
+    );
+  }
+
+  /* Shimmer is layered over the muted skeleton base. */
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%);
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--skeleton-highlight) 50%,
+      transparent 100%
+    );
   }
 }
 
@@ -156,6 +326,95 @@
   box-shadow: var(--shadow-float);
 }
 
+@keyframes fitency-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fitency-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fitency-shimmer {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(320%);
+  }
+}
+
+@keyframes fitency-soft-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .interactive-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .animate-page-in {
+    animation: fitency-page-in 380ms var(--motion-ease) backwards;
+  }
+
+  .stagger-children > * {
+    animation: fitency-rise-in 420ms var(--motion-ease) backwards;
+  }
+
+  .stagger-children > *:nth-child(2) {
+    animation-delay: 45ms;
+  }
+
+  .stagger-children > *:nth-child(3) {
+    animation-delay: 90ms;
+  }
+
+  .stagger-children > *:nth-child(4) {
+    animation-delay: 135ms;
+  }
+
+  .stagger-children > *:nth-child(5) {
+    animation-delay: 180ms;
+  }
+
+  .stagger-children > *:nth-child(6) {
+    animation-delay: 225ms;
+  }
+
+  .stagger-children > *:nth-child(n + 7) {
+    animation-delay: 270ms;
+  }
+
+  .skeleton-shimmer::after {
+    animation: fitency-shimmer 1.7s ease-in-out infinite;
+  }
+
+  .animate-soft-pulse {
+    animation: fitency-soft-pulse 1.8s ease-in-out infinite;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
@@ -164,5 +423,16 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .interactive-card:hover {
+    transform: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .brand-gradient {
+    background-image: none;
+    color: var(--foreground);
   }
 }

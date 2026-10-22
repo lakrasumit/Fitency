@@ -358,7 +358,7 @@ export function HomePage() {
                 </div>
 
                 {record.exercises.length > 0 ? (
-                  <ul className="space-y-3">
+                  <ul className="stagger-children space-y-3">
                     {record.exercises.map((exercise) => (
                       <ExerciseCard
                         key={exercise.id}
@@ -379,7 +379,7 @@ export function HomePage() {
                     ))}
                   </ul>
                 ) : (
-                  <div className="rounded-xl border border-dashed border-border p-6 text-center">
+                  <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center">
                     <p className="text-sm text-muted-foreground">
                       No exercises for this day yet. Choose a workout or add
                       your own.

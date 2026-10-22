@@ -17,11 +17,11 @@ export function TemplateCard({ template, onOpen }: TemplateCardProps) {
   )
 
   return (
-    <article className="flex flex-col rounded-xl border border-border/60 bg-card p-5">
+    <article className="surface-card interactive-card flex flex-col rounded-xl border border-border/60 bg-card p-5">
       <div className="flex items-start gap-3">
         <span
           aria-hidden
-          className="flex size-11 shrink-0 items-center justify-center rounded-full text-white"
+          className="flex size-11 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
           style={{ backgroundColor: meta.color }}
         >
           <Icon className="size-5" />
@@ -46,11 +46,14 @@ export function TemplateCard({ template, onOpen }: TemplateCardProps) {
         type="button"
         variant="outline"
         size="sm"
-        className="mt-4 self-start"
+        className="group/cta mt-4 self-start"
         onClick={() => onOpen(template)}
       >
         View &amp; add
-        <ArrowRight aria-hidden />
+        <ArrowRight
+          aria-hidden
+          className="transition-transform duration-200 group-hover/cta:translate-x-0.5"
+        />
       </Button>
     </article>
   )

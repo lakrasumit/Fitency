@@ -51,11 +51,11 @@ export function TemplatePicker({
               <button
                 type="button"
                 onClick={() => onSelect(template.id)}
-                className="flex w-full items-center gap-3 rounded-xl border border-border/60 p-3 text-left outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="flex w-full items-center gap-3 rounded-xl border border-border/60 p-3 text-left transition-[background-color,box-shadow,transform] duration-200 outline-none hover:bg-muted/60 hover:shadow-soft focus-visible:ring-3 focus-visible:ring-ring/50 motion-safe:hover:-translate-y-0.5"
               >
                 <span
                   aria-hidden
-                  className="flex size-10 shrink-0 items-center justify-center rounded-full text-white"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
                   style={{ backgroundColor: meta.color }}
                 >
                   <Icon className="size-5" />
@@ -80,7 +80,7 @@ export function TemplatePicker({
           <button
             type="button"
             onClick={() => onSelect(null)}
-            className="flex w-full items-center gap-3 rounded-xl border border-dashed border-border p-3 text-left outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="flex w-full items-center gap-3 rounded-xl border border-dashed border-border p-3 text-left outline-none transition-[background-color,box-shadow,transform] duration-200 hover:bg-muted/60 hover:shadow-soft focus-visible:ring-3 focus-visible:ring-ring/50 motion-safe:hover:-translate-y-0.5"
           >
             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
               <MoonStar aria-hidden className="size-5" />

@@ -36,7 +36,7 @@ export function WorkoutHistory({
   return (
     <section
       aria-labelledby="history-title"
-      className="rounded-xl border border-border/60 bg-card p-5"
+      className="surface-card rounded-xl border border-border/60 p-5"
     >
       <h2 id="history-title" className="font-heading text-base font-semibold">
         Workout history
@@ -59,13 +59,13 @@ export function WorkoutHistory({
             return (
               <details
                 key={record.date}
-                className="group rounded-xl border border-border/60 p-3"
+                className="group rounded-xl border border-border/60 bg-muted/10 transition-colors duration-200 open:bg-muted/20 hover:bg-muted/30"
               >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-3 py-2 outline-none transition-colors duration-200 hover:bg-muted/30 focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
                   <span className="flex min-w-0 items-center gap-3">
                     <span
                       aria-hidden
-                      className="flex size-9 shrink-0 items-center justify-center rounded-full text-white"
+                      className="flex size-9 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
                       style={{ backgroundColor: meta.color }}
                     >
                       <Icon className="size-4" />
@@ -95,7 +95,7 @@ export function WorkoutHistory({
                   </span>
                 </summary>
 
-                <ul className="mt-3 space-y-2 border-t border-border/60 pt-3">
+                <ul className="mt-1 space-y-2 border-t border-border/60 px-3 py-3">
                   {record.exercises.map((exercise) => (
                     <li
                       key={exercise.id}

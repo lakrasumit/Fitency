@@ -216,8 +216,11 @@ No habit functionality is implemented. See [Habit Management](#9-habit-managemen
 
 - Existing warm neutral palette with an orange primary accent.
 - Token-based colours for background, cards, borders, text, destructive states, success states, charts, and sidebar.
+- Subtle layered gradients on page backgrounds, cards, headers, the sidebar, and bottom navigation, using a restrained primary tint and faint complementary glows.
+- Primary actions and selected states use a soft orange gradient with light elevation; status surfaces use low-opacity success and primary tints.
 - Typography: Roboto for body text and Roboto Condensed for headings.
 - Rounded cards, pill controls, soft shadows, and compact data displays.
+- Lightweight hover, focus, page entrance, and content entrance motion implemented with CSS transitions and keyframes.
 - shadcn/Radix-style primitives, with responsive dialogs and bottom sheets.
 - The existing logo/favicon and visual identity must be preserved unless an explicit design change is requested.
 

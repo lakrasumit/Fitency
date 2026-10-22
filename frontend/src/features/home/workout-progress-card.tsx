@@ -1,10 +1,10 @@
 import { cn } from "cn"
-import type { CompletionStats } from "@/lib/utils/habits"
+import type { AggregateStats } from "@/lib/utils/workouts"
 
 export type OverallRange = "week" | "month" | "all"
 
-type OverallProgressCardProps = {
-  stats: CompletionStats
+type WorkoutProgressCardProps = {
+  stats: AggregateStats
   range: OverallRange
   onRangeChange: (range: OverallRange) => void
 }
@@ -15,29 +15,32 @@ const RANGES: { value: OverallRange; label: string }[] = [
   { value: "all", label: "All" },
 ]
 
-export function OverallProgressCard({
+export function WorkoutProgressCard({
   stats,
   range,
   onRangeChange,
-}: OverallProgressCardProps) {
-  const completedPercent = stats.percent ?? 0
-  const leftPercent = stats.percent === null ? 0 : 100 - completedPercent
+}: WorkoutProgressCardProps) {
+  const completedPercent = stats.workoutPercent ?? 0
+  const partialPercent = stats.plannedDays
+    ? Math.round((stats.partialDays / stats.plannedDays) * 100)
+    : 0
+  const leftPercent = Math.max(0, 100 - completedPercent - partialPercent)
 
   return (
     <section
-      aria-labelledby="overall-progress-title"
+      aria-labelledby="workout-progress-title"
       className="rounded-xl border border-border/60 bg-card p-5"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2
-          id="overall-progress-title"
+          id="workout-progress-title"
           className="font-heading text-base font-semibold"
         >
-          Overall progress
+          Training progress
         </h2>
         <div
           role="group"
-          aria-label="Overall progress range"
+          aria-label="Training progress range"
           className="flex gap-1 rounded-full bg-muted p-1"
         >
           {RANGES.map((option) => {
@@ -62,15 +65,15 @@ export function OverallProgressCard({
         </div>
       </div>
 
-      {stats.percent === null ? (
+      {stats.plannedDays === 0 ? (
         <p className="mt-4 text-sm text-muted-foreground">
-          Nothing scheduled in this period.
+          No workouts planned in this period.
         </p>
       ) : (
         <>
           <div
             role="img"
-            aria-label={`${completedPercent}% completed, ${leftPercent}% left`}
+            aria-label={`${completedPercent}% of workouts completed, ${partialPercent}% partially completed, ${leftPercent}% not started`}
             className="mt-4 flex h-3 w-full overflow-hidden rounded-full bg-muted"
           >
             <div
@@ -78,23 +81,32 @@ export function OverallProgressCard({
               style={{ width: `${completedPercent}%` }}
             />
             <div
-              className="bg-muted-foreground/30"
+              className="bg-primary"
+              style={{ width: `${partialPercent}%` }}
+            />
+            <div
+              className="bg-muted-foreground/20"
               style={{ width: `${leftPercent}%` }}
             />
           </div>
+
           <div className="mt-3 flex flex-wrap justify-between gap-2 text-sm">
             <span className="flex items-center gap-2">
               <span aria-hidden className="size-2.5 rounded-full bg-success" />
-              {completedPercent}% completed
+              {stats.completedDays} of {stats.plannedDays} workouts complete
             </span>
-            <span className="flex items-center gap-2 text-muted-foreground">
-              <span
-                aria-hidden
-                className="size-2.5 rounded-full bg-muted-foreground/30"
-              />
-              {leftPercent}% left
+            <span className="text-muted-foreground">
+              {stats.actualReps} of {stats.plannedReps} reps
             </span>
           </div>
+
+          <p className="mt-2 text-xs text-muted-foreground">
+            {stats.completedExercises} of {stats.plannedExercises} exercises
+            completed
+            {stats.partialExercises > 0
+              ? ` · ${stats.partialExercises} partially completed`
+              : ""}
+          </p>
         </>
       )}
     </section>

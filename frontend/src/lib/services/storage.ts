@@ -7,7 +7,7 @@ export const AUTH_STORAGE_KEY = `${STORAGE_PREFIX}:auth`
 const CORRUPTED_MESSAGE =
   "Your saved data appears to be corrupted. Reload the app or clear this site's data to start fresh."
 
-export type UserCollection = "habits" | "completions"
+export type UserCollection = "workouts" | "workout-settings"
 
 export function userCollectionKey(
   userId: string,

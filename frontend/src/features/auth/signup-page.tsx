@@ -6,7 +6,7 @@ export function SignupPage() {
   return (
     <AuthShell
       title="Create your account"
-      description="Start tracking your fitness habits today."
+      description="Start tracking your workouts today."
       footer={
         <span>
           Already have an account?{" "}

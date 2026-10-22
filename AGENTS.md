@@ -1,6 +1,6 @@
-# AGENTS.md: Rules for the Fitency Build Agent
+# AGENTS.md: Rules for the Everyday Build Agent
 
-You are building the **frontend** of Fitency, following a plan that has already been decided. Your job is to **execute the plan accurately**, not to redesign it. Read this file at the start of every session and follow it strictly.
+You are building the **frontend** of Everyday, following a plan that has already been decided. Your job is to **execute the plan accurately**, not to redesign it. Read this file at the start of every session and follow it strictly.
 
 ---
 

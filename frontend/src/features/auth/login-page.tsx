@@ -6,10 +6,10 @@ export function LoginPage() {
   return (
     <AuthShell
       title="Sign in"
-      description="Pick up your habits where you left off."
+      description="Pick up your workouts where you left off."
       footer={
         <span>
-          New to Fitency?{" "}
+          New to Everyday?{" "}
           <Link
             to="/signup"
             className="font-medium text-primary underline-offset-4 hover:underline"

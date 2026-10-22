@@ -1,35 +1,36 @@
 import { format } from "date-fns"
-import { CheckCircle2, Circle } from "lucide-react"
+import { Link } from "react-router"
 import { BottomSheet } from "@/components/bottom-sheet"
 import { Button } from "@/components/ui/button"
-import type { Completion, Habit } from "@/lib/types"
+import { ExerciseStatusBadge } from "@/features/workouts/exercise-status"
+import { getCategoryMeta } from "@/features/workouts/category"
+import type { WorkoutRecord } from "@/lib/types"
 import { parseDateKey } from "@/lib/utils/date"
-import { getScheduledHabits, perDayCompletion } from "@/lib/utils/habits"
+import {
+  exerciseActualReps,
+  exercisePlannedReps,
+  exerciseStatus,
+  resolveWorkout,
+  workoutStats,
+} from "@/lib/utils/workouts"
 
 type DayDetailSheetProps = {
   date: string | null
-  habits: Habit[]
-  completions: Completion[]
+  records: readonly WorkoutRecord[]
   onClose: () => void
   onCloseAutoFocus?: (event: Event) => void
 }
 
 export function DayDetailSheet({
   date,
-  habits,
-  completions,
+  records,
   onClose,
   onCloseAutoFocus,
 }: DayDetailSheetProps) {
-  const scheduled = date ? getScheduledHabits(habits, date) : []
-  const completedIds = new Set(
-    completions
-      .filter((completion) => completion.date === date)
-      .map((completion) => completion.habitId),
-  )
-  const done = scheduled.filter((habit) => completedIds.has(habit.id))
-  const notDone = scheduled.filter((habit) => !completedIds.has(habit.id))
-  const stats = date ? perDayCompletion(habits, completions, date) : null
+  const record = date ? resolveWorkout(date, records) : null
+  const stats = workoutStats(record)
+  const meta = record ? getCategoryMeta(record.category) : null
+  const Icon = meta?.icon
 
   return (
     <BottomSheet
@@ -37,82 +38,84 @@ export function DayDetailSheet({
       onOpenChange={(open) => {
         if (!open) onClose()
       }}
-      onCloseAutoFocus={onCloseAutoFocus}
-      title={date ? format(parseDateKey(date), "EEEE, d MMMM") : "Day details"}
+      title={date ? format(parseDateKey(date), "EEEE d MMMM") : "Day details"}
       description={
-        stats
-          ? stats.scheduled === 0
-            ? "No habits were scheduled on this day."
-            : `${stats.completed} of ${stats.scheduled} habits completed (${stats.percent}%).`
+        record
+          ? `${record.name} · ${stats.completedExercises} of ${stats.plannedExercises} exercises completed`
           : undefined
       }
+      onCloseAutoFocus={onCloseAutoFocus}
       footer={
-        <Button variant="outline" onClick={onClose}>
-          Close
-        </Button>
+        <>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={onClose}
+          >
+            Close
+          </Button>
+          {date && record?.exercises.length ? (
+            <Button asChild className="w-full sm:w-auto">
+              <Link to={`/?date=${date}`} onClick={onClose}>
+                Open this day
+              </Link>
+            </Button>
+          ) : null}
+        </>
       }
     >
-      {scheduled.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          No habits were scheduled on this day.
+      {!record || !stats.hasPlan ? (
+        <p className="py-6 text-center text-sm text-muted-foreground">
+          No workout planned for this day.
         </p>
       ) : (
-        <div className="space-y-5">
-          <section aria-labelledby="day-done-title">
-            <h3
-              id="day-done-title"
-              className="font-heading text-sm font-semibold"
-            >
-              Done
-            </h3>
-            {done.length === 0 ? (
-              <p className="mt-2 text-sm text-muted-foreground">
-                Nothing completed.
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-4">
+            {Icon && meta ? (
+              <span
+                aria-hidden
+                className="flex size-10 shrink-0 items-center justify-center rounded-full text-white"
+                style={{ backgroundColor: meta.color }}
+              >
+                <Icon className="size-5" />
+              </span>
+            ) : null}
+            <div className="min-w-0">
+              <p className="font-medium">{record.name}</p>
+              <p className="text-xs text-muted-foreground">{record.focus}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {stats.actualReps} of {stats.plannedReps} reps ·{" "}
+                {stats.plannedSets} sets
               </p>
-            ) : (
-              <ul className="mt-2 space-y-2">
-                {done.map((habit) => (
-                  <li key={habit.id} className="flex items-center gap-2">
-                    <CheckCircle2
-                      aria-hidden
-                      className="size-4 shrink-0 text-success"
-                    />
-                    <span className="truncate text-sm" title={habit.name}>
-                      {habit.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+            </div>
+          </div>
 
-          <section aria-labelledby="day-not-done-title">
-            <h3
-              id="day-not-done-title"
-              className="font-heading text-sm font-semibold"
-            >
-              Not done
-            </h3>
-            {notDone.length === 0 ? (
-              <p className="mt-2 text-sm text-muted-foreground">
-                Everything completed.
-              </p>
-            ) : (
-              <ul className="mt-2 space-y-2">
-                {notDone.map((habit) => (
-                  <li key={habit.id} className="flex items-center gap-2">
-                    <Circle
-                      aria-hidden
-                      className="size-4 shrink-0 text-muted-foreground"
-                    />
-                    <span className="truncate text-sm" title={habit.name}>
-                      {habit.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+          <ul className="space-y-2">
+            {record.exercises.map((exercise) => (
+              <li
+                key={exercise.id}
+                className="rounded-lg border border-border/60 p-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium">{exercise.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Target {exercise.targetSets} × {exercise.targetReps} reps
+                    </p>
+                  </div>
+                  <ExerciseStatusBadge status={exerciseStatus(exercise)} />
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground tabular-nums">
+                  {exerciseActualReps(exercise) > 0
+                    ? `Sets: ${exercise.actualReps.join(" / ")}`
+                    : "No reps recorded"}{" "}
+                  · {exerciseActualReps(exercise)} /{" "}
+                  {exercisePlannedReps(exercise)} reps
+                </p>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </BottomSheet>

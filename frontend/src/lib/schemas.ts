@@ -1,7 +1,7 @@
 import { z } from "zod"
-import type { Habit } from "@/lib/types"
+import type { WorkoutExercise } from "@/lib/types"
 
-export const HABIT_NAME_MAX_LENGTH = 40
+export const EXERCISE_NAME_MAX_LENGTH = 60
 
 export const MIN_PASSWORD_LENGTH = 8
 
@@ -33,38 +33,58 @@ export const accountNameSchema = z.object({
   name: z.string().trim().min(1, "Enter your name."),
 })
 
-export const habitFieldsSchema = z.object({
+export const exerciseFieldsSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, "Enter a habit name.")
+    .min(1, "Enter an exercise name.")
     .max(
-      HABIT_NAME_MAX_LENGTH,
-      `Habit names must be ${HABIT_NAME_MAX_LENGTH} characters or fewer.`,
+      EXERCISE_NAME_MAX_LENGTH,
+      `Exercise names must be ${EXERCISE_NAME_MAX_LENGTH} characters or fewer.`,
     ),
-  icon: z.string().min(1, "Choose an icon."),
-  color: z.string().min(1, "Choose a color."),
-  weekdays: z
-    .array(z.number().int().min(1).max(7))
-    .min(1, "Choose at least one weekday."),
+  muscle: z
+    .string()
+    .trim()
+    .min(1, "Enter the muscles worked.")
+    .max(60, "Keep this under 60 characters."),
+  equipment: z
+    .string()
+    .trim()
+    .min(1, "Enter the equipment used.")
+    .max(60, "Keep this under 60 characters."),
+  targetSets: z
+    .number()
+    .int("Enter a whole number of sets.")
+    .min(1, "Use at least one set.")
+    .max(10, "Use 10 sets or fewer."),
+  targetReps: z
+    .number()
+    .int("Enter a whole number of reps.")
+    .min(1, "Use at least one rep.")
+    .max(100, "Use 100 reps or fewer."),
+  targetWeight: z
+    .string()
+    .trim()
+    .max(30, "Keep this under 30 characters."),
 })
 
-export function createHabitSchema(
-  habits: readonly Habit[],
-  editingHabitId?: string,
+export function createExerciseSchema(
+  exercises: readonly WorkoutExercise[],
+  editingExerciseId?: string,
 ) {
-  return habitFieldsSchema.superRefine((value, ctx) => {
+  return exerciseFieldsSchema.superRefine((value, ctx) => {
     const name = value.name.toLowerCase()
-    const duplicate = habits.some(
-      (habit) =>
-        habit.id !== editingHabitId && habit.name.trim().toLowerCase() === name,
+    const duplicate = exercises.some(
+      (exercise) =>
+        exercise.id !== editingExerciseId &&
+        exercise.name.trim().toLowerCase() === name,
     )
 
     if (duplicate) {
       ctx.addIssue({
         code: "custom",
         path: ["name"],
-        message: "A habit with this name already exists.",
+        message: "This exercise is already in the workout.",
       })
     }
   })

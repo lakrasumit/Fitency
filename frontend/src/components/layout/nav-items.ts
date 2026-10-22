@@ -1,7 +1,7 @@
 import {
   ChartColumn,
+  Dumbbell,
   House,
-  ListChecks,
   UserRound,
   type LucideIcon,
 } from "lucide-react"
@@ -15,6 +15,6 @@ export type NavItem = {
 export const NAV_ITEMS: NavItem[] = [
   { to: "/", label: "Home", icon: House },
   { to: "/analytics", label: "Analytics", icon: ChartColumn },
-  { to: "/habits", label: "Habits", icon: ListChecks },
+  { to: "/library", label: "Library", icon: Dumbbell },
   { to: "/account", label: "Account", icon: UserRound },
 ]

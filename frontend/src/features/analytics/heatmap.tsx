@@ -2,23 +2,28 @@ import { cn } from "cn"
 import { format } from "date-fns"
 import { useEffect, useRef } from "react"
 import type { AnalyticsRange } from "@/features/analytics/range-switcher"
-import type { Completion, Habit } from "@/lib/types"
+import type { WorkoutRecord } from "@/lib/types"
 import { getWeekdayNumberFromKey, parseDateKey } from "@/lib/utils/date"
-import { perDayCompletion, type CompletionStats } from "@/lib/utils/habits"
+import {
+  resolveWorkout,
+  workoutStats,
+  type WorkoutStats,
+} from "@/lib/utils/workouts"
 
 type HeatmapProps = {
   range: AnalyticsRange
   days: string[]
   todayKey: string
-  habits: Habit[]
-  completions: Completion[]
+  startDate: string
+  records: readonly WorkoutRecord[]
   onSelectDay: (date: string) => void
 }
 
 type HeatmapDay = {
   date: string
-  stats: CompletionStats
+  stats: WorkoutStats
   isFuture: boolean
+  beforeStart: boolean
   interactive: boolean
 }
 
@@ -29,19 +34,21 @@ export function Heatmap({
   range,
   days,
   todayKey,
-  habits,
-  completions,
+  startDate,
+  records,
   onSelectDay,
 }: HeatmapProps) {
   const heatmapDays: HeatmapDay[] = days.map((date) => {
-    const stats = perDayCompletion(habits, completions, date)
+    const stats = workoutStats(resolveWorkout(date, records))
     const isFuture = date > todayKey
+    const beforeStart = date < startDate
 
     return {
       date,
       stats,
       isFuture,
-      interactive: !isFuture && stats.scheduled > 0,
+      beforeStart,
+      interactive: !isFuture && !beforeStart && stats.hasPlan,
     }
   })
 
@@ -190,7 +197,7 @@ function ContributionHeatmap({
           </div>
           <div
             role="group"
-            aria-label="Daily completion heatmap"
+            aria-label="Daily workout heatmap"
             className="grid grid-flow-col grid-rows-7 gap-1"
           >
             {cells.map((day, index) =>
@@ -227,9 +234,11 @@ function HeatmapCell({
   const dateLabel = format(parseDateKey(day.date), "EEEE, d MMMM yyyy")
   const label = day.isFuture
     ? `${dateLabel}: upcoming day`
-    : day.stats.scheduled === 0
-      ? `${dateLabel}: no habits scheduled`
-      : `${dateLabel}: ${day.stats.completed} of ${day.stats.scheduled} habits completed (${day.stats.percent}%)`
+    : day.beforeStart
+      ? `${dateLabel}: tracking not started`
+      : !day.stats.hasPlan
+        ? `${dateLabel}: no workout planned`
+        : `${dateLabel}: ${day.stats.completedExercises} of ${day.stats.plannedExercises} exercises completed, ${day.stats.actualReps} of ${day.stats.plannedReps} reps`
 
   return (
     <button
@@ -254,19 +263,25 @@ function HeatmapCell({
 
 function levelFor(day: HeatmapDay): Level {
   if (day.isFuture) return "future"
-  if (day.stats.scheduled === 0) return "none"
-  if (day.stats.percent === 0) return "zero"
-  if (day.stats.percent === 100) return "full"
+  if (day.beforeStart || !day.stats.hasPlan) return "none"
+  if (day.stats.isComplete) return "full"
   if ((day.stats.percent ?? 0) >= 50) return "high"
-  return "some"
+  if (
+    day.stats.actualReps > 0 ||
+    (day.stats.percent ?? 0) > 0 ||
+    day.stats.partialExercises > 0
+  ) {
+    return "some"
+  }
+  return "zero"
 }
 
 type Level = "future" | "none" | "zero" | "some" | "high" | "full"
 
 const LEVEL_CLASSES: Record<Level, string> = {
   future: "bg-muted/40 text-muted-foreground/40",
-  none: "bg-muted text-muted-foreground",
-  zero: "bg-success/10 text-foreground",
+  none: "bg-muted/40 text-muted-foreground/60",
+  zero: "bg-muted text-muted-foreground",
   some: "bg-success/25 text-foreground",
   high: "bg-success/45 text-foreground",
   full: "bg-success text-success-foreground",

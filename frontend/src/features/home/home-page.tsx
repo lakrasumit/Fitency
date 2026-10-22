@@ -1,104 +1,295 @@
-import { CalendarX, ListChecks, Plus } from "lucide-react"
-import { useEffect, useState } from "react"
-import { Link } from "react-router"
+import { format, startOfDay } from "date-fns"
+import { Dumbbell, Plus } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import { useSearchParams } from "react-router"
+import { toast } from "sonner"
+import { ConfirmDialog } from "@/components/confirm-dialog"
 import { EmptyState } from "@/components/empty-state"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { DateStrip } from "@/features/home/date-strip"
+import { ExerciseCard } from "@/features/home/exercise-card"
+import { ExerciseDetailSheet } from "@/features/home/exercise-detail-sheet"
+import { ExerciseForm } from "@/features/home/exercise-form"
 import { GreetingHeader } from "@/features/home/greeting-header"
-import { HabitItem } from "@/features/home/habit-item"
-import {
-  OverallProgressCard,
-  type OverallRange,
-} from "@/features/home/overall-progress-card"
 import { StreakBadge } from "@/features/home/streak-badge"
-import { TodayProgressCard } from "@/features/home/today-progress-card"
-import { buildRange, toDateKey } from "@/lib/utils/date"
+import { TemplatePicker } from "@/features/home/template-picker"
 import {
-  completionRate,
+  WorkoutProgressCard,
+  type OverallRange,
+} from "@/features/home/workout-progress-card"
+import { WorkoutSummary } from "@/features/home/workout-summary"
+import {
+  createRestWorkout,
+  createWorkoutFromTemplate,
+  getWorkoutTemplate,
+} from "@/lib/data/workout-templates"
+import type {
+  ExerciseInput,
+  ExerciseStatus,
+  WorkoutExercise,
+  WorkoutRecord,
+} from "@/lib/types"
+import { buildRange, isDateKey, parseDateKey, toDateKey } from "@/lib/utils/date"
+import {
+  aggregateStats,
+  clampReps,
   currentStreak,
-  getScheduledHabits,
-  habitCreatedAtKey,
-  perDayCompletion,
-} from "@/lib/utils/habits"
+  hasSavedWorkout,
+  resolveWorkout,
+  workoutStats,
+} from "@/lib/utils/workouts"
 import { useAuthStore } from "@/store/auth-store"
-import { useCompletionsStore } from "@/store/completions-store"
-import { useHabitsStore } from "@/store/habits-store"
+import { useWorkoutsStore } from "@/store/workouts-store"
+
+function initialDate(dateParam: string | null): Date {
+  return dateParam && isDateKey(dateParam)
+    ? parseDateKey(dateParam)
+    : startOfDay(new Date())
+}
 
 export function HomePage() {
   const user = useAuthStore((state) => state.user)
-  const habits = useHabitsStore((state) => state.habits)
-  const habitsLoading = useHabitsStore((state) => state.loading)
-  const habitsError = useHabitsStore((state) => state.error)
-  const loadHabits = useHabitsStore((state) => state.loadHabits)
-  const completions = useCompletionsStore((state) => state.completions)
-  const completionsLoading = useCompletionsStore((state) => state.loading)
-  const completionsError = useCompletionsStore((state) => state.error)
-  const loadCompletions = useCompletionsStore((state) => state.loadCompletions)
-  const toggleCompletion = useCompletionsStore(
-    (state) => state.toggleCompletion,
-  )
+  const records = useWorkoutsStore((state) => state.records)
+  const startDate = useWorkoutsStore((state) => state.startDate)
+  const loading = useWorkoutsStore((state) => state.loading)
+  const initialized = useWorkoutsStore((state) => state.initialized)
+  const error = useWorkoutsStore((state) => state.error)
+  const loadWorkouts = useWorkoutsStore((state) => state.loadWorkouts)
+  const saveWorkout = useWorkoutsStore((state) => state.saveWorkout)
 
+  const [searchParams] = useSearchParams()
+  const dateParam = searchParams.get("date")
+  const [selectedDate, setSelectedDate] = useState(() =>
+    initialDate(dateParam),
+  )
   const [range, setRange] = useState<OverallRange>("week")
-  const [focusHabitId, setFocusHabitId] = useState<string | null>(null)
+  const [templatePickerOpen, setTemplatePickerOpen] = useState(false)
+  const [pendingTemplate, setPendingTemplate] = useState<{
+    templateId: string | null
+  } | null>(null)
+  const [formOpen, setFormOpen] = useState(false)
+  const [editingExercise, setEditingExercise] =
+    useState<WorkoutExercise | null>(null)
+  const [detailsExercise, setDetailsExercise] =
+    useState<WorkoutExercise | null>(null)
+  const [removeTarget, setRemoveTarget] = useState<WorkoutExercise | null>(
+    null,
+  )
+  const focusRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
-    void loadHabits()
-    void loadCompletions()
-  }, [loadHabits, loadCompletions])
+    if (!initialized) void loadWorkouts()
+  }, [initialized, loadWorkouts])
 
-  const today = new Date()
-  const todayKey = toDateKey(today)
-  const scheduledToday = getScheduledHabits(habits, todayKey)
-  const completedToday = new Set(
-    completions
-      .filter((completion) => completion.date === todayKey)
-      .map((completion) => completion.habitId),
-  )
-  const pending = scheduledToday.filter(
-    (habit) => !completedToday.has(habit.id),
-  )
-  const completed = scheduledToday.filter((habit) =>
-    completedToday.has(habit.id),
-  )
-  const todayStats = perDayCompletion(habits, completions, todayKey)
-  const streak = currentStreak(habits, completions, todayKey)
-  const earliestKey =
-    habits.length > 0 ? habits.map(habitCreatedAtKey).sort()[0] : todayKey
-  const overallStats = completionRate(
-    habits,
-    completions,
-    buildRange(range, today, earliestKey).elapsedDays,
-  )
-  const loading = habitsLoading || completionsLoading
-  const error = habitsError ?? completionsError
+  const todayKey = toDateKey(new Date())
+  const dateKey = toDateKey(selectedDate)
+  const record = resolveWorkout(dateKey, records)
+  const stats = workoutStats(record)
+  const isSaved = hasSavedWorkout(dateKey, records)
+  const streak = startDate
+    ? currentStreak(records, todayKey, startDate)
+    : 0
+  const rangeDays = startDate
+    ? buildRange(range, new Date(), startDate).elapsedDays.filter(
+        (day) => day >= startDate,
+      )
+    : []
+  const rangeStats = aggregateStats(rangeDays, records)
 
-  function retry() {
-    void loadHabits()
-    void loadCompletions()
+  function rememberFocus() {
+    focusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
   }
 
-  function toggleHabit(habitId: string) {
-    setFocusHabitId(habitId)
-    void toggleCompletion(habitId, todayKey)
+  function restoreFocus(event: Event) {
+    event.preventDefault()
+    if (focusRef.current?.isConnected) focusRef.current.focus()
+  }
+
+  function latestRecord(): WorkoutRecord | null {
+    return resolveWorkout(
+      dateKey,
+      useWorkoutsStore.getState().records,
+    )
+  }
+
+  function persist(next: WorkoutRecord) {
+    void saveWorkout({ ...next, updatedAt: new Date().toISOString() })
+  }
+
+  function applyTemplate(templateId: string | null) {
+    const template = templateId ? getWorkoutTemplate(templateId) : null
+    const next = template
+      ? createWorkoutFromTemplate(template, dateKey)
+      : createRestWorkout(dateKey)
+
+    persist(next)
+    toast.success(
+      template
+        ? `${template.name} added to ${format(selectedDate, "d MMM")}.`
+        : "Rest day set.",
+    )
+  }
+
+  function requestTemplate(templateId: string | null) {
+    setTemplatePickerOpen(false)
+
+    if (!isSaved) {
+      applyTemplate(templateId)
+      return
+    }
+
+    setPendingTemplate({ templateId })
+  }
+
+  function commitSet(exerciseId: string, setIndex: number, reps: number) {
+    const current = latestRecord()
+    if (!current) return
+
+    persist({
+      ...current,
+      exercises: current.exercises.map((exercise) =>
+        exercise.id === exerciseId
+          ? {
+              ...exercise,
+              actualReps: exercise.actualReps.map((saved, index) =>
+                index === setIndex ? clampReps(reps) : saved,
+              ),
+            }
+          : exercise,
+      ),
+    })
+  }
+
+  function changeStatus(
+    exerciseId: string,
+    status: ExerciseStatus | null,
+  ) {
+    const current = latestRecord()
+    if (!current) return
+
+    persist({
+      ...current,
+      exercises: current.exercises.map((exercise) =>
+        exercise.id === exerciseId
+          ? { ...exercise, statusOverride: status }
+          : exercise,
+      ),
+    })
+  }
+
+  function openAddExercise() {
+    rememberFocus()
+    setEditingExercise(null)
+    setFormOpen(true)
+  }
+
+  function openEditExercise(exercise: WorkoutExercise) {
+    rememberFocus()
+    setEditingExercise(exercise)
+    setFormOpen(true)
+  }
+
+  function openDetails(exercise: WorkoutExercise) {
+    rememberFocus()
+    setDetailsExercise(exercise)
+  }
+
+  function saveExercise(input: ExerciseInput): boolean {
+    const current = latestRecord()
+    if (!current) return false
+
+    if (editingExercise) {
+      persist({
+        ...current,
+        exercises: current.exercises.map((exercise) =>
+          exercise.id === editingExercise.id
+            ? {
+                ...exercise,
+                ...input,
+                actualReps: Array.from(
+                  { length: input.targetSets },
+                  (_, index) => exercise.actualReps[index] ?? 0,
+                ),
+              }
+            : exercise,
+        ),
+      })
+      toast.success("Exercise updated.")
+      return true
+    }
+
+    const exercise: WorkoutExercise = {
+      id: crypto.randomUUID(),
+      ...input,
+      difficulty: "Custom",
+      secondary: "",
+      instructions: [],
+      breathing: [],
+      mistakes: [],
+      safety: [],
+      actualReps: Array.from({ length: input.targetSets }, () => 0),
+      statusOverride: null,
+    }
+
+    // Adding the first exercise to a rest day turns it into a custom session.
+    const base =
+      current.exercises.length === 0 && current.category === "rest"
+        ? {
+            ...current,
+            name: "Custom Workout",
+            category: "fullBody" as const,
+            focus: "Custom session",
+            templateId: null,
+          }
+        : current
+
+    persist({ ...base, exercises: [...base.exercises, exercise] })
+    toast.success("Exercise added.")
+    return true
+  }
+
+  function confirmRemove() {
+    const target = removeTarget
+    if (!target) return
+
+    const current = latestRecord()
+    if (current) {
+      persist({
+        ...current,
+        exercises: current.exercises.filter(
+          (exercise) => exercise.id !== target.id,
+        ),
+      })
+      toast.success(`${target.name} removed.`)
+    }
+
+    setRemoveTarget(null)
   }
 
   if (!user) return null
+
+  const busy = loading || !initialized
 
   return (
     <div className="space-y-6">
       <GreetingHeader user={user} />
 
-      {loading ? (
+      {busy ? (
         <div
           className="space-y-6"
           aria-busy="true"
-          aria-label="Loading your dashboard"
+          aria-label="Loading your workout"
         >
-          <Skeleton className="h-56 rounded-xl" />
+          <Skeleton className="h-36 rounded-xl" />
+          <Skeleton className="h-64 rounded-xl" />
           <Skeleton className="h-8 w-36 rounded-full" />
           <div className="space-y-3">
-            <Skeleton className="h-16 rounded-xl" />
-            <Skeleton className="h-16 rounded-xl" />
+            <Skeleton className="h-44 rounded-xl" />
+            <Skeleton className="h-44 rounded-xl" />
           </div>
           <Skeleton className="h-40 rounded-xl" />
         </div>
@@ -107,102 +298,200 @@ export function HomePage() {
           <p role="alert" className="text-sm text-destructive">
             {error}
           </p>
-          <Button variant="outline" size="sm" className="mt-3" onClick={retry}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            onClick={() => void loadWorkouts()}
+          >
             Try again
           </Button>
         </div>
-      ) : habits.length === 0 ? (
-        <EmptyState
-          icon={ListChecks}
-          title="No habits yet"
-          description="Create your first habit to start tracking your days."
-          action={
-            <Button asChild>
-              <Link to="/habits">
-                <Plus aria-hidden />
-                Add your first habit
-              </Link>
-            </Button>
-          }
-        />
       ) : (
         <>
-          {scheduledToday.length > 0 ? (
-            <TodayProgressCard stats={todayStats} />
-          ) : null}
-
-          <StreakBadge streak={streak} />
-
-          {scheduledToday.length === 0 ? (
-            <EmptyState
-              icon={CalendarX}
-              title="Nothing scheduled today"
-              description="Enjoy the rest day."
-            />
-          ) : (
-            <>
-              {pending.length === 0 ? (
-                <p className="rounded-xl bg-success/10 px-4 py-3 text-sm font-medium text-success">
-                  All done for today — nice work.
-                </p>
-              ) : (
-                <section aria-labelledby="pending-title" className="space-y-3">
-                  <h2
-                    id="pending-title"
-                    className="font-heading text-base font-semibold"
-                  >
-                    Pending
-                  </h2>
-                  <ul className="space-y-3">
-                    {pending.map((habit) => (
-                      <li key={habit.id}>
-                        <HabitItem
-                          habit={habit}
-                          completed={false}
-                          autoFocus={habit.id === focusHabitId}
-                          onToggle={() => toggleHabit(habit.id)}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-
-              {completed.length > 0 ? (
-                <section
-                  aria-labelledby="completed-title"
-                  className="space-y-3"
-                >
-                  <h2
-                    id="completed-title"
-                    className="font-heading text-base font-semibold"
-                  >
-                    Completed
-                  </h2>
-                  <ul className="space-y-3">
-                    {completed.map((habit) => (
-                      <li key={habit.id}>
-                        <HabitItem
-                          habit={habit}
-                          completed
-                          autoFocus={habit.id === focusHabitId}
-                          onToggle={() => toggleHabit(habit.id)}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              ) : null}
-            </>
-          )}
-
-          <OverallProgressCard
-            stats={overallStats}
-            range={range}
-            onRangeChange={setRange}
+          <DateStrip
+            selectedDate={selectedDate}
+            records={records}
+            onSelect={(date) => setSelectedDate(startOfDay(date))}
           />
+
+          {record ? (
+            <>
+              <WorkoutSummary
+                record={record}
+                stats={stats}
+                suggested={!isSaved}
+                onChangeWorkout={() => {
+                  rememberFocus()
+                  setTemplatePickerOpen(true)
+                }}
+              />
+
+              <StreakBadge streak={streak} />
+
+              <section
+                aria-labelledby="exercise-list-title"
+                className="space-y-3"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h2
+                    id="exercise-list-title"
+                    className="font-heading text-base font-semibold"
+                  >
+                    Exercises
+                    {stats.plannedExercises > 0 ? (
+                      <span className="ml-2 text-sm font-normal text-muted-foreground">
+                        {stats.completedExercises}/{stats.plannedExercises} done
+                      </span>
+                    ) : null}
+                  </h2>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={openAddExercise}
+                  >
+                    <Plus aria-hidden />
+                    Add exercise
+                  </Button>
+                </div>
+
+                {record.exercises.length > 0 ? (
+                  <ul className="space-y-3">
+                    {record.exercises.map((exercise) => (
+                      <ExerciseCard
+                        key={exercise.id}
+                        exercise={exercise}
+                        onCommitSet={(setIndex, reps) =>
+                          commitSet(exercise.id, setIndex, reps)
+                        }
+                        onStatusChange={(status) =>
+                          changeStatus(exercise.id, status)
+                        }
+                        onShowDetails={() => openDetails(exercise)}
+                        onEdit={() => openEditExercise(exercise)}
+                        onRemove={() => {
+                          rememberFocus()
+                          setRemoveTarget(exercise)
+                        }}
+                      />
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-border p-6 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      No exercises for this day yet. Choose a workout or add
+                      your own.
+                    </p>
+                    <div className="mt-3 flex flex-wrap justify-center gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => {
+                          rememberFocus()
+                          setTemplatePickerOpen(true)
+                        }}
+                      >
+                        Choose workout
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={openAddExercise}
+                      >
+                        <Plus aria-hidden />
+                        Add exercise
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </section>
+
+              <WorkoutProgressCard
+                stats={rangeStats}
+                range={range}
+                onRangeChange={setRange}
+              />
+            </>
+          ) : (
+            <EmptyState
+              icon={Dumbbell}
+              title="No workout planned"
+              description="Choose a pre-filled workout or build this day yourself."
+              action={
+                <Button
+                  type="button"
+                  onClick={() => {
+                    rememberFocus()
+                    setTemplatePickerOpen(true)
+                  }}
+                >
+                  Choose workout
+                </Button>
+              }
+            />
+          )}
         </>
       )}
+
+      <TemplatePicker
+        open={templatePickerOpen}
+        onOpenChange={setTemplatePickerOpen}
+        dateKey={dateKey}
+        selectedTemplateId={record?.templateId ?? null}
+        isRestDay={
+          !record ||
+          (record.category === "rest" && record.exercises.length === 0)
+        }
+        onSelect={requestTemplate}
+      />
+
+      <ConfirmDialog
+        open={pendingTemplate !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingTemplate(null)
+        }}
+        title="Replace this workout?"
+        description={`This clears the recorded reps and exercise changes for ${format(selectedDate, "EEEE d MMMM")}.`}
+        confirmLabel="Replace workout"
+        onConfirm={() => {
+          if (pendingTemplate) applyTemplate(pendingTemplate.templateId)
+          setPendingTemplate(null)
+        }}
+        onCloseAutoFocus={restoreFocus}
+      />
+
+      <ExerciseForm
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        exercise={editingExercise}
+        exercises={record?.exercises ?? []}
+        onSave={saveExercise}
+        onCloseAutoFocus={restoreFocus}
+      />
+
+      <ExerciseDetailSheet
+        exercise={detailsExercise}
+        open={detailsExercise !== null}
+        onOpenChange={(open) => {
+          if (!open) setDetailsExercise(null)
+        }}
+        onCloseAutoFocus={restoreFocus}
+      />
+
+      <ConfirmDialog
+        open={removeTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setRemoveTarget(null)
+        }}
+        title="Remove exercise?"
+        description={`Remove ${removeTarget?.name ?? "this exercise"} from ${format(selectedDate, "EEEE d MMMM")}? Its recorded reps will be deleted.`}
+        confirmLabel="Remove exercise"
+        onConfirm={confirmRemove}
+        onCloseAutoFocus={restoreFocus}
+      />
     </div>
   )
 }

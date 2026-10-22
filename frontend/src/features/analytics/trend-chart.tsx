@@ -8,27 +8,24 @@ import {
   YAxis,
 } from "recharts"
 import type { AnalyticsRange } from "@/features/analytics/range-switcher"
-import type { Completion, Habit } from "@/lib/types"
+import type { WorkoutRecord } from "@/lib/types"
 import { parseDateKey } from "@/lib/utils/date"
-import { perDayCompletion } from "@/lib/utils/habits"
+import { resolveWorkout, workoutStats } from "@/lib/utils/workouts"
 
 type TrendChartProps = {
   range: AnalyticsRange
   days: string[]
-  habits: Habit[]
-  completions: Completion[]
+  records: readonly WorkoutRecord[]
 }
 
-export function TrendChart({
-  range,
-  days,
-  habits,
-  completions,
-}: TrendChartProps) {
-  const data = days.map((date) => ({
-    date,
-    percent: perDayCompletion(habits, completions, date).percent,
-  }))
+export function TrendChart({ range, days, records }: TrendChartProps) {
+  const data = days.map((date) => {
+    const stats = workoutStats(resolveWorkout(date, records))
+    return {
+      date,
+      percent: stats.hasPlan ? (stats.percent ?? 0) : null,
+    }
+  })
   const scheduled = data.filter(
     (point): point is { date: string; percent: number } =>
       point.percent !== null,
@@ -43,13 +40,13 @@ export function TrendChart({
         Completion trend
       </h2>
       <p className="mt-1 text-xs text-muted-foreground">
-        Daily completion rate across the selected range.
+        Daily exercise completion across the selected range.
       </p>
 
       <figure className="mt-4">
         {scheduled.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
-            No habits were scheduled in this period.
+            No workouts planned in this period.
           </p>
         ) : (
           <>
@@ -123,11 +120,13 @@ function summarizeTrend(points: { date: string; percent: number }[]): string {
   const first = points[0]
   const last = points[points.length - 1]
   const fullDays = points.filter((point) => point.percent === 100).length
-  const lowest = Math.min(...points.map((point) => point.percent))
+  const partialDays = points.filter(
+    (point) => point.percent > 0 && point.percent < 100,
+  ).length
   const firstLabel = format(parseDateKey(first.date), "d MMM")
   const lastLabel = format(parseDateKey(last.date), "d MMM")
   const period =
     first.date === last.date ? firstLabel : `${firstLabel} to ${lastLabel}`
 
-  return `${period}: ${points.length} ${points.length === 1 ? "day" : "days"} with habits scheduled, ${fullDays} at 100%, lowest ${lowest}%.`
+  return `${period}: ${points.length} ${points.length === 1 ? "day" : "days"} with workouts, ${fullDays} fully completed, ${partialDays} with partial progress.`
 }

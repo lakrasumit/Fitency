@@ -75,13 +75,21 @@ export function exerciseProgress(exercise: WorkoutExercise): number {
 export function workoutStats(record: WorkoutRecord | null): WorkoutStats {
   const exercises = record?.exercises ?? []
   const plannedExercises = exercises.length
-  const statuses = exercises.map(exerciseStatus)
-  const completedExercises = statuses.filter(
-    (status) => status === "completed",
-  ).length
-  const partialExercises = statuses.filter(
-    (status) => status === "partial",
-  ).length
+
+  // Count each exercise exactly once, under its current status, so the three
+  // status counts always add up to the number of planned exercises.
+  const counts: Record<ExerciseStatus, number> = {
+    completed: 0,
+    partial: 0,
+    notCompleted: 0,
+  }
+  for (const exercise of exercises) {
+    counts[exerciseStatus(exercise)] += 1
+  }
+  const completedExercises = counts.completed
+  const partialExercises = counts.partial
+  const notCompletedExercises = counts.notCompleted
+
   const plannedSets = exercises.reduce(
     (total, exercise) => total + exercise.targetSets,
     0,
@@ -99,8 +107,7 @@ export function workoutStats(record: WorkoutRecord | null): WorkoutStats {
     plannedExercises,
     completedExercises,
     partialExercises,
-    notCompletedExercises:
-      plannedExercises - completedExercises - partialExercises,
+    notCompletedExercises,
     plannedSets,
     plannedReps,
     actualReps,

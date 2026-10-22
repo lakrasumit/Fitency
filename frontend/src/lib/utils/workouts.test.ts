@@ -5,7 +5,7 @@ import {
   createWorkoutFromTemplate,
   getWorkoutTemplate,
 } from "@/lib/data/workout-templates"
-import type { WorkoutRecord } from "@/lib/types"
+import type { ExerciseStatus, WorkoutRecord } from "@/lib/types"
 import {
   aggregateStats,
   bestStreak,
@@ -111,6 +111,57 @@ describe("workoutStats", () => {
     expect(stats.hasPlan).toBe(false)
     expect(stats.percent).toBeNull()
     expect(stats.repsPercent).toBeNull()
+  })
+
+  it("recounts each exercise under its current status as it changes", () => {
+    const record = templateRecord("chest", MONDAY)
+    const counts = (): [number, number, number] => {
+      const stats = workoutStats(record)
+      expect(
+        stats.completedExercises +
+          stats.partialExercises +
+          stats.notCompletedExercises,
+      ).toBe(stats.plannedExercises)
+      return [
+        stats.completedExercises,
+        stats.partialExercises,
+        stats.notCompletedExercises,
+      ]
+    }
+    const override = (index: number, status: ExerciseStatus | null) => {
+      record.exercises[index] = {
+        ...record.exercises[index],
+        statusOverride: status,
+      }
+    }
+
+    expect(counts()).toEqual([0, 0, 4])
+
+    override(0, "completed")
+    expect(counts()).toEqual([1, 0, 3])
+
+    override(1, "partial")
+    expect(counts()).toEqual([1, 1, 2])
+
+    // Switching an exercise moves it between counts instead of adding to both.
+    override(0, "notCompleted")
+    expect(counts()).toEqual([0, 1, 3])
+
+    override(1, "completed")
+    expect(counts()).toEqual([1, 0, 3])
+
+    // Returning to automatic status derives counts from the recorded reps.
+    override(0, null)
+    override(1, null)
+    record.exercises[0] = {
+      ...record.exercises[0],
+      actualReps: [12, 12, 12],
+    }
+    record.exercises[1] = {
+      ...record.exercises[1],
+      actualReps: [12, 0, 0],
+    }
+    expect(counts()).toEqual([1, 1, 2])
   })
 })
 

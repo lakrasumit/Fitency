@@ -74,11 +74,11 @@ Fitency is currently:
 | Habit management | Missing | No habit model, service, store, route, navigation item, or UI exists. |
 | Light/dark-only theme policy | Missing / pending | Current code supports `light`, `dark`, and `system`; the decision requires removing `system`. |
 | Data export/import/migration | Missing | No export, import, schema version, or migration path exists. |
-| Automated tests | Limited | 13 unit tests cover workout helpers; no routing, store, persistence, or theme tests. |
+| Automated tests | Limited | 14 unit tests cover workout helpers, including status recounting; no routing, store, persistence, or theme tests. |
 
 ### Verification Performed
 
-- `npm test` — 13 tests passed.
+- `npm test` — 14 tests passed.
 - `npm run lint` — passed.
 - `npm run build` — passed; production bundle emitted with a chunk-size warning.
 - Live smoke test — active navigation showed Home, Analytics, and Library; `/account`, `/login`, and `/signup` resolved to the 404 page.
@@ -453,7 +453,7 @@ No habit requirements should be treated as implemented until code exists and is 
 | Medium | System theme still supported despite Light/Dark-only decision | `Theme` includes `system`; provider listens to OS changes; picker lists System. | Verified; change pending |
 | Medium | Accessibility target and label issues | Date-strip accessible names do not contain visible text on 15 buttons; year heatmap cells are 12 px; some exercise controls are below recommended touch size. | Verified by live audit/source |
 | Medium | Bundle and font payload are large | Build warning for >500 kB chunk; eager routes and all font subsets included. | Verified by build |
-| Medium | Test coverage omits critical workflows | Only 13 helper tests exist; no persistence, rollback, routing, midnight, or theme tests. | Verified |
+| Medium | Test coverage omits critical workflows | Only 14 helper tests exist; no persistence, rollback, routing, midnight, or theme tests. | Verified |
 | Low | Home empty-state branch is effectively unreachable | Every valid weekday maps to a template, so the “No workout planned” branch rarely appears in normal use. | Verified by source |
 | Low | Stale README API names | README refers to `getWorkouts()`/`saveWorkout()` while actual services are `getWorkoutData()`/`saveWorkoutRecord()`. | Documentation gap |
 | Low | Possible Node engine mismatch | README supports Node 20, while an installed dependency may require Node 22 or newer. | Needs verification |

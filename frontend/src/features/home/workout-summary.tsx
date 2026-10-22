@@ -86,26 +86,26 @@ export function WorkoutSummary({
 
           <dl className="grid w-full grid-cols-3 gap-2 text-center">
             <div className="rounded-lg bg-success/10 px-2 py-3 ring-1 ring-success/15 ring-inset">
-              <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase">
+              <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
                 Done
               </dt>
-              <dd className="mt-1 font-heading text-xl font-semibold text-success tabular-nums">
+              <dd className="mt-1 font-heading text-xl font-semibold text-success tabular-nums lg:text-2xl">
                 {stats.completedExercises}
               </dd>
             </div>
             <div className="rounded-lg bg-primary/10 px-2 py-3 ring-1 ring-primary/15 ring-inset">
-              <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase">
+              <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
                 Partial
               </dt>
-              <dd className="mt-1 font-heading text-xl font-semibold text-primary tabular-nums">
+              <dd className="mt-1 font-heading text-xl font-semibold text-primary tabular-nums lg:text-2xl">
                 {stats.partialExercises}
               </dd>
             </div>
             <div className="rounded-lg bg-muted/60 px-2 py-3 ring-1 ring-border/50 ring-inset">
-              <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase">
+              <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
                 Left
               </dt>
-              <dd className="mt-1 font-heading text-xl font-semibold tabular-nums">
+              <dd className="mt-1 font-heading text-xl font-semibold tabular-nums lg:text-2xl">
                 {stats.notCompletedExercises}
               </dd>
             </div>

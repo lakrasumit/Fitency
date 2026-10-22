@@ -155,7 +155,7 @@ function RepInput({
   onCommit,
 }: RepInputProps) {
   return (
-    <label className="flex items-center justify-between gap-2 rounded-lg bg-muted/50 px-2.5 py-1.5 transition-colors duration-200 hover:bg-muted/80 focus-within:bg-muted/80 focus-within:ring-2 focus-within:ring-ring/20">
+    <label className="flex items-center justify-between gap-2 rounded-lg border border-border/70 bg-muted/50 px-2.5 py-1.5 transition-colors duration-200 hover:border-border hover:bg-muted/80 focus-within:border-primary/40 focus-within:bg-muted/80 focus-within:ring-2 focus-within:ring-ring/20">
       <span className="text-xs text-muted-foreground">{label}</span>
       <span className="flex items-center gap-1">
         <Input

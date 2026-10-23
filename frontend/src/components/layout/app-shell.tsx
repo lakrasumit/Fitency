@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react"
+import { Suspense, useLayoutEffect, useRef } from "react"
 import { Outlet, useLocation, useNavigationType } from "react-router"
 import { BottomTabBar } from "@/components/layout/bottom-tab-bar"
 import { Sidebar } from "@/components/layout/sidebar"
@@ -42,9 +42,20 @@ export function AppShell() {
             tabIndex={-1}
             className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 pb-28 outline-none md:px-8 md:py-10 md:pb-12"
           >
-            <div key={location.pathname} className="animate-page-in">
-              <Outlet />
-            </div>
+            <Suspense
+              fallback={
+                <div
+                  role="status"
+                  className="py-16 text-center text-sm text-muted-foreground"
+                >
+                  Loading…
+                </div>
+              }
+            >
+              <div key={location.pathname} className="animate-page-in">
+                <Outlet />
+              </div>
+            </Suspense>
           </main>
         </div>
       </div>

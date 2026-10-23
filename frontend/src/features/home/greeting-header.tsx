@@ -1,6 +1,7 @@
 import { format } from "date-fns"
 import { ThemeToggle } from "@/components/theme/theme-toggle"
 import type { User } from "@/lib/types"
+import { initials } from "@/lib/utils/format"
 
 type GreetingHeaderProps = {
   user: User
@@ -11,16 +12,6 @@ function greetingFor(date: Date): string {
   if (hour < 12) return "Good morning"
   if (hour < 18) return "Good afternoon"
   return "Good evening"
-}
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return "?"
-
-  return parts
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join("")
 }
 
 export function GreetingHeader({ user }: GreetingHeaderProps) {

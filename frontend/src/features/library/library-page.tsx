@@ -82,7 +82,7 @@ export function LibraryPage() {
       <div className="surface-card mb-6 flex items-start gap-3 rounded-xl border border-border/60 p-4">
         <span
           aria-hidden
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 text-primary ring-1 ring-primary/15"
+          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 text-primary-strong ring-1 ring-primary/15"
         >
           <Dumbbell className="size-4" />
         </span>

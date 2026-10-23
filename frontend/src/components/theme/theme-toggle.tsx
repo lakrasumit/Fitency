@@ -34,7 +34,7 @@ export function ThemeToggle() {
       aria-label={label}
       title={label}
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative overflow-hidden rounded-full border border-border/70 bg-background/60 text-muted-foreground shadow-soft hover:border-primary/30 hover:bg-primary/10 hover:text-primary"
+      className="relative overflow-hidden rounded-full border border-border/70 bg-background/60 text-muted-foreground shadow-soft hover:border-primary/30 hover:bg-primary/10 hover:text-primary-strong"
     >
       <Sun
         aria-hidden

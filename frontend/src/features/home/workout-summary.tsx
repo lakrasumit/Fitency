@@ -45,7 +45,7 @@ export function WorkoutSummary({
                 {record.name}
               </h2>
               {suggested ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[0.65rem] font-medium text-primary">
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[0.65rem] font-medium text-primary-strong">
                   <Sparkles aria-hidden className="size-3" />
                   Suggested
                 </span>
@@ -89,7 +89,7 @@ export function WorkoutSummary({
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
                 Done
               </dt>
-              <dd className="mt-1 font-heading text-xl font-semibold text-success tabular-nums lg:text-2xl">
+              <dd className="mt-1 font-heading text-xl font-semibold text-success-strong tabular-nums lg:text-2xl">
                 {stats.completedExercises}
               </dd>
             </div>
@@ -97,7 +97,7 @@ export function WorkoutSummary({
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
                 Partial
               </dt>
-              <dd className="mt-1 font-heading text-xl font-semibold text-primary tabular-nums lg:text-2xl">
+              <dd className="mt-1 font-heading text-xl font-semibold text-primary-strong tabular-nums lg:text-2xl">
                 {stats.partialExercises}
               </dd>
             </div>

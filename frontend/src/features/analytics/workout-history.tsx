@@ -84,7 +84,7 @@ export function WorkoutHistory({
                   </span>
                   <span className="flex shrink-0 items-center gap-2">
                     {stats.partialExercises > 0 ? (
-                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[0.65rem] font-medium text-primary">
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[0.65rem] font-medium text-primary-strong">
                         Partial
                       </span>
                     ) : null}

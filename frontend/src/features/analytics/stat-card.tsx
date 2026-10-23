@@ -13,7 +13,7 @@ export function StatCard({ icon: Icon, label, value, detail }: StatCardProps) {
       <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
         <span
           aria-hidden
-          className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/10"
+          className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary-strong ring-1 ring-primary/10"
         >
           <Icon className="size-3.5" />
         </span>

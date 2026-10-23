@@ -18,7 +18,7 @@ export function BottomTabBar() {
                 cn(
                   "group relative flex h-16 flex-col items-center justify-center gap-1 text-[0.7rem] font-medium transition-colors duration-200 outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset",
                   isActive
-                    ? "bg-gradient-to-t from-primary/10 to-transparent font-semibold text-primary after:absolute after:inset-x-0 after:top-0 after:mx-auto after:h-0.5 after:w-8 after:rounded-full after:bg-primary"
+                    ? "bg-gradient-to-t from-primary/10 to-transparent font-semibold text-primary-strong after:absolute after:inset-x-0 after:top-0 after:mx-auto after:h-0.5 after:w-8 after:rounded-full after:bg-primary"
                     : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
                 )
               }

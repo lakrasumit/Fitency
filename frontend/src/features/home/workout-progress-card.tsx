@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { SegmentedControl } from "@/components/segmented-control"
 import type { AggregateStats } from "@/lib/utils/workouts"
 
 export type OverallRange = "week" | "month" | "all"
@@ -38,31 +38,12 @@ export function WorkoutProgressCard({
         >
           Training progress
         </h2>
-        <div
-          role="group"
-          aria-label="Training progress range"
-          className="flex gap-1 rounded-full bg-muted/80 p-1 ring-1 ring-border/50 ring-inset"
-        >
-          {RANGES.map((option) => {
-            const selected = range === option.value
-            return (
-              <button
-                key={option.value}
-                type="button"
-                aria-pressed={selected}
-                className={cn(
-                  "flex min-h-10 min-w-10 items-center justify-center rounded-full px-3 text-xs font-medium outline-none transition-all duration-200 focus-visible:ring-3 focus-visible:ring-ring/50",
-                  selected
-                    ? "bg-background text-foreground shadow-soft"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-                onClick={() => onRangeChange(option.value)}
-              >
-                {option.label}
-              </button>
-            )
-          })}
-        </div>
+        <SegmentedControl
+          label="Training progress range"
+          options={RANGES}
+          value={range}
+          onChange={onRangeChange}
+        />
       </div>
 
       {stats.plannedDays === 0 ? (

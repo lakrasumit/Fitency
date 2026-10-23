@@ -1,59 +1,45 @@
-import { Moon, Sun } from "lucide-react"
-import { useSyncExternalStore } from "react"
+import { Monitor, Moon, Sun, type LucideIcon } from "lucide-react"
 import { useTheme } from "@/components/theme/theme-context"
-import { Button } from "@/components/ui/button"
+import type { Theme } from "@/components/theme/theme-storage"
 import { cn } from "cn"
 
-const DARK_QUERY = "(prefers-color-scheme: dark)"
-
-function subscribeToSystemTheme(onChange: () => void) {
-  const media = window.matchMedia(DARK_QUERY)
-  media.addEventListener("change", onChange)
-  return () => media.removeEventListener("change", onChange)
-}
-
-function getSystemPrefersDark() {
-  return window.matchMedia(DARK_QUERY).matches
-}
+const OPTIONS: { value: Theme; label: string; icon: LucideIcon }[] = [
+  { value: "light", label: "Light", icon: Sun },
+  { value: "dark", label: "Dark", icon: Moon },
+  { value: "system", label: "System", icon: Monitor },
+]
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
-  const systemPrefersDark = useSyncExternalStore(
-    subscribeToSystemTheme,
-    getSystemPrefersDark,
-    () => false,
-  )
-  const isDark = theme === "dark" || (theme === "system" && systemPrefersDark)
-  const label = isDark ? "Switch to light theme" : "Switch to dark theme"
 
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-lg"
-      aria-label={label}
-      title={label}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative overflow-hidden rounded-full border border-border/70 bg-background/60 text-muted-foreground shadow-soft hover:border-primary/30 hover:bg-primary/10 hover:text-primary-strong"
+    <div
+      role="group"
+      aria-label="Theme"
+      className="flex shrink-0 items-center gap-0.5 rounded-full border border-border/70 bg-background/60 p-0.5 shadow-soft"
     >
-      <Sun
-        aria-hidden
-        className={cn(
-          "absolute inset-0 m-auto size-4 transition-[transform,opacity] duration-300",
-          isDark
-            ? "rotate-90 scale-0 opacity-0"
-            : "rotate-0 scale-100 opacity-100",
-        )}
-      />
-      <Moon
-        aria-hidden
-        className={cn(
-          "absolute inset-0 m-auto size-4 transition-[transform,opacity] duration-300",
-          isDark
-            ? "rotate-0 scale-100 opacity-100"
-            : "-rotate-90 scale-0 opacity-0",
-        )}
-      />
-    </Button>
+      {OPTIONS.map(({ value, label, icon: Icon }) => {
+        const selected = theme === value
+
+        return (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={selected}
+            aria-label={`${label} theme`}
+            title={`${label} theme`}
+            onClick={() => setTheme(value)}
+            className={cn(
+              "flex size-8 items-center justify-center rounded-full outline-none transition-colors duration-200 focus-visible:ring-3 focus-visible:ring-ring/50",
+              selected
+                ? "bg-primary text-primary-foreground shadow-soft"
+                : "text-muted-foreground hover:bg-primary/10 hover:text-primary-strong",
+            )}
+          >
+            <Icon aria-hidden className="size-4" />
+          </button>
+        )
+      })}
+    </div>
   )
 }

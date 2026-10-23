@@ -1,4 +1,4 @@
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import type { ExerciseStatus } from "@/lib/types"
 import { STATUS_META } from "@/features/workouts/status-meta"
 

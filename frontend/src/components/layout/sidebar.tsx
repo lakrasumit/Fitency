@@ -1,4 +1,4 @@
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import { NavLink } from "react-router"
 import { NAV_ITEMS } from "@/components/layout/nav-items"
 

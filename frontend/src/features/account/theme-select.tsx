@@ -1,4 +1,4 @@
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import { Monitor, Moon, Sun, type LucideIcon } from "lucide-react"
 import { useTheme } from "@/components/theme/theme-context"
 import type { Theme } from "@/components/theme/theme-storage"

@@ -8,7 +8,7 @@ import {
 } from "date-fns"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { WorkoutRecord } from "@/lib/types"

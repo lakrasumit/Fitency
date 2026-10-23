@@ -1,4 +1,4 @@
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import type { AggregateStats } from "@/lib/utils/workouts"
 
 export type OverallRange = "week" | "month" | "all"

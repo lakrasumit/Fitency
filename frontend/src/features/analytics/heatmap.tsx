@@ -1,4 +1,4 @@
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { useEffect, useRef } from "react"
 import type { AnalyticsRange } from "@/features/analytics/range-switcher"

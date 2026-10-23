@@ -48,6 +48,8 @@ function initialDate(dateParam: string | null): Date {
     : startOfDay(new Date())
 }
 
+const SAVE_ERROR_TOAST_ID = "workout-save-error"
+
 export function HomePage() {
   const user = useAuthStore((state) => state.user)
   const records = useWorkoutsStore((state) => state.records)
@@ -116,17 +118,57 @@ export function HomePage() {
     )
   }
 
-  function persist(next: WorkoutRecord) {
-    void saveWorkout({ ...next, updatedAt: new Date().toISOString() })
+  function showSaveError(failed: WorkoutRecord) {
+    const message =
+      useWorkoutsStore.getState().saveError ??
+      "Your workout changes could not be saved."
+
+    toast.error(message, {
+      id: SAVE_ERROR_TOAST_ID,
+      description: "Your workout is still on screen. Retry to save these changes.",
+      duration: 10_000,
+      action: {
+        label: "Retry",
+        onClick: () => void retrySave(failed),
+      },
+    })
   }
 
-  function applyTemplate(templateId: string | null) {
+  async function retrySave(failed: WorkoutRecord) {
+    const current = latestRecord()
+
+    // A newer edit has already replaced this snapshot, so replaying it would
+    // overwrite fresher data.
+    if (current && current.updatedAt > failed.updatedAt) return
+
+    if (await saveWorkout(failed)) {
+      toast.success("Changes saved.")
+      toast.dismiss(SAVE_ERROR_TOAST_ID)
+      return
+    }
+
+    showSaveError(failed)
+  }
+
+  async function persist(next: WorkoutRecord): Promise<boolean> {
+    const record = { ...next, updatedAt: new Date().toISOString() }
+    if (await saveWorkout(record)) {
+      toast.dismiss(SAVE_ERROR_TOAST_ID)
+      return true
+    }
+
+    showSaveError(record)
+    return false
+  }
+
+  async function applyTemplate(templateId: string | null) {
     const template = templateId ? getWorkoutTemplate(templateId) : null
     const next = template
       ? createWorkoutFromTemplate(template, dateKey)
       : createRestWorkout(dateKey)
 
-    persist(next)
+    if (!(await persist(next))) return
+
     toast.success(
       template
         ? `${template.name} added to ${format(selectedDate, "d MMM")}.`
@@ -138,7 +180,7 @@ export function HomePage() {
     setTemplatePickerOpen(false)
 
     if (!isSaved) {
-      applyTemplate(templateId)
+      void applyTemplate(templateId)
       return
     }
 
@@ -149,7 +191,7 @@ export function HomePage() {
     const current = latestRecord()
     if (!current) return
 
-    persist({
+    void persist({
       ...current,
       exercises: current.exercises.map((exercise) =>
         exercise.id === exerciseId
@@ -171,7 +213,7 @@ export function HomePage() {
     const current = latestRecord()
     if (!current) return
 
-    persist({
+    void persist({
       ...current,
       exercises: current.exercises.map((exercise) =>
         exercise.id === exerciseId
@@ -198,12 +240,12 @@ export function HomePage() {
     setDetailsExercise(exercise)
   }
 
-  function saveExercise(input: ExerciseInput): boolean {
+  async function saveExercise(input: ExerciseInput): Promise<boolean> {
     const current = latestRecord()
     if (!current) return false
 
     if (editingExercise) {
-      persist({
+      const saved = await persist({
         ...current,
         exercises: current.exercises.map((exercise) =>
           exercise.id === editingExercise.id
@@ -218,8 +260,8 @@ export function HomePage() {
             : exercise,
         ),
       })
-      toast.success("Exercise updated.")
-      return true
+      if (saved) toast.success("Exercise updated.")
+      return saved
     }
 
     const exercise: WorkoutExercise = {
@@ -247,24 +289,27 @@ export function HomePage() {
           }
         : current
 
-    persist({ ...base, exercises: [...base.exercises, exercise] })
-    toast.success("Exercise added.")
-    return true
+    const saved = await persist({
+      ...base,
+      exercises: [...base.exercises, exercise],
+    })
+    if (saved) toast.success("Exercise added.")
+    return saved
   }
 
-  function confirmRemove() {
+  async function confirmRemove() {
     const target = removeTarget
     if (!target) return
 
     const current = latestRecord()
     if (current) {
-      persist({
+      const saved = await persist({
         ...current,
         exercises: current.exercises.filter(
           (exercise) => exercise.id !== target.id,
         ),
       })
-      toast.success(`${target.name} removed.`)
+      if (saved) toast.success(`${target.name} removed.`)
     }
 
     setRemoveTarget(null)
@@ -457,7 +502,7 @@ export function HomePage() {
         description={`This clears the recorded reps and exercise changes for ${format(selectedDate, "EEEE d MMMM")}.`}
         confirmLabel="Replace workout"
         onConfirm={() => {
-          if (pendingTemplate) applyTemplate(pendingTemplate.templateId)
+          if (pendingTemplate) void applyTemplate(pendingTemplate.templateId)
           setPendingTemplate(null)
         }}
         onCloseAutoFocus={restoreFocus}

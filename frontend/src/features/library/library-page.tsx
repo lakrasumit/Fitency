@@ -41,14 +41,15 @@ export function LibraryPage() {
     setSheetOpen(false)
 
     const next = createWorkoutFromTemplate(template, dateKey)
-    navigate(`/?date=${dateKey}`)
-
     const saved = await saveWorkout(next)
+
     if (saved) {
       toast.success(`${template.name} added.`)
-    } else {
-      toast.error("The workout could not be saved. Try again from Home.")
+      navigate(`/?date=${dateKey}`)
+      return
     }
+
+    toast.error("The workout could not be saved. Please try again.")
   }
 
   return (

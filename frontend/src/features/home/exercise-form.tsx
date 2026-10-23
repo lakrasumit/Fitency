@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
 import { Button } from "@/components/ui/button"
@@ -20,7 +20,7 @@ type ExerciseFormProps = {
   onOpenChange: (open: boolean) => void
   exercise: WorkoutExercise | null
   exercises: readonly WorkoutExercise[]
-  onSave: (input: ExerciseInput) => boolean
+  onSave: (input: ExerciseInput) => Promise<boolean>
   onCloseAutoFocus?: (event: Event) => void
 }
 
@@ -65,12 +65,14 @@ export function ExerciseForm({
     defaultValues: defaultValues(exercise),
   })
 
+  const [saving, setSaving] = useState(false)
+
   useEffect(() => {
     if (!open) return
     reset(defaultValues(exercise))
   }, [open, exercise, reset])
 
-  function onSubmit(values: ExerciseFormValues) {
+  async function onSubmit(values: ExerciseFormValues) {
     const name = values.name.trim().toLowerCase()
     const duplicate = exercises.some(
       (candidate) =>
@@ -85,16 +87,21 @@ export function ExerciseForm({
       return
     }
 
-    const saved = onSave({
-      name: values.name.trim(),
-      muscle: values.muscle.trim(),
-      equipment: values.equipment.trim(),
-      targetSets: values.targetSets,
-      targetReps: values.targetReps,
-      targetWeight: values.targetWeight.trim(),
-    })
+    setSaving(true)
+    try {
+      const saved = await onSave({
+        name: values.name.trim(),
+        muscle: values.muscle.trim(),
+        equipment: values.equipment.trim(),
+        targetSets: values.targetSets,
+        targetReps: values.targetReps,
+        targetWeight: values.targetWeight.trim(),
+      })
 
-    if (saved) onOpenChange(false)
+      if (saved) onOpenChange(false)
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -221,12 +228,13 @@ export function ExerciseForm({
               type="button"
               variant="outline"
               className="flex-1"
+              disabled={saving}
               onClick={() => onOpenChange(false)}
             >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1">
-              {exercise ? "Save changes" : "Add exercise"}
+            <Button type="submit" className="flex-1" disabled={saving}>
+              {saving ? "Saving…" : exercise ? "Save changes" : "Add exercise"}
             </Button>
           </div>
         </form>

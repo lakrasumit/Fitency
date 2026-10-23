@@ -13,7 +13,10 @@ type WorkoutsState = {
   loading: boolean
   /** True once saved workouts have been loaded at least once. */
   initialized: boolean
+  /** Only set when loading the saved workouts fails. */
   error: string | null
+  /** Only set when a write fails, so pages stay usable after a failed save. */
+  saveError: string | null
   loadWorkouts: () => Promise<void>
   saveWorkout: (record: WorkoutRecord) => Promise<boolean>
   clearError: () => void
@@ -26,6 +29,7 @@ export const useWorkoutsStore = create<WorkoutsState>((set, get) => ({
   loading: false,
   initialized: false,
   error: null,
+  saveError: null,
 
   loadWorkouts: async () => {
     set({ loading: true, error: null })
@@ -56,7 +60,7 @@ export const useWorkoutsStore = create<WorkoutsState>((set, get) => ({
       record,
     ])
 
-    set({ records: next, error: null })
+    set({ records: next, saveError: null })
 
     try {
       await saveWorkoutRecord(record)
@@ -68,7 +72,7 @@ export const useWorkoutsStore = create<WorkoutsState>((set, get) => ({
 
       set({
         records: stillLatest ? previous : latest,
-        error: getServiceErrorMessage(
+        saveError: getServiceErrorMessage(
           error,
           "Your workout changes could not be saved.",
         ),
@@ -77,7 +81,7 @@ export const useWorkoutsStore = create<WorkoutsState>((set, get) => ({
     }
   },
 
-  clearError: () => set({ error: null }),
+  clearError: () => set({ error: null, saveError: null }),
 
   reset: () =>
     set({

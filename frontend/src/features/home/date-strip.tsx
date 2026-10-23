@@ -3,6 +3,7 @@ import {
   eachDayOfInterval,
   format,
   isSameDay,
+  isSameMonth,
   startOfDay,
 } from "date-fns"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -16,6 +17,10 @@ import { resolveWorkout, workoutStats } from "@/lib/utils/workouts"
 
 const WINDOW_DAYS = 15
 
+function centeredWindowStart(date: Date) {
+  return startOfDay(addDays(date, -7))
+}
+
 type DateStripProps = {
   selectedDate: Date
   records: readonly WorkoutRecord[]
@@ -25,23 +30,28 @@ type DateStripProps = {
 export function DateStrip({ selectedDate, records, onSelect }: DateStripProps) {
   const today = startOfDay(new Date())
   const [windowStart, setWindowStart] = useState(() =>
-    startOfDay(addDays(selectedDate, -7)),
+    centeredWindowStart(selectedDate),
   )
+  const [windowAnchor, setWindowAnchor] = useState(selectedDate)
   const scrollRef = useRef<HTMLDivElement>(null)
   const selectedRef = useRef<HTMLButtonElement>(null)
 
+  // Re-centre the strip only when the selected date moves outside it (for
+  // example via the date input or the Today button). Paging the window itself
+  // must not feed back into this adjustment.
+  if (!isSameDay(windowAnchor, selectedDate)) {
+    setWindowAnchor(selectedDate)
+
+    const currentEnd = addDays(windowStart, WINDOW_DAYS - 1)
+    if (selectedDate < windowStart || selectedDate > currentEnd) {
+      setWindowStart(centeredWindowStart(selectedDate))
+    }
+  }
+
   const windowEnd = addDays(windowStart, WINDOW_DAYS - 1)
-  const effectiveWindowStart =
-    selectedDate < windowStart || selectedDate > windowEnd
-      ? startOfDay(addDays(selectedDate, -7))
-      : windowStart
-  const effectiveWindowEnd = addDays(
-    effectiveWindowStart,
-    WINDOW_DAYS - 1,
-  )
   const days = eachDayOfInterval({
-    start: effectiveWindowStart,
-    end: effectiveWindowEnd,
+    start: windowStart,
+    end: windowEnd,
   })
 
   useEffect(() => {
@@ -52,7 +62,7 @@ export function DateStrip({ selectedDate, records, onSelect }: DateStripProps) {
     const left =
       button.offsetLeft - container.clientWidth / 2 + button.clientWidth / 2
     container.scrollTo({ left: Math.max(0, left) })
-  }, [selectedDate, effectiveWindowStart])
+  }, [selectedDate, windowStart])
 
   function selectKey(value: string) {
     if (!isDateKey(value)) return
@@ -67,9 +77,12 @@ export function DateStrip({ selectedDate, records, onSelect }: DateStripProps) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2
           id="date-strip-title"
+          aria-live="polite"
           className="font-heading text-sm font-semibold"
         >
-          {format(selectedDate, "MMMM yyyy")}
+          {isSameMonth(windowStart, windowEnd)
+            ? `${format(windowStart, "d")} – ${format(windowEnd, "d MMM yyyy")}`
+            : `${format(windowStart, "d MMM")} – ${format(windowEnd, "d MMM yyyy")}`}
         </h2>
         <div className="flex items-center gap-2">
           <Button
@@ -104,7 +117,7 @@ export function DateStrip({ selectedDate, records, onSelect }: DateStripProps) {
           aria-label="Previous two weeks"
           className="size-8 shrink-0"
           onClick={() =>
-            setWindowStart(addDays(effectiveWindowStart, -WINDOW_DAYS))
+            setWindowStart((current) => addDays(current, -WINDOW_DAYS))
           }
         >
           <ChevronLeft aria-hidden />
@@ -178,7 +191,7 @@ export function DateStrip({ selectedDate, records, onSelect }: DateStripProps) {
           aria-label="Next two weeks"
           className="size-8 shrink-0"
           onClick={() =>
-            setWindowStart(addDays(effectiveWindowStart, WINDOW_DAYS))
+            setWindowStart((current) => addDays(current, WINDOW_DAYS))
           }
         >
           <ChevronRight aria-hidden />

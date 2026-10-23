@@ -26,7 +26,9 @@ describe("SegmentedControl", () => {
       screen.getByRole("button", { name: "Week" }).getAttribute("aria-pressed"),
     ).toBe("false")
     expect(
-      screen.getByRole("button", { name: "Month" }).getAttribute("aria-pressed"),
+      screen
+        .getByRole("button", { name: "Month" })
+        .getAttribute("aria-pressed"),
     ).toBe("true")
   })
 

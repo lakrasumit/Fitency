@@ -24,7 +24,9 @@ export function DetailList({
     <Wrapper>
       <Heading
         className={cn(
-          compact ? "text-xs font-medium" : "font-heading text-sm font-semibold",
+          compact
+            ? "text-xs font-medium"
+            : "font-heading text-sm font-semibold",
         )}
       >
         {title}
@@ -32,7 +34,9 @@ export function DetailList({
       <List
         className={cn(
           "text-muted-foreground",
-          compact ? "mt-1 space-y-1 pl-4 text-xs" : "mt-2 space-y-1.5 pl-5 text-sm",
+          compact
+            ? "mt-1 space-y-1 pl-4 text-xs"
+            : "mt-2 space-y-1.5 pl-5 text-sm",
           ordered ? "list-decimal" : "list-disc",
         )}
       >

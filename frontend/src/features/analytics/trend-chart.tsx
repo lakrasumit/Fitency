@@ -4,6 +4,7 @@ import {
   Line,
   LineChart,
   ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
 } from "recharts"
@@ -50,11 +51,11 @@ export function TrendChart({ range, days, records }: TrendChartProps) {
           </p>
         ) : (
           <>
-            <div aria-hidden="true" className="h-[220px] w-full">
+            <div className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={data}
-                  accessibilityLayer={false}
+                  accessibilityLayer
                   margin={{ top: 8, right: 8, bottom: 0, left: 0 }}
                 >
                   <CartesianGrid
@@ -81,6 +82,23 @@ export function TrendChart({ range, days, records }: TrendChartProps) {
                     axisLine={false}
                     tickMargin={4}
                     tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
+                  />
+                  <Tooltip
+                    cursor={{ stroke: "var(--border)" }}
+                    contentStyle={{
+                      background: "var(--popover)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "0.75rem",
+                      boxShadow: "var(--shadow-soft)",
+                      fontSize: 12,
+                      color: "var(--popover-foreground)",
+                    }}
+                    labelStyle={{ color: "var(--foreground)", fontWeight: 600 }}
+                    itemStyle={{ color: "var(--foreground)" }}
+                    labelFormatter={(value) =>
+                      format(parseDateKey(String(value)), "EEEE d MMMM")
+                    }
+                    formatter={(value) => [`${value}%`, "Completed"]}
                   />
                   <Line
                     type="monotone"

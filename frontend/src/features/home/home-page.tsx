@@ -396,7 +396,8 @@ export function HomePage() {
                     Exercises
                     {stats.plannedExercises > 0 ? (
                       <span className="ml-2 text-sm font-normal text-muted-foreground">
-                        {stats.completedExercises}/{stats.plannedExercises} done
+                        {stats.completedExercises}/{stats.plannedExercises}{" "}
+                        completed
                       </span>
                     ) : null}
                   </h2>

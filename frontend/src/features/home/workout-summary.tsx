@@ -2,6 +2,7 @@ import { Dumbbell, Sparkles } from "lucide-react"
 import { ProgressRing } from "@/components/progress-ring"
 import { Button } from "@/components/ui/button"
 import { getCategoryMeta } from "@/features/workouts/category"
+import { STATUS_META } from "@/features/workouts/status-meta"
 import type { WorkoutRecord } from "@/lib/types"
 import type { WorkoutStats } from "@/lib/utils/workouts"
 
@@ -87,7 +88,7 @@ export function WorkoutSummary({
           <dl className="grid w-full grid-cols-3 gap-2 text-center">
             <div className="rounded-lg bg-success/10 px-2 py-3 ring-1 ring-success/15 ring-inset">
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
-                Done
+                {STATUS_META.completed.shortLabel}
               </dt>
               <dd className="mt-1 font-heading text-xl font-semibold text-success-strong tabular-nums lg:text-2xl">
                 {stats.completedExercises}
@@ -95,7 +96,7 @@ export function WorkoutSummary({
             </div>
             <div className="rounded-lg bg-primary/10 px-2 py-3 ring-1 ring-primary/15 ring-inset">
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
-                Partial
+                {STATUS_META.partial.shortLabel}
               </dt>
               <dd className="mt-1 font-heading text-xl font-semibold text-primary-strong tabular-nums lg:text-2xl">
                 {stats.partialExercises}
@@ -103,7 +104,7 @@ export function WorkoutSummary({
             </div>
             <div className="rounded-lg bg-muted/60 px-2 py-3 ring-1 ring-border/50 ring-inset">
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
-                Left
+                {STATUS_META.notCompleted.shortLabel}
               </dt>
               <dd className="mt-1 font-heading text-xl font-semibold tabular-nums lg:text-2xl">
                 {stats.notCompletedExercises}

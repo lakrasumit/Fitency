@@ -1,6 +1,6 @@
 import { format, startOfDay } from "date-fns"
 import { Dumbbell, Plus } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
 import { toast } from "sonner"
 import { ConfirmDialog } from "@/components/confirm-dialog"
@@ -60,11 +60,9 @@ export function HomePage() {
   const loadWorkouts = useWorkoutsStore((state) => state.loadWorkouts)
   const saveWorkout = useWorkoutsStore((state) => state.saveWorkout)
 
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const dateParam = searchParams.get("date")
-  const [selectedDate, setSelectedDate] = useState(() =>
-    initialDate(dateParam),
-  )
+  const selectedDate = useMemo(() => initialDate(dateParam), [dateParam])
   const [range, setRange] = useState<OverallRange>("week")
   const [templatePickerOpen, setTemplatePickerOpen] = useState(false)
   const [pendingTemplate, setPendingTemplate] = useState<{
@@ -109,6 +107,12 @@ export function HomePage() {
   function restoreFocus(event: Event) {
     event.preventDefault()
     if (focusRef.current?.isConnected) focusRef.current.focus()
+  }
+
+  function selectDate(date: Date) {
+    const next = new URLSearchParams(searchParams)
+    next.set("date", toDateKey(date))
+    setSearchParams(next, { replace: true })
   }
 
   function latestRecord(): WorkoutRecord | null {
@@ -358,7 +362,7 @@ export function HomePage() {
           <DateStrip
             selectedDate={selectedDate}
             records={records}
-            onSelect={(date) => setSelectedDate(startOfDay(date))}
+            onSelect={selectDate}
           />
 
           {record ? (

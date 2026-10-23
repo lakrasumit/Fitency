@@ -11,6 +11,7 @@ export function StreakBadge({ streak }: StreakBadgeProps) {
       {streak === 0
         ? "No streak yet"
         : `${streak} day${streak === 1 ? "" : "s"} streak`}
+      <span className="font-normal"> · as of today</span>
     </p>
   )
 }

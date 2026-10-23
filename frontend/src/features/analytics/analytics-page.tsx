@@ -178,7 +178,7 @@ export function AnalyticsPage() {
                 icon={Flame}
                 label="Current streak"
                 value={`${current} ${current === 1 ? "day" : "days"}`}
-                detail={`Best: ${best} ${best === 1 ? "day" : "days"}`}
+                detail={`Best all time: ${best} ${best === 1 ? "day" : "days"}`}
               />
             </dl>
           </section>
@@ -203,8 +203,8 @@ export function AnalyticsPage() {
           />
 
           <p className="text-xs text-muted-foreground">
-            Showing {rangeLabel}. All figures are calculated from your recorded
-            reps and statuses.
+            Showing {rangeLabel}. Completion, exercises and reps follow the
+            selected range; streaks cover all tracked days up to today.
           </p>
         </div>
       )}

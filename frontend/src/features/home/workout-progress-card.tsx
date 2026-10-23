@@ -71,6 +71,9 @@ export function WorkoutProgressCard({
         </p>
       ) : (
         <>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Totals up to today, not the day selected above.
+          </p>
           <div
             role="img"
             aria-label={`${completedPercent}% of workouts completed, ${partialPercent}% partially completed, ${leftPercent}% not started`}

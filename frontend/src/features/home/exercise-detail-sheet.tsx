@@ -1,4 +1,5 @@
 import { BottomSheet } from "@/components/bottom-sheet"
+import { DetailList } from "@/components/detail-list"
 import { Button } from "@/components/ui/button"
 import type { WorkoutExercise } from "@/lib/types"
 
@@ -63,42 +64,11 @@ export function ExerciseDetailSheet({
           </div>
         </dl>
 
-        <DetailSection title="How to perform" items={exercise.instructions} ordered />
-        <DetailSection title="Breathing" items={exercise.breathing} />
-        <DetailSection title="Common mistakes" items={exercise.mistakes} />
-        <DetailSection title="Safety notes" items={exercise.safety} />
+        <DetailList title="How to perform" items={exercise.instructions} ordered />
+        <DetailList title="Breathing" items={exercise.breathing} />
+        <DetailList title="Common mistakes" items={exercise.mistakes} />
+        <DetailList title="Safety notes" items={exercise.safety} />
       </div>
     </BottomSheet>
-  )
-}
-
-function DetailSection({
-  title,
-  items,
-  ordered = false,
-}: {
-  title: string
-  items: string[]
-  ordered?: boolean
-}) {
-  if (items.length === 0) return null
-
-  const List = ordered ? "ol" : "ul"
-
-  return (
-    <section>
-      <h3 className="font-heading text-sm font-semibold">{title}</h3>
-      <List
-        className={
-          ordered
-            ? "mt-2 list-decimal space-y-1.5 pl-5 text-sm text-muted-foreground"
-            : "mt-2 list-disc space-y-1.5 pl-5 text-sm text-muted-foreground"
-        }
-      >
-        {items.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </List>
-    </section>
   )
 }

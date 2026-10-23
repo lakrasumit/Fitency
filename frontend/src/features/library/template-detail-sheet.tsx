@@ -1,6 +1,7 @@
 import { format } from "date-fns"
 import { ChevronDown } from "lucide-react"
 import { BottomSheet } from "@/components/bottom-sheet"
+import { DetailList } from "@/components/detail-list"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { getCategoryMeta } from "@/features/workouts/category"
@@ -134,13 +135,15 @@ export function TemplateDetailSheet({
                       title="How to perform"
                       items={exercise.instructions}
                       ordered
+                      compact
                     />
-                    <DetailList title="Breathing" items={exercise.breathing} />
+                    <DetailList title="Breathing" items={exercise.breathing} compact />
                     <DetailList
                       title="Common mistakes"
                       items={exercise.mistakes}
+                      compact
                     />
-                    <DetailList title="Safety notes" items={exercise.safety} />
+                    <DetailList title="Safety notes" items={exercise.safety} compact />
                   </div>
                 </details>
               </li>
@@ -171,36 +174,5 @@ export function TemplateDetailSheet({
         </div>
       </div>
     </BottomSheet>
-  )
-}
-
-function DetailList({
-  title,
-  items,
-  ordered = false,
-}: {
-  title: string
-  items: string[]
-  ordered?: boolean
-}) {
-  if (items.length === 0) return null
-
-  const List = ordered ? "ol" : "ul"
-
-  return (
-    <div>
-      <p className="text-xs font-medium">{title}</p>
-      <List
-        className={
-          ordered
-            ? "mt-1 list-decimal space-y-1 pl-4 text-xs text-muted-foreground"
-            : "mt-1 list-disc space-y-1 pl-4 text-xs text-muted-foreground"
-        }
-      >
-        {items.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </List>
-    </div>
   )
 }

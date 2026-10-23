@@ -114,7 +114,9 @@ export function WorkoutSummary({
         </div>
       ) : (
         <p className="mt-4 text-sm text-muted-foreground">
-          No exercises planned for this day. Choose a workout or rest day.
+          {record.category === "rest"
+            ? "Rest day. No workout planned — recovery is part of the plan."
+            : "No exercises planned for this day. Choose a workout or rest day."}
         </p>
       )}
 

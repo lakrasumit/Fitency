@@ -310,13 +310,21 @@ export function HomePage() {
 
     const current = latestRecord()
     if (current) {
-      const saved = await persist({
-        ...current,
-        exercises: current.exercises.filter(
-          (exercise) => exercise.id !== target.id,
-        ),
-      })
-      if (saved) toast.success(`${target.name} removed.`)
+      const remaining = current.exercises.filter(
+        (exercise) => exercise.id !== target.id,
+      )
+      const saved = await persist(
+        remaining.length === 0
+          ? createRestWorkout(dateKey)
+          : { ...current, exercises: remaining },
+      )
+      if (saved) {
+        toast.success(
+          remaining.length === 0
+            ? `${target.name} removed. ${format(selectedDate, "d MMM")} is now a rest day.`
+            : `${target.name} removed.`,
+        )
+      }
     }
 
     setRemoveTarget(null)
@@ -542,7 +550,11 @@ export function HomePage() {
           if (!open) setRemoveTarget(null)
         }}
         title="Remove exercise?"
-        description={`Remove ${removeTarget?.name ?? "this exercise"} from ${format(selectedDate, "EEEE d MMMM")}? Its recorded reps will be deleted.`}
+        description={
+          removeTarget && (record?.exercises.length ?? 0) <= 1
+            ? `Remove ${removeTarget.name} from ${format(selectedDate, "EEEE d MMMM")}? This is the last exercise, so the day will become a rest day.`
+            : `Remove ${removeTarget?.name ?? "this exercise"} from ${format(selectedDate, "EEEE d MMMM")}? Its recorded reps will be deleted.`
+        }
         confirmLabel="Remove exercise"
         onConfirm={confirmRemove}
         onCloseAutoFocus={restoreFocus}

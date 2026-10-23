@@ -24,6 +24,7 @@ type HeatmapDay = {
   stats: WorkoutStats
   isFuture: boolean
   beforeStart: boolean
+  isRest: boolean
   interactive: boolean
 }
 
@@ -39,7 +40,8 @@ export function Heatmap({
   onSelectDay,
 }: HeatmapProps) {
   const heatmapDays: HeatmapDay[] = days.map((date) => {
-    const stats = workoutStats(resolveWorkout(date, records))
+    const record = resolveWorkout(date, records)
+    const stats = workoutStats(record)
     const isFuture = date > todayKey
     const beforeStart = date < startDate
 
@@ -48,7 +50,9 @@ export function Heatmap({
       stats,
       isFuture,
       beforeStart,
-      interactive: !isFuture && !beforeStart && stats.hasPlan,
+      isRest: record?.category === "rest",
+      interactive:
+        !isFuture && !beforeStart && (stats.hasPlan || record?.category === "rest"),
     }
   })
 
@@ -74,16 +78,40 @@ export function Heatmap({
         )}
       </div>
 
-      <div
-        aria-hidden
-        className="mt-4 flex flex-wrap items-center justify-end gap-1.5 text-[0.65rem] text-muted-foreground"
-      >
-        <span>Less</span>
-        <span className={cn("size-3 rounded-[3px]", levelClass("zero"))} />
-        <span className={cn("size-3 rounded-[3px]", levelClass("some"))} />
-        <span className={cn("size-3 rounded-[3px]", levelClass("high"))} />
-        <span className={cn("size-3 rounded-[3px]", levelClass("full"))} />
-        <span>More</span>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[0.65rem] text-muted-foreground">
+        <div className="flex items-center gap-1.5">
+          <span
+            aria-hidden
+            className={cn("size-3 rounded-[3px]", levelClass("rest"))}
+          />
+          <span>Rest day</span>
+          <span
+            aria-hidden
+            className={cn("ml-2 size-3 rounded-[3px]", levelClass("none"))}
+          />
+          <span>No plan</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="sr-only">Workout completion:</span>
+          <span>Less</span>
+          <span
+            aria-hidden
+            className={cn("size-3 rounded-[3px]", levelClass("zero"))}
+          />
+          <span
+            aria-hidden
+            className={cn("size-3 rounded-[3px]", levelClass("some"))}
+          />
+          <span
+            aria-hidden
+            className={cn("size-3 rounded-[3px]", levelClass("high"))}
+          />
+          <span
+            aria-hidden
+            className={cn("size-3 rounded-[3px]", levelClass("full"))}
+          />
+          <span>More</span>
+        </div>
       </div>
     </section>
   )
@@ -171,7 +199,7 @@ function ContributionHeatmap({
           aria-hidden
           className="ml-8 grid h-3 gap-1"
           style={{
-            gridTemplateColumns: `repeat(${weeks.length}, 0.75rem)`,
+            gridTemplateColumns: `repeat(${weeks.length}, 1.25rem)`,
           }}
         >
           {monthLabels.map((label, index) => (
@@ -207,7 +235,7 @@ function ContributionHeatmap({
                   day={day}
                   onSelectDay={onSelectDay}
                   dense
-                  className="flex size-3 items-center justify-center rounded-[3px]"
+                  className="flex size-5 items-center justify-center rounded-[3px]"
                 />
               ) : (
                 <span key={`blank-${index}`} aria-hidden />
@@ -236,9 +264,11 @@ function HeatmapCell({
     ? `${dateLabel}: upcoming day`
     : day.beforeStart
       ? `${dateLabel}: tracking not started`
-      : !day.stats.hasPlan
-        ? `${dateLabel}: no workout planned`
-        : `${dateLabel}: ${day.stats.completedExercises} of ${day.stats.plannedExercises} exercises completed, ${day.stats.actualReps} of ${day.stats.plannedReps} reps`
+      : day.isRest
+        ? `${dateLabel}: rest day`
+        : !day.stats.hasPlan
+          ? `${dateLabel}: no workout planned`
+          : `${dateLabel}: ${day.stats.completedExercises} of ${day.stats.plannedExercises} exercises completed, ${day.stats.actualReps} of ${day.stats.plannedReps} reps`
 
   return (
     <button
@@ -263,7 +293,9 @@ function HeatmapCell({
 
 function levelFor(day: HeatmapDay): Level {
   if (day.isFuture) return "future"
-  if (day.beforeStart || !day.stats.hasPlan) return "none"
+  if (day.beforeStart) return "none"
+  if (day.isRest) return "rest"
+  if (!day.stats.hasPlan) return "none"
   if (day.stats.isComplete) return "full"
   if ((day.stats.percent ?? 0) >= 50) return "high"
   if (
@@ -276,11 +308,12 @@ function levelFor(day: HeatmapDay): Level {
   return "zero"
 }
 
-type Level = "future" | "none" | "zero" | "some" | "high" | "full"
+type Level = "future" | "none" | "rest" | "zero" | "some" | "high" | "full"
 
 const LEVEL_CLASSES: Record<Level, string> = {
-  future: "bg-muted/30 text-muted-foreground/40",
-  none: "bg-muted/40 text-muted-foreground/60",
+  future: "bg-muted/20 text-muted-foreground",
+  none: "bg-muted/40 text-muted-foreground",
+  rest: "bg-muted/60 text-muted-foreground ring-1 ring-border/70 ring-inset",
   zero: "bg-muted text-muted-foreground",
   some:
     "bg-gradient-to-br from-success/30 to-success/15 text-foreground",

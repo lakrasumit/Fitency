@@ -29,6 +29,7 @@ export function DayDetailSheet({
 }: DayDetailSheetProps) {
   const record = date ? resolveWorkout(date, records) : null
   const stats = workoutStats(record)
+  const isRest = record?.category === "rest"
   const meta = record ? getCategoryMeta(record.category) : null
   const Icon = meta?.icon
 
@@ -41,7 +42,9 @@ export function DayDetailSheet({
       title={date ? format(parseDateKey(date), "EEEE d MMMM") : "Day details"}
       description={
         record
-          ? `${record.name} · ${stats.completedExercises} of ${stats.plannedExercises} exercises completed`
+          ? isRest
+            ? "Rest day · recovery"
+            : `${record.name} · ${stats.completedExercises} of ${stats.plannedExercises} exercises completed`
           : undefined
       }
       onCloseAutoFocus={onCloseAutoFocus}
@@ -67,7 +70,9 @@ export function DayDetailSheet({
     >
       {!record || !stats.hasPlan ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
-          No workout planned for this day.
+          {isRest
+            ? "Rest day. No workout planned — recovery is part of the plan."
+            : "No workout planned for this day."}
         </p>
       ) : (
         <div className="space-y-4">

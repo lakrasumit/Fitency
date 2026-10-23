@@ -87,10 +87,12 @@ export function AnalyticsPage() {
 
       {busy ? (
         <div
-          className="space-y-6"
+          role="status"
+          aria-live="polite"
           aria-busy="true"
-          aria-label="Loading your analytics"
+          className="space-y-6"
         >
+          <span className="sr-only">Loading your analytics…</span>
           <Skeleton className="h-10 w-full rounded-full sm:w-64" />
           <div className="grid grid-cols-2 gap-3">
             <Skeleton className="h-[104px] rounded-xl" />

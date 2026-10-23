@@ -95,10 +95,12 @@ export function LibraryPage() {
 
       {loading && !initialized ? (
         <div
-          className="grid gap-3 sm:grid-cols-2"
+          role="status"
+          aria-live="polite"
           aria-busy="true"
-          aria-label="Loading your workout library"
+          className="grid gap-3 sm:grid-cols-2"
         >
+          <span className="sr-only">Loading your workout library…</span>
           <Skeleton className="h-56 rounded-xl" />
           <Skeleton className="h-56 rounded-xl" />
           <Skeleton className="h-56 rounded-xl" />

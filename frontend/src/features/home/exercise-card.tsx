@@ -89,7 +89,7 @@ export function ExerciseCard({
                   : (event.target.value as ExerciseStatus),
               )
             }
-            className="h-9 rounded-lg border border-input bg-card px-2 text-xs font-medium text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="h-9 rounded-lg border border-input bg-card px-2 text-base font-medium text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 sm:text-xs"
           >
             <option value="auto">
               Auto · {STATUS_META[status].shortLabel}

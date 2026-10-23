@@ -332,10 +332,12 @@ export function HomePage() {
 
       {busy ? (
         <div
-          className="space-y-6"
+          role="status"
+          aria-live="polite"
           aria-busy="true"
-          aria-label="Loading your workout"
+          className="space-y-6"
         >
+          <span className="sr-only">Loading your workout…</span>
           <Skeleton className="h-36 rounded-xl" />
           <Skeleton className="h-64 rounded-xl" />
           <Skeleton className="h-8 w-36 rounded-full" />

@@ -31,6 +31,7 @@ import type {
   WorkoutRecord,
 } from "@/lib/types"
 import { buildRange, isDateKey, parseDateKey, toDateKey } from "@/lib/utils/date"
+import { usePageTitle } from "@/lib/use-page-title"
 import {
   aggregateStats,
   clampReps,
@@ -51,6 +52,8 @@ function initialDate(dateParam: string | null): Date {
 const SAVE_ERROR_TOAST_ID = "workout-save-error"
 
 export function HomePage() {
+  usePageTitle("Home")
+
   const user = useAuthStore((state) => state.user)
   const records = useWorkoutsStore((state) => state.records)
   const startDate = useWorkoutsStore((state) => state.startDate)

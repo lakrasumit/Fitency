@@ -14,8 +14,11 @@ import type { WorkoutTemplate } from "@/lib/types"
 import { parseDateKey, toDateKey } from "@/lib/utils/date"
 import { hasSavedWorkout } from "@/lib/utils/workouts"
 import { useWorkoutsStore } from "@/store/workouts-store"
+import { usePageTitle } from "@/lib/use-page-title"
 
 export function LibraryPage() {
+  usePageTitle("Library")
+
   const navigate = useNavigate()
   const records = useWorkoutsStore((state) => state.records)
   const loading = useWorkoutsStore((state) => state.loading)

@@ -15,9 +15,9 @@ export function AppRoutes() {
             <Route index element={<HomePage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="library" element={<LibraryPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Route>
-        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   )

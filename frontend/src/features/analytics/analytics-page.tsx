@@ -28,8 +28,11 @@ import {
   currentStreak,
 } from "@/lib/utils/workouts"
 import { useWorkoutsStore } from "@/store/workouts-store"
+import { usePageTitle } from "@/lib/use-page-title"
 
 export function AnalyticsPage() {
+  usePageTitle("Analytics")
+
   const records = useWorkoutsStore((state) => state.records)
   const startDate = useWorkoutsStore((state) => state.startDate)
   const loading = useWorkoutsStore((state) => state.loading)

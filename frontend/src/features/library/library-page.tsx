@@ -1,7 +1,9 @@
+import { format } from "date-fns"
 import { Dumbbell } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
+import { ConfirmDialog } from "@/components/confirm-dialog"
 import { PageHeader } from "@/components/layout/page-header"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -9,7 +11,7 @@ import { TemplateCard } from "@/features/library/template-card"
 import { TemplateDetailSheet } from "@/features/library/template-detail-sheet"
 import { createWorkoutFromTemplate, WORKOUT_TEMPLATES } from "@/lib/data/workout-templates"
 import type { WorkoutTemplate } from "@/lib/types"
-import { toDateKey } from "@/lib/utils/date"
+import { parseDateKey, toDateKey } from "@/lib/utils/date"
 import { hasSavedWorkout } from "@/lib/utils/workouts"
 import { useWorkoutsStore } from "@/store/workouts-store"
 
@@ -26,6 +28,10 @@ export function LibraryPage() {
     useState<WorkoutTemplate | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [addDate, setAddDate] = useState(toDateKey(new Date()))
+  const [pendingReplace, setPendingReplace] = useState<{
+    template: WorkoutTemplate
+    dateKey: string
+  } | null>(null)
 
   useEffect(() => {
     if (!initialized) void loadWorkouts()
@@ -50,6 +56,17 @@ export function LibraryPage() {
     }
 
     toast.error("The workout could not be saved. Please try again.")
+  }
+
+  function requestAdd(template: WorkoutTemplate, dateKey: string) {
+    setSheetOpen(false)
+
+    if (hasSavedWorkout(dateKey, records)) {
+      setPendingReplace({ template, dateKey })
+      return
+    }
+
+    void addWorkout(template, dateKey)
   }
 
   return (
@@ -120,7 +137,30 @@ export function LibraryPage() {
         hasSavedWorkout={(dateKey) =>
           hasSavedWorkout(dateKey, records)
         }
-        onAdd={(template, dateKey) => void addWorkout(template, dateKey)}
+        onAdd={requestAdd}
+      />
+
+      <ConfirmDialog
+        open={pendingReplace !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingReplace(null)
+        }}
+        title="Replace this workout?"
+        description={
+          pendingReplace
+            ? `This clears the recorded reps and exercise changes for ${format(
+                parseDateKey(pendingReplace.dateKey),
+                "EEEE d MMMM",
+              )}.`
+            : ""
+        }
+        confirmLabel="Replace workout"
+        onConfirm={() => {
+          if (pendingReplace) {
+            void addWorkout(pendingReplace.template, pendingReplace.dateKey)
+          }
+          setPendingReplace(null)
+        }}
       />
     </>
   )

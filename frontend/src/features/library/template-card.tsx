@@ -42,19 +42,21 @@ export function TemplateCard({ template, onOpen }: TemplateCardProps) {
         {template.exercises.length} exercises · {sets} sets
       </p>
 
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        className="group/cta mt-4 self-start"
-        onClick={() => onOpen(template)}
-      >
-        View &amp; add
-        <ArrowRight
-          aria-hidden
-          className="transition-transform duration-200 group-hover/cta:translate-x-0.5"
-        />
-      </Button>
+      <div className="mt-auto pt-4">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="group/cta"
+          onClick={() => onOpen(template)}
+        >
+          View &amp; add
+          <ArrowRight
+            aria-hidden
+            className="transition-transform duration-200 group-hover/cta:translate-x-0.5"
+          />
+        </Button>
+      </div>
     </article>
   )
 }

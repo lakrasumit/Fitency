@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
 import { Button } from "@/components/ui/button"
@@ -10,10 +10,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { exerciseFieldsSchema } from "@/lib/schemas"
+import { createExerciseSchema } from "@/lib/schemas"
 import type { ExerciseInput, WorkoutExercise } from "@/lib/types"
 
-type ExerciseFormValues = z.input<typeof exerciseFieldsSchema>
+type ExerciseFormValues = z.input<ReturnType<typeof createExerciseSchema>>
 
 type ExerciseFormProps = {
   open: boolean
@@ -54,14 +54,18 @@ export function ExerciseForm({
   onSave,
   onCloseAutoFocus,
 }: ExerciseFormProps) {
+  const schema = useMemo(
+    () => createExerciseSchema(exercises, exercise?.id),
+    [exercises, exercise?.id],
+  )
+
   const {
     register,
     handleSubmit,
     reset,
-    setError,
     formState: { errors },
   } = useForm<ExerciseFormValues>({
-    resolver: zodResolver(exerciseFieldsSchema),
+    resolver: zodResolver(schema),
     defaultValues: defaultValues(exercise),
   })
 
@@ -73,20 +77,6 @@ export function ExerciseForm({
   }, [open, exercise, reset])
 
   async function onSubmit(values: ExerciseFormValues) {
-    const name = values.name.trim().toLowerCase()
-    const duplicate = exercises.some(
-      (candidate) =>
-        candidate.id !== exercise?.id &&
-        candidate.name.trim().toLowerCase() === name,
-    )
-
-    if (duplicate) {
-      setError("name", {
-        message: "This exercise is already in the workout.",
-      })
-      return
-    }
-
     setSaving(true)
     try {
       const saved = await onSave({
@@ -135,9 +125,15 @@ export function ExerciseForm({
                 placeholder="e.g. Incline press"
                 autoComplete="off"
                 aria-invalid={Boolean(errors.name)}
+                aria-describedby={
+                  errors.name ? "exercise-name-error" : undefined
+                }
                 {...register("name")}
               />
-              <FieldError message={errors.name?.message} />
+              <FieldError
+                id="exercise-name-error"
+                message={errors.name?.message}
+              />
             </div>
 
             <div className="space-y-2">
@@ -148,9 +144,15 @@ export function ExerciseForm({
                 id="exercise-muscle"
                 placeholder="e.g. Chest and triceps"
                 aria-invalid={Boolean(errors.muscle)}
+                aria-describedby={
+                  errors.muscle ? "exercise-muscle-error" : undefined
+                }
                 {...register("muscle")}
               />
-              <FieldError message={errors.muscle?.message} />
+              <FieldError
+                id="exercise-muscle-error"
+                message={errors.muscle?.message}
+              />
             </div>
 
             <div className="space-y-2">
@@ -164,9 +166,15 @@ export function ExerciseForm({
                 id="exercise-equipment"
                 placeholder="e.g. Dumbbells"
                 aria-invalid={Boolean(errors.equipment)}
+                aria-describedby={
+                  errors.equipment ? "exercise-equipment-error" : undefined
+                }
                 {...register("equipment")}
               />
-              <FieldError message={errors.equipment?.message} />
+              <FieldError
+                id="exercise-equipment-error"
+                message={errors.equipment?.message}
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -184,9 +192,15 @@ export function ExerciseForm({
                   min={1}
                   max={10}
                   aria-invalid={Boolean(errors.targetSets)}
+                  aria-describedby={
+                    errors.targetSets ? "exercise-sets-error" : undefined
+                  }
                   {...register("targetSets", { valueAsNumber: true })}
                 />
-                <FieldError message={errors.targetSets?.message} />
+                <FieldError
+                  id="exercise-sets-error"
+                  message={errors.targetSets?.message}
+                />
               </div>
 
               <div className="space-y-2">
@@ -203,9 +217,15 @@ export function ExerciseForm({
                   min={1}
                   max={100}
                   aria-invalid={Boolean(errors.targetReps)}
+                  aria-describedby={
+                    errors.targetReps ? "exercise-reps-error" : undefined
+                  }
                   {...register("targetReps", { valueAsNumber: true })}
                 />
-                <FieldError message={errors.targetReps?.message} />
+                <FieldError
+                  id="exercise-reps-error"
+                  message={errors.targetReps?.message}
+                />
               </div>
             </div>
 
@@ -217,9 +237,15 @@ export function ExerciseForm({
                 id="exercise-weight"
                 placeholder="e.g. 20 kg or body weight"
                 aria-invalid={Boolean(errors.targetWeight)}
+                aria-describedby={
+                  errors.targetWeight ? "exercise-weight-error" : undefined
+                }
                 {...register("targetWeight")}
               />
-              <FieldError message={errors.targetWeight?.message} />
+              <FieldError
+                id="exercise-weight-error"
+                message={errors.targetWeight?.message}
+              />
             </div>
           </div>
 
@@ -243,11 +269,11 @@ export function ExerciseForm({
   )
 }
 
-function FieldError({ message }: { message?: string }) {
+function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null
 
   return (
-    <p role="alert" className="text-xs text-destructive">
+    <p id={id} role="alert" className="text-xs text-destructive">
       {message}
     </p>
   )

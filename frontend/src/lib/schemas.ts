@@ -53,12 +53,12 @@ export const exerciseFieldsSchema = z.object({
     .min(1, "Enter the equipment used.")
     .max(60, "Keep this under 60 characters."),
   targetSets: z
-    .number()
+    .number({ error: "Enter a number of sets." })
     .int("Enter a whole number of sets.")
     .min(1, "Use at least one set.")
     .max(10, "Use 10 sets or fewer."),
   targetReps: z
-    .number()
+    .number({ error: "Enter a number of reps." })
     .int("Enter a whole number of reps.")
     .min(1, "Use at least one rep.")
     .max(100, "Use 100 reps or fewer."),

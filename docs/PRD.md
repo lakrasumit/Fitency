@@ -15,10 +15,6 @@ This document describes what Fitency currently does, what it requires, and what 
 
 Fitency is a personal workout tracker for planning a training session, recording actual reps for each set, and reviewing consistency over time. It provides a pre-filled weekly training schedule and lets the user customise any date without changing the underlying templates.
 
-### Problem Statement
-
-People following a recurring workout split often need to remember the planned session, track what they actually completed, and judge progress over weeks or months. Spreadsheets and notes apps require manual setup and do not provide workout-specific completion, streak, or rep-level summaries.
-
 Fitency addresses this by:
 
 - Providing a suggested workout for every weekday.

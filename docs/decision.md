@@ -89,7 +89,7 @@ Preserve the existing UI, layout, visual language, and design system unless a ch
 ### Current Design Baseline
 
 - Tailwind CSS tokens and shadcn/Radix primitives.
-- Warm neutral palette with an orange primary accent.
+- Neon green palette with a vivid green primary accent in light and dark modes.
 - Subtle surface gradients on the page background, cards, headers, sidebar, and bottom navigation.
 - Roboto body text and Roboto Condensed headings.
 - Desktop sidebar, mobile bottom tab bar.

@@ -83,7 +83,7 @@ export function WorkoutBreakdown({ days, records }: WorkoutBreakdownProps) {
                   <div className="flex min-w-0 items-center gap-2">
                     <span
                       aria-hidden
-                      className="flex size-7 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
+                      className="flex size-7 shrink-0 items-center justify-center rounded-full text-category-foreground shadow-soft ring-1 ring-black/5 dark:ring-white/10"
                       style={{ backgroundColor: meta.color }}
                     >
                       <Icon className="size-3.5" />
@@ -111,8 +111,8 @@ export function WorkoutBreakdown({ days, records }: WorkoutBreakdownProps) {
                 </div>
 
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {row.completed} of {row.planned} exercises ·{" "}
-                  {row.actualReps} of {row.plannedReps} reps
+                  {row.completed} of {row.planned} exercises · {row.actualReps}{" "}
+                  of {row.plannedReps} reps
                   {row.partial > 0 ? ` · ${row.partial} partial` : ""}
                 </p>
               </li>

@@ -80,7 +80,7 @@ export function DayDetailSheet({
             {Icon && meta ? (
               <span
                 aria-hidden
-                className="flex size-10 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
+                className="flex size-10 shrink-0 items-center justify-center rounded-full text-category-foreground shadow-soft ring-1 ring-black/5 dark:ring-white/10"
                 style={{ backgroundColor: meta.color }}
               >
                 <Icon className="size-5" />

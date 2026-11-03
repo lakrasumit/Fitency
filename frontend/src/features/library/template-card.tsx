@@ -21,13 +21,15 @@ export function TemplateCard({ template, onOpen }: TemplateCardProps) {
       <div className="flex items-start gap-3">
         <span
           aria-hidden
-          className="flex size-11 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
+          className="flex size-11 shrink-0 items-center justify-center rounded-full text-category-foreground shadow-soft ring-1 ring-black/5 dark:ring-white/10"
           style={{ backgroundColor: meta.color }}
         >
           <Icon className="size-5" />
         </span>
         <div className="min-w-0">
-          <h2 className="font-heading text-lg font-semibold">{template.name}</h2>
+          <h2 className="font-heading text-lg font-semibold">
+            {template.name}
+          </h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
             {template.focus}
           </p>

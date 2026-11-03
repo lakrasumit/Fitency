@@ -4,10 +4,7 @@ import { ExerciseStatusBadge } from "@/features/workouts/exercise-status"
 import { getCategoryMeta } from "@/features/workouts/category"
 import type { WorkoutRecord } from "@/lib/types"
 import { parseDateKey } from "@/lib/utils/date"
-import {
-  exerciseStatus,
-  workoutStats,
-} from "@/lib/utils/workouts"
+import { exerciseStatus, workoutStats } from "@/lib/utils/workouts"
 
 type WorkoutHistoryProps = {
   records: readonly WorkoutRecord[]
@@ -65,7 +62,7 @@ export function WorkoutHistory({
                   <span className="flex min-w-0 items-center gap-3">
                     <span
                       aria-hidden
-                      className="flex size-9 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
+                      className="flex size-9 shrink-0 items-center justify-center rounded-full text-category-foreground shadow-soft ring-1 ring-black/5 dark:ring-white/10"
                       style={{ backgroundColor: meta.color }}
                     >
                       <Icon className="size-4" />
@@ -76,9 +73,9 @@ export function WorkoutHistory({
                         {record.name}
                       </span>
                       <span className="block text-xs text-muted-foreground">
-                        {stats.completedExercises} of{" "}
-                        {stats.plannedExercises} exercises ·{" "}
-                        {stats.actualReps} of {stats.plannedReps} reps
+                        {stats.completedExercises} of {stats.plannedExercises}{" "}
+                        exercises · {stats.actualReps} of {stats.plannedReps}{" "}
+                        reps
                       </span>
                     </span>
                   </span>
@@ -108,9 +105,7 @@ export function WorkoutHistory({
                           {exercise.targetSets} × {exercise.targetReps}
                         </p>
                       </div>
-                      <ExerciseStatusBadge
-                        status={exerciseStatus(exercise)}
-                      />
+                      <ExerciseStatusBadge status={exerciseStatus(exercise)} />
                     </li>
                   ))}
                 </ul>

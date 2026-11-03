@@ -173,9 +173,9 @@ export function DateStrip({ selectedDate, records, onSelect }: DateStripProps) {
                       : !stats.hasPlan
                         ? "bg-transparent"
                         : stats.isComplete
-                          ? "bg-success"
+                          ? "bg-status-done"
                           : stats.actualReps > 0
-                            ? "bg-primary"
+                            ? "bg-status-partial"
                             : "bg-muted-foreground/40",
                   )}
                 />

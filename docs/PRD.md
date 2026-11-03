@@ -214,10 +214,10 @@ No habit functionality is implemented. See [Habit Management](#9-habit-managemen
 
 ### 5.2 Visual Design
 
-- Existing warm neutral palette with an orange primary accent.
-- Token-based colours for background, cards, borders, text, destructive states, success states, charts, and sidebar.
-- Subtle layered gradients on page backgrounds, cards, headers, the sidebar, and bottom navigation, using a restrained primary tint and faint complementary glows.
-- Primary actions and selected states use a soft orange gradient with light elevation; status surfaces use low-opacity success and primary tints.
+- Neon green palette with a vivid green primary accent in both light and dark modes.
+- Token-based colours for background, elevated surfaces, cards, borders, text, destructive states, exercise statuses, charts, and sidebar.
+- Subtle layered gradients on page backgrounds, cards, headers, the sidebar, and bottom navigation, using a restrained primary tint and faint green glows.
+- Primary actions and selected states use a soft neon green gradient with light elevation; status surfaces use low-opacity done, partial, not-done, and information tints.
 - Typography: Roboto for body text and Roboto Condensed for headings.
 - Rounded cards, pill controls, soft shadows, and compact data displays.
 - Lightweight hover, focus, page entrance, and content entrance motion implemented with CSS transitions and keyframes.

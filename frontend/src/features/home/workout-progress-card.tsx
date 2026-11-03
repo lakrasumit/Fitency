@@ -61,11 +61,11 @@ export function WorkoutProgressCard({
             className="mt-4 flex h-3 w-full overflow-hidden rounded-full bg-muted ring-1 ring-border/50 ring-inset"
           >
             <div
-              className="bg-gradient-to-r from-success to-success/70 transition-[width] duration-700 ease-out"
+              className="bg-gradient-to-r from-status-done to-status-done/70 transition-[width] duration-700 ease-out"
               style={{ width: `${completedPercent}%` }}
             />
             <div
-              className="bg-gradient-to-r from-primary to-primary/70 transition-[width] duration-700 ease-out"
+              className="bg-gradient-to-r from-status-partial to-status-partial/70 transition-[width] duration-700 ease-out"
               style={{ width: `${partialPercent}%` }}
             />
             <div
@@ -76,7 +76,10 @@ export function WorkoutProgressCard({
 
           <div className="mt-3 flex flex-wrap justify-between gap-2 text-sm">
             <span className="flex items-center gap-2">
-              <span aria-hidden className="size-2.5 rounded-full bg-success" />
+              <span
+                aria-hidden
+                className="size-2.5 rounded-full bg-status-done"
+              />
               {stats.completedDays} of {stats.plannedDays} workouts complete
             </span>
             <span className="text-muted-foreground">

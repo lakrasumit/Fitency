@@ -32,7 +32,7 @@ export function WorkoutSummary({
         <div className="flex min-w-0 items-start gap-3">
           <span
             aria-hidden
-            className="flex size-11 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full text-category-foreground shadow-soft ring-1 ring-black/5 dark:ring-white/10"
             style={{ backgroundColor: meta.color }}
           >
             <Icon className="size-5" />
@@ -46,7 +46,7 @@ export function WorkoutSummary({
                 {record.name}
               </h2>
               {suggested ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[0.65rem] font-medium text-primary-strong">
+                <span className="inline-flex items-center gap-1 rounded-full bg-status-info/10 px-2 py-0.5 text-[0.65rem] font-medium text-status-info-strong ring-1 ring-status-info/20">
                   <Sparkles aria-hidden className="size-3" />
                   Suggested
                 </span>
@@ -86,27 +86,27 @@ export function WorkoutSummary({
           </ProgressRing>
 
           <dl className="grid w-full grid-cols-3 gap-2 text-center">
-            <div className="rounded-lg bg-success/10 px-2 py-3 ring-1 ring-success/15 ring-inset">
+            <div className="rounded-lg bg-status-done/10 px-2 py-3 ring-1 ring-status-done/20 ring-inset">
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
                 {STATUS_META.completed.shortLabel}
               </dt>
-              <dd className="mt-1 font-heading text-xl font-semibold text-success-strong tabular-nums lg:text-2xl">
+              <dd className="mt-1 font-heading text-xl font-semibold text-status-done-strong tabular-nums lg:text-2xl">
                 {stats.completedExercises}
               </dd>
             </div>
-            <div className="rounded-lg bg-primary/10 px-2 py-3 ring-1 ring-primary/15 ring-inset">
+            <div className="rounded-lg bg-status-partial/10 px-2 py-3 ring-1 ring-status-partial/20 ring-inset">
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
                 {STATUS_META.partial.shortLabel}
               </dt>
-              <dd className="mt-1 font-heading text-xl font-semibold text-primary-strong tabular-nums lg:text-2xl">
+              <dd className="mt-1 font-heading text-xl font-semibold text-status-partial-strong tabular-nums lg:text-2xl">
                 {stats.partialExercises}
               </dd>
             </div>
-            <div className="rounded-lg bg-muted/60 px-2 py-3 ring-1 ring-border/50 ring-inset">
+            <div className="rounded-lg bg-status-not-done/10 px-2 py-3 ring-1 ring-status-not-done/20 ring-inset">
               <dt className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase lg:text-xs">
                 {STATUS_META.notCompleted.shortLabel}
               </dt>
-              <dd className="mt-1 font-heading text-xl font-semibold tabular-nums lg:text-2xl">
+              <dd className="mt-1 font-heading text-xl font-semibold text-status-not-done-strong tabular-nums lg:text-2xl">
                 {stats.notCompletedExercises}
               </dd>
             </div>

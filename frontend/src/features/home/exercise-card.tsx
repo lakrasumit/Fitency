@@ -58,9 +58,7 @@ export function ExerciseCard({
       </div>
 
       <fieldset className="mt-3">
-        <legend className="sr-only">
-          Recorded reps for {exercise.name}
-        </legend>
+        <legend className="sr-only">Recorded reps for {exercise.name}</legend>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {Array.from({ length: exercise.targetSets }, (_, index) => (
             <RepInput
@@ -77,9 +75,7 @@ export function ExerciseCard({
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
         <label className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="sr-only">
-            Completion status for {exercise.name}
-          </span>
+          <span className="sr-only">Completion status for {exercise.name}</span>
           <select
             value={exercise.statusOverride ?? "auto"}
             onChange={(event) =>
@@ -110,7 +106,7 @@ export function ExerciseCard({
         className="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-muted"
       >
         <div
-          className="bg-gradient-to-r from-success to-success/70 transition-[width] duration-500 ease-out"
+          className="bg-gradient-to-r from-primary to-primary/70 transition-[width] duration-500 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -167,10 +163,7 @@ function RepInput({
           defaultValue={value}
           aria-label={`${label} actual reps for ${exerciseName}`}
           onBlur={(event) => {
-            const parsed = Number.parseInt(
-              event.currentTarget.value || "0",
-              10,
-            )
+            const parsed = Number.parseInt(event.currentTarget.value || "0", 10)
             const next = clampReps(Number.isNaN(parsed) ? 0 : parsed)
             event.currentTarget.value = String(next)
             if (next !== value) onCommit(next)

@@ -6,7 +6,7 @@ export function BottomTabBar() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-card/90 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_-24px_rgb(28_27_25/0.45)] backdrop-blur-md dark:shadow-[0_-10px_30px_-24px_rgb(0_0_0/0.65)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-card/90 pb-[env(safe-area-inset-bottom)] shadow-[var(--nav-shadow)] backdrop-blur-md transition-colors duration-300 md:hidden"
     >
       <ul className="grid grid-cols-3">
         {NAV_ITEMS.map((item) => (

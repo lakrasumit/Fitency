@@ -55,7 +55,7 @@ export function TemplatePicker({
               >
                 <span
                   aria-hidden
-                  className="flex size-10 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full text-category-foreground shadow-soft ring-1 ring-black/5 dark:ring-white/10"
                   style={{ backgroundColor: meta.color }}
                 >
                   <Icon className="size-5" />
@@ -64,7 +64,7 @@ export function TemplatePicker({
                   <span className="flex items-center gap-2 font-medium">
                     {template.name}
                     {selected ? (
-                      <Check aria-hidden className="size-4 text-success" />
+                      <Check aria-hidden className="size-4 text-status-done" />
                     ) : null}
                   </span>
                   <span className="mt-0.5 block truncate text-xs text-muted-foreground">
@@ -89,7 +89,7 @@ export function TemplatePicker({
               <span className="flex items-center gap-2 font-medium">
                 Rest day
                 {isRestDay ? (
-                  <Check aria-hidden className="size-4 text-success" />
+                  <Check aria-hidden className="size-4 text-status-done" />
                 ) : null}
               </span>
               <span className="mt-0.5 block text-xs text-muted-foreground">

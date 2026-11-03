@@ -12,7 +12,7 @@ export function LoginPage() {
           New to Fitency?{" "}
           <Link
             to="/signup"
-            className="font-medium text-primary underline-offset-4 hover:underline"
+            className="font-medium text-primary-strong underline-offset-4 hover:underline"
           >
             Create an account
           </Link>

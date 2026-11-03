@@ -17,7 +17,7 @@ export function AuthShell({
     <main className="grid min-h-svh place-items-center px-4 py-10">
       <div className="w-full max-w-sm space-y-6">
         <div className="space-y-1 text-center">
-          <p className="font-heading text-2xl font-semibold text-primary">
+          <p className="font-heading text-2xl font-semibold text-primary-strong">
             Fitency
           </p>
           <h1 className="font-heading text-xl font-semibold">{title}</h1>

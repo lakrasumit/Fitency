@@ -71,7 +71,7 @@ export function TemplateDetailSheet({
         <div className="surface-inset flex items-start gap-3 rounded-lg p-4 ring-1 ring-border/40 ring-inset">
           <span
             aria-hidden
-            className="flex size-10 shrink-0 items-center justify-center rounded-full text-white shadow-soft ring-1 ring-black/5 dark:ring-white/10"
+            className="flex size-10 shrink-0 items-center justify-center rounded-full text-category-foreground shadow-soft ring-1 ring-black/5 dark:ring-white/10"
             style={{ backgroundColor: meta.color }}
           >
             <Icon className="size-5" />
@@ -137,13 +137,21 @@ export function TemplateDetailSheet({
                       ordered
                       compact
                     />
-                    <DetailList title="Breathing" items={exercise.breathing} compact />
+                    <DetailList
+                      title="Breathing"
+                      items={exercise.breathing}
+                      compact
+                    />
                     <DetailList
                       title="Common mistakes"
                       items={exercise.mistakes}
                       compact
                     />
-                    <DetailList title="Safety notes" items={exercise.safety} compact />
+                    <DetailList
+                      title="Safety notes"
+                      items={exercise.safety}
+                      compact
+                    />
                   </div>
                 </details>
               </li>
@@ -160,12 +168,13 @@ export function TemplateDetailSheet({
             type="date"
             value={dateKey}
             onChange={(event) => {
-              if (isDateKey(event.target.value)) onDateChange(event.target.value)
+              if (isDateKey(event.target.value))
+                onDateChange(event.target.value)
             }}
             className="h-10 w-full sm:w-48"
           />
           {replaces ? (
-            <p role="status" className="text-xs text-primary">
+            <p role="status" className="text-xs text-primary-strong">
               A saved workout already exists on{" "}
               {format(parseDateKey(dateKey), "d MMMM")}. Adding this template
               will replace it.

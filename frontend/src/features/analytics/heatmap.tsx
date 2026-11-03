@@ -52,7 +52,9 @@ export function Heatmap({
       beforeStart,
       isRest: record?.category === "rest",
       interactive:
-        !isFuture && !beforeStart && (stats.hasPlan || record?.category === "rest"),
+        !isFuture &&
+        !beforeStart &&
+        (stats.hasPlan || record?.category === "rest"),
     }
   })
 
@@ -315,12 +317,9 @@ const LEVEL_CLASSES: Record<Level, string> = {
   none: "bg-muted/40 text-muted-foreground",
   rest: "bg-muted/60 text-muted-foreground ring-1 ring-border/70 ring-inset",
   zero: "bg-muted text-muted-foreground",
-  some:
-    "bg-gradient-to-br from-success/30 to-success/15 text-foreground",
-  high:
-    "bg-gradient-to-br from-success/55 to-success/35 text-foreground",
-  full:
-    "bg-gradient-to-br from-success to-success/80 text-success-foreground shadow-[0_0_0_1px_color-mix(in_oklab,var(--success)_35%,transparent)]",
+  some: "bg-gradient-to-br from-status-done/30 to-status-done/15 text-foreground",
+  high: "bg-gradient-to-br from-status-done/55 to-status-done/35 text-foreground",
+  full: "bg-gradient-to-br from-status-done to-status-done/80 text-status-done-foreground shadow-[0_0_0_1px_color-mix(in_oklab,var(--status-done)_35%,transparent)]",
 }
 
 function levelClass(level: Level): string {

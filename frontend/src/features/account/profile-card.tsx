@@ -13,7 +13,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
     >
       <span
         aria-hidden
-        className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary/5 font-heading text-xl font-semibold text-primary"
+        className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary/5 font-heading text-xl font-semibold text-primary-strong"
       >
         {initials(user.name)}
       </span>

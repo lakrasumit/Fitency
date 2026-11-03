@@ -18,14 +18,22 @@ export type CategoryMeta = {
 }
 
 export const CATEGORY_META: Record<WorkoutCategory, CategoryMeta> = {
-  chest: { label: "Chest", icon: Dumbbell, color: "#c2410c" },
-  back: { label: "Back", icon: Activity, color: "#1d4ed8" },
-  legs: { label: "Legs", icon: Footprints, color: "#6d28d9" },
-  shoulders: { label: "Shoulders", icon: PersonStanding, color: "#a21caf" },
-  arms: { label: "Arms", icon: BicepsFlexed, color: "#0e7490" },
-  core: { label: "Core", icon: Target, color: "#a16207" },
-  fullBody: { label: "Full body", icon: HeartPulse, color: "#334155" },
-  rest: { label: "Rest", icon: MoonStar, color: "#64748b" },
+  chest: { label: "Chest", icon: Dumbbell, color: "var(--category-chest)" },
+  back: { label: "Back", icon: Activity, color: "var(--category-back)" },
+  legs: { label: "Legs", icon: Footprints, color: "var(--category-legs)" },
+  shoulders: {
+    label: "Shoulders",
+    icon: PersonStanding,
+    color: "var(--category-shoulders)",
+  },
+  arms: { label: "Arms", icon: BicepsFlexed, color: "var(--category-arms)" },
+  core: { label: "Core", icon: Target, color: "var(--category-core)" },
+  fullBody: {
+    label: "Full body",
+    icon: HeartPulse,
+    color: "var(--category-full-body)",
+  },
+  rest: { label: "Rest", icon: MoonStar, color: "var(--category-rest)" },
 }
 
 export function getCategoryMeta(category: WorkoutCategory): CategoryMeta {
